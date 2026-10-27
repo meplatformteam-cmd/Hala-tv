@@ -87,6 +87,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -110,6 +111,7 @@ import java.util.Iterator;
 
 public class MainActivity extends Activity {
   private WebView web;
+  private ValueCallback<Uri[]> fcb;
 
   public class Bridge {
     @JavascriptInterface
@@ -181,6 +183,8 @@ public class MainActivity extends Activity {
             c.setConnectTimeout(15000);
             c.setReadTimeout(url.contains("/ai") ? 240000 : 30000);
             JSONObject h = new JSONObject(headers);
+            boolean raw = h.has("X-Hala-Raw");
+            h.remove("X-Hala-Raw");
             Iterator<String> it = h.keys();
             while (it.hasNext()) { String k = it.next(); c.setRequestProperty(k, h.getString(k)); }
             if (body != null && body.length() > 0) {
@@ -201,7 +205,7 @@ public class MainActivity extends Activity {
             JSONObject r = new JSONObject();
             r.put("status", code);
             r.put("body", bo.toString("UTF-8"));
-            if (url.contains("/subtitleserve/")) r.put("b64", Base64.encodeToString(bo.toByteArray(), Base64.NO_WRAP));
+            if (raw || url.contains("/subtitleserve/")) r.put("b64", Base64.encodeToString(bo.toByteArray(), Base64.NO_WRAP));
             out = r.toString();
           } catch (Exception e) {
             out = "{\"status\":0,\"body\":\"\"}";
@@ -240,7 +244,24 @@ public class MainActivity extends Activity {
     s.setUseWideViewPort(true);
     s.setLoadWithOverviewMode(true);
     web.setBackgroundColor(0xFF000000);
-    web.setWebChromeClient(new WebChromeClient());
+    web.setWebChromeClient(new WebChromeClient() {
+      @Override
+      public boolean onShowFileChooser(WebView w, ValueCallback<Uri[]> cb, FileChooserParams p) {
+        if (fcb != null) fcb.onReceiveValue(null);
+        fcb = cb;
+        try {
+          Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+          i.addCategory(Intent.CATEGORY_OPENABLE);
+          i.setType("*/*");
+          startActivityForResult(i, 7);
+        } catch (Exception e) {
+          fcb = null;
+          cb.onReceiveValue(null);
+          web.evaluateJavascript("window.__nopicker&&window.__nopicker()", null);
+        }
+        return true;
+      }
+    });
     web.setWebViewClient(new WebViewClient() {
       @Override
       public boolean onRenderProcessGone(WebView view, android.webkit.RenderProcessGoneDetail detail) {
@@ -252,6 +273,18 @@ public class MainActivity extends Activity {
     web.addJavascriptInterface(new Bridge(), "HalaNative");
     web.loadUrl("file:///android_asset/index.html");
     web.requestFocus();
+  }
+
+  @Override
+  protected void onActivityResult(int rq, int rs, Intent d) {
+    if (rq == 7 && fcb != null) {
+      Uri[] r = null;
+      if (rs == RESULT_OK && d != null) r = WebChromeClient.FileChooserParams.parseResult(rs, d);
+      fcb.onReceiveValue(r);
+      fcb = null;
+      return;
+    }
+    super.onActivityResult(rq, rs, d);
   }
 
   @Override
