@@ -307,9 +307,26 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
 #bf{position:absolute;top:50%;left:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border:6px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:bfs .9s linear infinite;display:none;z-index:7;pointer-events:none}@keyframes bfs{to{transform:rotate(360deg)}}
 #st-logt{display:none;grid-column:1/-1;white-space:pre-wrap;direction:ltr;text-align:left;font-size:15px;color:var(--mu);max-height:30vh;overflow:hidden}#st-logt.on{display:block}
 #upb{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:90;background:var(--hi);color:var(--ov);padding:10px 26px;border-radius:999px;font-weight:700;font-size:clamp(16px,1.4vw,24px);display:none}
+
+/* --- شريط الحروف أنحف + ترك مساحة أكبر للعناوين --- */
+.pg{grid-template-columns:var(--cg,19%) 4.6% 1fr 30%}
+#p-a{grid-template-columns:1fr;gap:2px;padding:6px 3px}
+.ai{padding:3px 0;font-size:clamp(13px,1.15vw,19px);border-radius:9px}
+/* --- شاشة الافتتاح --- */
+#splash{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .9s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash .gl{position:absolute;left:50%;top:50%;width:90vmin;height:90vmin;margin:-45vmin 0 0 -45vmin;border-radius:50%;background:radial-gradient(circle,rgba(255,236,190,.55) 0%,rgba(255,200,110,.22) 32%,rgba(0,0,0,0) 68%);opacity:0;animation:glow 3.4s ease-in-out forwards}
+#splash .ln{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:linear-gradient(90deg,transparent,rgba(255,236,190,.95),transparent);transform:scaleX(0);animation:ln 1.5s .2s ease-out forwards}
+#splash .lw{position:relative;opacity:0;transform:scale(1.12);filter:blur(14px);animation:lg 1.6s .5s cubic-bezier(.2,.7,.2,1) forwards}
+#splash .lw img{display:block;height:clamp(120px,30vmin,300px);width:auto;filter:drop-shadow(0 0 28px rgba(255,225,160,.45))}
+#splash .sw{position:absolute;inset:0;-webkit-mask:var(--lm) center/contain no-repeat;mask:var(--lm) center/contain no-repeat;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.95) 50%,transparent 58%) 140% 0/250% 100% no-repeat;animation:sw 1.5s 1.5s ease-in-out forwards}
+@keyframes glow{0%{opacity:0;transform:scale(.6)}35%{opacity:1}100%{opacity:.75;transform:scale(1.15)}}
+@keyframes ln{0%{transform:scaleX(0);opacity:1}70%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes lg{to{opacity:1;transform:scale(1);filter:blur(0)}}
+@keyframes sw{to{background-position:-40% 0}}
 </style>
 </head>
-<body data-v="login"><div id="fx"></div>
+<body data-v="login"><div id="splash"><div class="gl"></div><div class="ln"></div><div class="lw"><img id="sp-img" alt=""><div class="sw"></div></div></div><div id="fx"></div>
 <svg id="scene" viewBox="0 0 800 400" preserveAspectRatio="xMidYMax slice"><g fill="none" stroke="#fff" stroke-width="2.2">
 <rect x="150" y="150" width="300" height="250"/><path d="M130 190H470M150 330H450M130 190L300 135 470 190M180 190V330M230 190V330M280 190V330M320 190V330M370 190V330M420 190V330M255 150V105h90v45M265 105L300 45 335 105M278 400V350a22 22 0 0 1 44 0V400"/><circle cx="300" cy="105" r="22"/>
 <path d="M560 400V170M600 400V170M640 400V170M680 400V170M720 400V170M540 170H745M548 158H737M0 400V335a30 30 0 0 1 60 0V400M60 400V335a30 30 0 0 1 60 0V400"/></g></svg>
@@ -346,7 +363,7 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
 
 <div id="app"><video id="v" autoplay playsinline></video><div id="bf"></div><div id="msg"></div><div id="pm"></div><div id="sp"><div class="spc">
  <div class="sph"><h2 class="ruq" data-i="subs"></h2><button class="circ sx" id="sp-x" tabindex="0"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
- <div class="spr" id="sp-ch"><button class="btn sx" id="sp-e" tabindex="0" data-i="subemb"></button><button class="btn sx" id="sp-a" tabindex="0" data-i="subauto"></button></div>
+ <div class="spr" id="sp-ch"><button class="btn sx" id="sp-e" tabindex="0" data-i="subemb"></button><button class="btn sx" id="sp-a" tabindex="0" data-i="subauto"></button><button class="btn sx" id="sp-ai" tabindex="0" data-i="sbai"></button><button class="btn sx" id="sp-f" tabindex="0" data-i="sbfile"></button><button class="btn sx" id="sp-u" tabindex="0" data-i="sburl"></button></div>
  <div class="spr" id="sp-sr" style="display:none"><button class="pill sx on" tabindex="0" data-sl="ar">العربية</button><button class="pill sx" tabindex="0" data-sl="en">English</button><input class="sx" id="sp-q" dir="auto" tabindex="0" data-ip="subq"><button class="btn sx" id="sp-go" tabindex="0" data-i="subgo"></button></div>
  <div id="sp-st"></div>
  <div id="sp-list"></div>
@@ -358,7 +375,7 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
 <script>
 /* ===== النصوص (عربي أردني عامي / English) — كل الكلام بمكان واحد وسهل تعدّله ===== */
 const T={ar:{
-app:'هلا TV',on:'مفعّل',off:'مطفي',s_disp:'العرض والجهاز',s_sec:'الأمان',s_app:'التطبيق',s_w:'الويدجتس: اختار اللي بدك تظهر بالرئيسية',s_loc:'موقعك (لأوقات الصلاة)',s_rad:'الراديو',s_cus:'ويدجت خاص فيك',kbm:'⌨ الكيبورد',kba:'تلقائي',kbp:'كيبورد التطبيق',kbs:'كيبورد الجهاز',upd:'⬆ تحديث التطبيق',upd_chk:'عم نفحص…',upd_ok:'✓ عندك آخر إصدار',upd_dl:'عم ننزّل التحديث…',upd_fail:'ما قدرنا نفحص التحديث',upd_none:'ما لقينا ملف تحديث',qrT:'امسح الكود من تليفونك وعبّي البيانات',prT:'عبّي بيانات هلا TV من التليفون',prgo:'ابعت للتلفزيون',prok:'تم الإرسال ✓ شوف التلفزيون',prfail:'ما انرسل، تأكد من النت',kbsp:'مسافة',w_prayer:'🕌 أوقات الصلاة',w_fx:'💱 أسعار العملات',w_radio:'🎵 راديو / موسيقى',w_custom:'📝 ويدجت خاص فيّ',adh:'🔔 تنبيه وقت الأذان',ph_city:'المدينة (مثلاً Amman)',ph_country:'الدولة (مثلاً Jordan)',rn:'اسم المحطة',ru:'رابط البث (stream URL)',ct:'عنوان الويدجت',cx:'النص',next:'الصلاة الجاية',adhm:n=>`🕌 حان الآن موعد أذان ${n}`,vm:'طريقة العرض',vml:'قائمة',vmg:'مربعات',dev:'نوع الجهاز',deva:'تلقائي',devt:'شاشة',devp:'تليفون',setT:'الإعدادات',setpw:'🔑 عيّن كلمة سر للأقسام',chpw:'🔑 غيّر كلمة السر',oldpw:'اكتب كلمة السر',newpw:'اكتب كلمة سر جديدة',badpw:'كلمة السر غلط',kid:'👶 قفل الأطفال',kidoff:'انفتح قفل الأطفال',okb:'تأكيد',cnl:'إلغاء',kidhint:'للفتح بالريموت: ↑ ↑ ↓ ↓',seasons:'الأجزاء',season:'الجزء',episode:'حلقة',episodes:'الحلقات',pickse:'اختار الجزء',lockmgr:'🔒 إدارة الأقسام',lockdone:'تمام ✓',lockon:'انقفل القسم وانخبّى',lockoff:'رجع القسم',lastw:'آخر مشاهدة',epfail:'ما قدرنا نجيب الحلقات',subemb:'ترجمة الفيديو نفسه',subauto:'أوتوماتيك من opensubtitles.org',subnoemb:'ما في ترجمة مدمجة بهالفيديو',pm_play:'تشغيل',pm_pause:'إيقاف مؤقت',pm_fav:'أضف للمفضلة ♥',pm_unfav:'شيل من المفضلة',pm_fit:'حجم الصورة',fit0:'مناسب',fit1:'ملء الشاشة',fit2:'تمديد',pm_q:'الوضوح',auto:'تلقائي',pm_back:'رجوع للقائمة',srv:'دوّر بكل القنوات والأفلام والمسلسلات',p_s:'نتائج البحث',cast:'الممثلين',noinfo:'ما لقينا نبذة',accok:(d,n)=>`✓ اشتراكك فعّال${d?' لحد '+d:''}${n>0?' · باقي '+n+' يوم':''}`,expd:d=>`اشتراكك منتهي${d?' من '+d:''}، لازم تجدده عند مزوّد الخدمة`,banned:'الحساب موقوف أو محظور، كلّم مزوّد الخدمة',badlogin:'اليوزر أو الباسوورد غلط، أو الحساب مش موجود',srvdown:'السيرفر ما ردّ: يا الرابط غلط، يا السيرفر واقف، يا النت فيه مشكلة',http:c=>'السيرفر رد بخطأ '+c,allg:'الكل',subnokey:'الترجمة الأوتوماتيك مش شغالة: ناقص مفتاح بالبناء',lsub:'يا هلا فيك! اكتب اسمك وحط رابط قنواتك وخلّينا نبلّش',nmph:'شو اسمك؟',tabm3u:'رابط M3U',xsph:'السيرفر  http://host:port',xuph:'اسم المستخدم',xpph:'كلمة السر',
+app:'هلا TV',on:'مفعّل',off:'مطفي',s_disp:'العرض والجهاز',s_sec:'الأمان',s_app:'التطبيق',s_w:'الويدجتس: اختار اللي بدك تظهر بالرئيسية',s_loc:'موقعك (لأوقات الصلاة)',s_rad:'الراديو',s_cus:'ويدجت خاص فيك',kbm:'⌨ الكيبورد',kba:'تلقائي',kbp:'كيبورد التطبيق',kbs:'كيبورد الجهاز',upd:'⬆ تحديث التطبيق',upd_chk:'عم نفحص…',upd_ok:'✓ عندك آخر إصدار',upd_dl:'عم ننزّل التحديث…',upd_fail:'ما قدرنا نفحص التحديث',upd_none:'ما لقينا ملف تحديث',qrT:'امسح الكود من تليفونك وعبّي البيانات',prT:'عبّي بيانات هلا TV من التليفون',prgo:'ابعت للتلفزيون',prok:'تم الإرسال ✓ شوف التلفزيون',prfail:'ما انرسل، تأكد من النت',kbsp:'مسافة',w_prayer:'🕌 أوقات الصلاة',w_fx:'💱 أسعار العملات',w_radio:'🎵 راديو / موسيقى',w_custom:'📝 ويدجت خاص فيّ',adh:'🔔 تنبيه وقت الأذان',ph_city:'المدينة (مثلاً Amman)',ph_country:'الدولة (مثلاً Jordan)',rn:'اسم المحطة',ru:'رابط البث (stream URL)',ct:'عنوان الويدجت',cx:'النص',next:'الصلاة الجاية',adhm:n=>`🕌 حان الآن موعد أذان ${n}`,vm:'طريقة العرض',vml:'قائمة',vmg:'مربعات',dev:'نوع الجهاز',deva:'تلقائي',devt:'شاشة',devp:'تليفون',setT:'الإعدادات',setpw:'🔑 عيّن كلمة سر للأقسام',chpw:'🔑 غيّر كلمة السر',oldpw:'اكتب كلمة السر',newpw:'اكتب كلمة سر جديدة',badpw:'كلمة السر غلط',kid:'👶 قفل الأطفال',kidoff:'انفتح قفل الأطفال',okb:'تأكيد',cnl:'إلغاء',kidhint:'للفتح بالريموت: ↑ ↑ ↓ ↓',seasons:'الأجزاء',season:'الجزء',episode:'حلقة',episodes:'الحلقات',pickse:'اختار الجزء',lockmgr:'🔒 إدارة الأقسام',lockdone:'تمام ✓',lockon:'انقفل القسم وانخبّى',lockoff:'رجع القسم',lastw:'آخر مشاهدة',epfail:'ما قدرنا نجيب الحلقات',subemb:'ترجمة الفيديو نفسه',sbai:'ترجمة بالذكاء الاصطناعي',sbfile:'ملف من فلاشة/جهاز',sburl:'من رابط',subai:'عم نترجم بالذكاء الاصطناعي… ممكن ياخد دقيقة أو اثنتين',subnosrv:'السيرفر مش مفعّل بالبناء (SUB_SRV)',subbadurl:'حط رابط مزبوط',subpasteurl:'الصق رابط ملف الترجمة بالخانة وكبس «من رابط» مرة تانية',subauto:'أوتوماتيك من opensubtitles.org',subnoemb:'ما في ترجمة مدمجة بهالفيديو',pm_play:'تشغيل',pm_pause:'إيقاف مؤقت',pm_fav:'أضف للمفضلة ♥',pm_unfav:'شيل من المفضلة',pm_fit:'حجم الصورة',fit0:'مناسب',fit1:'ملء الشاشة',fit2:'تمديد',pm_q:'الوضوح',auto:'تلقائي',pm_back:'رجوع للقائمة',srv:'دوّر بكل القنوات والأفلام والمسلسلات',p_s:'نتائج البحث',cast:'الممثلين',noinfo:'ما لقينا نبذة',accok:(d,n)=>`✓ اشتراكك فعّال${d?' لحد '+d:''}${n>0?' · باقي '+n+' يوم':''}`,expd:d=>`اشتراكك منتهي${d?' من '+d:''}، لازم تجدده عند مزوّد الخدمة`,banned:'الحساب موقوف أو محظور، كلّم مزوّد الخدمة',badlogin:'اليوزر أو الباسوورد غلط، أو الحساب مش موجود',srvdown:'السيرفر ما ردّ: يا الرابط غلط، يا السيرفر واقف، يا النت فيه مشكلة',http:c=>'السيرفر رد بخطأ '+c,allg:'الكل',subnokey:'الترجمة الأوتوماتيك مش شغالة: ناقص مفتاح بالبناء',lsub:'يا هلا فيك! اكتب اسمك وحط رابط قنواتك وخلّينا نبلّش',nmph:'شو اسمك؟',tabm3u:'رابط M3U',xsph:'السيرفر  http://host:port',xuph:'اسم المستخدم',xpph:'كلمة السر',
 go:'يلا نبلّش',demo:'جرّب الشكل بدون نت',needname:'اكتب اسمك أول شي',loading:'ثواني ونجيبلك القنوات…',fail:'ما زبطت: ',
 netfail:'ما قدرنا نوصل للرابط. افتح الملف بمتصفح عادي (كروم أو سفاري) مش من معاينة التطبيق، وتأكد من النت',
 needurl:'اكتب الرابط',fill:'عبّي كل الخانات',deny:'السيرفر رفض الدخول',badacc:'الحساب مش مزبوط',nochan:'ما لقينا قنوات',savedfail:'الدخول المحفوظ ما زبط، اكتب بياناتك من جديد',err:'خطأ ',
@@ -371,7 +388,7 @@ wfail:'ما قدرنا نجيب الجو هسا',meas:'عم نقيس النت…
 gl:{mv:'أفلام',sr:'مسلسلات',sp:'رياضة',nw:'أخبار',ge:'عام'},
 dn:{mv:['وادي رم','البتراء','نشامى','عمّان ليل'],sr:['ليالي عمّان','بيت الشعر','درب الحجاز','حارة الدار'],sp:['الكرة مباشر','كأس الأردن','دوري المحترفين'],nw:['نشرة الأخبار','رؤيا','المملكة'],ge:['التلفزيون الأردني','قناة المنوّعات']}},
 en:{
-app:'Hala TV',on:'On',off:'Off',s_disp:'Display & device',s_sec:'Security',s_app:'App',s_w:'Widgets: choose what shows on Home',s_loc:'Your location (prayer times)',s_rad:'Radio',s_cus:'Your own widget',kbm:'⌨ Keyboard',kba:'Auto',kbp:'App keyboard',kbs:'Device keyboard',upd:'⬆ Update app',upd_chk:'Checking…',upd_ok:'✓ You have the latest version',upd_dl:'Downloading update…',upd_fail:'Couldn\u2019t check for updates',upd_none:'No update file found',qrT:'Scan with your phone to fill in the details',prT:'Fill in Hala TV details from your phone',prgo:'Send to TV',prok:'Sent ✓ check your TV',prfail:'Couldn\u2019t send, check your connection',kbsp:'space',w_prayer:'🕌 Prayer times',w_fx:'💱 Exchange rates',w_radio:'🎵 Radio / music',w_custom:'📝 My own widget',adh:'🔔 Adhan alert',ph_city:'City (e.g. Amman)',ph_country:'Country (e.g. Jordan)',rn:'Station name',ru:'Stream URL',ct:'Widget title',cx:'Text',next:'Next prayer',adhm:n=>`🕌 It is time for ${n} adhan`,vm:'View',vml:'List',vmg:'Tiles',dev:'Device',deva:'Auto',devt:'TV / Screen',devp:'Phone',setT:'Settings',setpw:'🔑 Set categories password',chpw:'🔑 Change password',oldpw:'Enter password',newpw:'Enter a new password',badpw:'Wrong password',kid:'👶 Child lock',kidoff:'Child lock off',okb:'OK',cnl:'Cancel',kidhint:'Remote unlock: ↑ ↑ ↓ ↓',seasons:'Seasons',season:'Season',episode:'Episode',episodes:'Episodes',pickse:'Pick a season',lockmgr:'🔒 Manage categories',lockdone:'Done ✓',lockon:'Category locked and hidden',lockoff:'Category restored',lastw:'Last watched',epfail:'Couldn\u2019t load episodes',subemb:'Subtitles from the video',subauto:'Automatic from opensubtitles.org',subnoemb:'No built-in subtitles in this video',pm_play:'Play',pm_pause:'Pause',pm_fav:'Add to favorites ♥',pm_unfav:'Remove from favorites',pm_fit:'Picture size',fit0:'Fit',fit1:'Fill',fit2:'Stretch',pm_q:'Quality',auto:'Auto',pm_back:'Back to list',srv:'Search all channels, movies and series',p_s:'Search results',cast:'Cast',noinfo:'No synopsis found',accok:(d,n)=>`✓ Subscription active${d?' until '+d:''}${n>0?' · '+n+' days left':''}`,expd:d=>`Subscription expired${d?' on '+d:''}, renew it with your provider`,banned:'Account is banned or disabled, contact your provider',badlogin:'Wrong username or password, or account not found',srvdown:'Server did not respond: wrong link, server down, or no internet',http:c=>'Server error '+c,allg:'All',subnokey:'Auto subtitles off: missing key in build',lsub:'Welcome! Enter your name and your playlist, and let\u2019s go',nmph:'Your name',tabm3u:'M3U link',xsph:'Server  http://host:port',xuph:'Username',xpph:'Password',
+app:'Hala TV',on:'On',off:'Off',s_disp:'Display & device',s_sec:'Security',s_app:'App',s_w:'Widgets: choose what shows on Home',s_loc:'Your location (prayer times)',s_rad:'Radio',s_cus:'Your own widget',kbm:'⌨ Keyboard',kba:'Auto',kbp:'App keyboard',kbs:'Device keyboard',upd:'⬆ Update app',upd_chk:'Checking…',upd_ok:'✓ You have the latest version',upd_dl:'Downloading update…',upd_fail:'Couldn\u2019t check for updates',upd_none:'No update file found',qrT:'Scan with your phone to fill in the details',prT:'Fill in Hala TV details from your phone',prgo:'Send to TV',prok:'Sent ✓ check your TV',prfail:'Couldn\u2019t send, check your connection',kbsp:'space',w_prayer:'🕌 Prayer times',w_fx:'💱 Exchange rates',w_radio:'🎵 Radio / music',w_custom:'📝 My own widget',adh:'🔔 Adhan alert',ph_city:'City (e.g. Amman)',ph_country:'Country (e.g. Jordan)',rn:'Station name',ru:'Stream URL',ct:'Widget title',cx:'Text',next:'Next prayer',adhm:n=>`🕌 It is time for ${n} adhan`,vm:'View',vml:'List',vmg:'Tiles',dev:'Device',deva:'Auto',devt:'TV / Screen',devp:'Phone',setT:'Settings',setpw:'🔑 Set categories password',chpw:'🔑 Change password',oldpw:'Enter password',newpw:'Enter a new password',badpw:'Wrong password',kid:'👶 Child lock',kidoff:'Child lock off',okb:'OK',cnl:'Cancel',kidhint:'Remote unlock: ↑ ↑ ↓ ↓',seasons:'Seasons',season:'Season',episode:'Episode',episodes:'Episodes',pickse:'Pick a season',lockmgr:'🔒 Manage categories',lockdone:'Done ✓',lockon:'Category locked and hidden',lockoff:'Category restored',lastw:'Last watched',epfail:'Couldn\u2019t load episodes',subemb:'Subtitles from the video',sbai:'AI translation',sbfile:'File from USB/device',sburl:'From link',subai:'Translating with AI… may take a minute or two',subnosrv:'Server not enabled in build (SUB_SRV)',subbadurl:'Enter a valid link',subpasteurl:'Paste the subtitle link in the box, then press From link again',subauto:'Automatic from opensubtitles.org',subnoemb:'No built-in subtitles in this video',pm_play:'Play',pm_pause:'Pause',pm_fav:'Add to favorites ♥',pm_unfav:'Remove from favorites',pm_fit:'Picture size',fit0:'Fit',fit1:'Fill',fit2:'Stretch',pm_q:'Quality',auto:'Auto',pm_back:'Back to list',srv:'Search all channels, movies and series',p_s:'Search results',cast:'Cast',noinfo:'No synopsis found',accok:(d,n)=>`✓ Subscription active${d?' until '+d:''}${n>0?' · '+n+' days left':''}`,expd:d=>`Subscription expired${d?' on '+d:''}, renew it with your provider`,banned:'Account is banned or disabled, contact your provider',badlogin:'Wrong username or password, or account not found',srvdown:'Server did not respond: wrong link, server down, or no internet',http:c=>'Server error '+c,allg:'All',subnokey:'Auto subtitles off: missing key in build',lsub:'Welcome! Enter your name and your playlist, and let\u2019s go',nmph:'Your name',tabm3u:'M3U link',xsph:'Server  http://host:port',xuph:'Username',xpph:'Password',
 go:'Let\u2019s go',demo:'Preview without internet',needname:'Please enter your name first',loading:'Loading your channels…',fail:'Failed: ',
 netfail:'Couldn\u2019t reach the link. Open the file in a normal browser (Chrome or Safari), not an in-app preview, and check your connection',
 needurl:'Enter the link',fill:'Fill in all fields',deny:'The server rejected the login',badacc:'Invalid account',nochan:'No channels found',savedfail:'Saved login failed, please enter your details again',err:'Error ',
@@ -764,7 +781,8 @@ async function webGet(id){
  }catch(e){spSt(t('subfail')+'opensubtitles.org');return false}
 }
 async function subFind(q,tr){
- let a=[],we=0;try{a=await webFind(q,tr)}catch(e){we=1}
+ let a=[],we=0;if(srvOK())try{a=await srvFind(q,tr)}catch(e){}
+ if(!a.length)try{a=await webFind(q,tr)}catch(e){we=1}
  if(!a.length&&osOK()){const b=await osFind(q,tr);if(b)a=b.map(at=>({name:at.release||at.files[0].file_name||'—',n:at.download_count||0,get:()=>osGet(at.files[0].file_id)}))}
  if(!a.length&&we&&!$('#sp-st').textContent)spSt(t('subnet'));
  return a;
@@ -964,6 +982,37 @@ function embSubs(){
  it.forEach(([n,f])=>{const d=document.createElement('div');d.className='ri sx';d.tabIndex=0;d.textContent=n;d.onclick=()=>{S.sub=null;clearSub();f();spSt(t('subok'))};L.append(d)});
  focusEl($('#sp-list .ri'));
 }
+
+/* ===== سيرفر الترجمة + الذكاء الاصطناعي + رفع ملف ===== */
+const SRV='__SUB_SRV__',srvOK=()=>SRV&&!/^__/.test(SRV);
+const dec=u=>{let x;try{x=new TextDecoder('utf-8',{fatal:true}).decode(u)}catch(e){x=new TextDecoder(OS.lang=='ar'?'windows-1256':'windows-1252').decode(u)}return x.replace(/^\uFEFF?WEBVTT[^\n]*\n/,'')};
+async function srvFind(q,tr,lang){
+ const r=await xhttp('GET',SRV+'/find?q='+enc(q)+'&lang='+(lang||OS.lang)+(tr&&tr.se?'&se='+tr.se+'&ep='+tr.ep:''),{});
+ return (jp(r.body).items||[]).map(x=>({name:x.name,n:x.n||'',get:()=>srvGet(x.id)}));
+}
+function setSub(x,lang){S.sub={srt:x,lang:lang||OS.lang,off:0};applySub();spSt(t('subok'));$('#sp-o').textContent='0.0s';return true}
+async function srvGet(id){
+ spSt(t('subdl'));const r=await xhttp('GET',SRV+'/get?id='+enc(id),{});
+ if(r.status!=200||!r.body){spSt(t('subfail')+r.status);return false}return setSub(r.body);
+}
+async function aiSub(){
+ if(!srvOK()){spSt(t('subnosrv'));return}
+ const tr=S.track;if(!tr)return;spSt(t('subai'));
+ const en=S.sub&&S.sub.lang=='en'?S.sub.srt:'';
+ const r=en?await xhttp('POST',SRV+'/ai',{'Content-Type':'text/plain'},en):await xhttp('GET',SRV+'/ai?q='+enc(cleanTitle(tr.name))+(tr.se?'&se='+tr.se+'&ep='+tr.ep:''),{});
+ if(S.track!==tr)return;
+ if(r.status!=200||!r.body){spSt(t('subfail')+(r.status||t('subnet')));return}
+ setSub(r.body,'ar');
+}
+function subFile(){const i=document.createElement('input');i.type='file';i.accept='.srt,.vtt,.txt';i.onchange=async()=>{const f=i.files[0];if(f)setSub(dec(new Uint8Array(await f.arrayBuffer())))};i.click()}
+async function subUrl(){
+ const r0=$('#sp-sr'),u=$('#sp-q').value.trim();
+ if(r0.style.display=='none'){r0.style.display='';$('#sp-q').value='';focusEl($('#sp-q'));spSt(t('subpasteurl'));return}
+ if(!/^https?:\/\//i.test(u)){spSt(t('subbadurl'));return}
+ spSt(t('subdl'));const r=await xhttp('GET',srvOK()?SRV+'/fetch?url='+enc(u):u,UA);
+ if(r.status!=200||!r.body){spSt(t('subfail')+r.status);return}setSub(r.body.replace(/^\uFEFF?WEBVTT[^\n]*\n/,''));
+}
+$('#sp-ai').onclick=aiSub;$('#sp-f').onclick=subFile;$('#sp-u').onclick=subUrl;
 $('#sp-e').onclick=embSubs;$('#sp-a').onclick=()=>{$('#sp-sr').style.display='';osSearch(true)};
 $('#hq').onkeydown=e=>{if(e.keyCode!=13)return;e.preventDefault();e.stopPropagation();const q=$('#hq').value.trim();if(!q)return;$('#p-q').value=q;S.grp='';S.let='';S.limit=100;S.lastId=null;showPage('__s',true)};
 let cm=0;
@@ -1091,12 +1140,56 @@ $('#st-upd').onclick=async()=>{const b=$('#st-upd');b.textContent=t('upd_chk');
 function upBanner(x){let e=$('#upb');if(!e){e=document.createElement('div');e.id='upb';document.body.append(e)}e.textContent=x;e.style.display='block';setTimeout(()=>e.style.display='none',15000)}
 async function autoUpd(){try{const cur=+APP_VER||0;if(!cur)return;const r=await xhttp('GET','https://api.github.com/repos/'+REPO+'/releases/latest',{Accept:'application/vnd.github+json'}),j=jp(r.body),n=+((j.tag_name||j.name||'').match(/(\d+)/)||[])[1]||0,a=(j.assets||[]).find(x=>/\.apk$/i.test(x.name));if(a&&n>cur)upBanner(S.lang=='ar'?'🔔 يوجد تحديث جديد (v'+n+') — الإعدادات ← تحديث':'🔔 New update (v'+n+') — Settings → Update')}catch(e){}}
 setTimeout(autoUpd,9000);
+
+/* ===== شاشة الافتتاح (لوجو + نغمة + إضاءة سينمائية) ===== */
+(function(){
+ const sp=$('#splash'),lg=$('#login .logo');if(!sp)return;
+ if(lg&&lg.src){$('#sp-img').src=lg.src;sp.style.setProperty('--lm','url("'+lg.src+'")')}
+ let done=0;const end=()=>{if(done)return;done=1;sp.classList.add('out');setTimeout(()=>{sp.remove()},1000)};
+ document.addEventListener('keydown',e=>{if(!done){e.stopPropagation();e.preventDefault();if(e.keyCode==13)end()}},true);
+ sp.onclick=end;setTimeout(end,3600);
+ try{
+  const C=new (window.AudioContext||window.webkitAudioContext)();C.resume&&C.resume();
+  const t0=C.currentTime+.1,mg=C.createGain(),dl=C.createDelay(),fb=C.createGain(),lp=C.createBiquadFilter();
+  lp.type='lowpass';lp.frequency.value=3200;mg.gain.value=.5;dl.delayTime.value=.28;fb.gain.value=.42;
+  mg.connect(lp);lp.connect(C.destination);lp.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(C.destination);
+  const tone=(f,st,at,du,vol,ty)=>{const o=C.createOscillator(),g=C.createGain();o.type=ty||'sine';o.frequency.value=f;
+   g.gain.setValueAtTime(0,t0+st);g.gain.linearRampToValueAtTime(vol,t0+st+at);g.gain.exponentialRampToValueAtTime(.0001,t0+st+du);
+   o.connect(g);g.connect(mg);o.start(t0+st);o.stop(t0+st+du+.1)};
+  tone(55,0,1.4,3.2,.5);tone(110,0,1.5,3.0,.28);                       // نبض سينمائي واطي
+  [146.83,220,293.66,369.99].forEach((f,i)=>tone(f,.25+i*.12,1.2,3.0,.13,'triangle')); // وسادة دافية
+  [880,1318.5,1760].forEach((f,i)=>tone(f,1.35+i*.11,.02,1.9,.2-i*.04));   // رنّة لما يظهر اللوجو
+ }catch(e){}
+})();
+
+/* ===== تمرير العناوين الطويلة ===== */
+
+(function(){
+ let raf=0,cur=null;
+ const stop=()=>{cancelAnimationFrame(raf);if(cur){cur.el.scrollLeft=0;cur.el.scrollTop=0;cur.el.style.textOverflow='';cur=null}};
+ document.addEventListener('focusin',e=>{
+  stop();const f=e.target;if(!f||!f.closest)return;
+  const el=f.matches('.cap')?f:f.querySelector('.cap,span:not(.fvb)');if(!el||!el.closest('.li,.cd,.gi'))return;
+  setTimeout(()=>{
+   if(document.activeElement!==f)return;
+   const ox=el.scrollWidth-el.clientWidth,oy=el.scrollHeight-el.clientHeight,vert=oy>3&&ox<=3,max=vert?oy:ox;
+   if(max<=3)return;
+   const rtl=getComputedStyle(el).direction=='rtl'?-1:1,dur=Math.max(2200,max*28);cur={el};el.style.textOverflow='clip';
+   const t0=performance.now(),tick=n=>{
+    const c=(n-t0)%(dur+1600),p=c<800?0:c>dur+800?1:Math.min(1,(c-800)/dur);
+    if(vert)el.scrollTop=max*p;else el.scrollLeft=rtl*max*p;
+    raf=requestAnimationFrame(tick)};
+   raf=requestAnimationFrame(tick);
+  },500);
+ });
+ document.addEventListener('focusout',stop);
+})();
 /* ===== أول ما يفتح ===== */
 S.lang=store.get('lang')||'ar';S.name=store.get('name')||'';applyLang();
 if(S.name)$('#nm').value=S.name;
 try{const lc=window.HalaNative&&HalaNative.lastCrash&&HalaNative.lastCrash();if(lc)elog('ANDROID: '+lc)}catch(e){}
 const saved=store.get('conf');
-if(PAIR){setView('pair');applyLang();focusEl($('#pr-n'))}else if(saved&&S.name){
+if(PAIR){setView('pair');applyLang();focusEl($('#pr-n'))}else if(saved){if(!S.name){S.name=store.get('name')||'Hala'}
  const fresh=()=>load(saved).then(showHome).catch(()=>{setView('login');$('#err').textContent=t('savedfail');startPair()});
  idb.get('lists').then(c=>{if(c&&c.sig===JSON.stringify(saved)&&c.chans&&c.chans.length&&c.conf){S.conf=c.conf;S.chans=c.chans;S.live=c.chans;S.mv=c.mv||[];S.sr=c.sr||[];S.lv=0;S.acc=c.acc||'';S.cm=1;showHome();load(saved).then(()=>{S.cm=0;if(V()=='home')renderHome()}).catch(e=>{S.cm=0;elog('refresh: '+(e&&e.message))})}else fresh()}).catch(fresh)}else{focusEl($('.lg.on'));startPair()}
 </script>

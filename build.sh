@@ -3,7 +3,7 @@ set -e
 mkdir -p android/app/src/main/res/xml android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
 BUILD_TS=$(date -u '+%Y-%m-%d %H:%M')
-sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g;s|__BUILD__|${BUILD_TS}|g" android/app/src/main/assets/index.html
+sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g;s|__BUILD__|${BUILD_TS}|g;s|__SUB_SRV__|${SUB_SRV:-}|g" android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
 pluginManagement {
   repositories { google(); mavenCentral(); gradlePluginPortal() }
@@ -179,7 +179,7 @@ public class MainActivity extends Activity {
             HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
             c.setRequestMethod(method);
             c.setConnectTimeout(15000);
-            c.setReadTimeout(30000);
+            c.setReadTimeout(url.contains("/ai") ? 240000 : 30000);
             JSONObject h = new JSONObject(headers);
             Iterator<String> it = h.keys();
             while (it.hasNext()) { String k = it.next(); c.setRequestProperty(k, h.getString(k)); }
