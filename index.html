@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var d='auto';try{d=JSON.parse(localStorage.getItem('dev'))||'auto'}catch(e){}var sm=Math.min(screen.width,screen.height)<700,m=(d=='phone'||(d=='auto'&&sm))?'ph':(d=='tv'||window.HalaNative)?'tv':'';document.documentElement.className=m;if(m=='tv'&&window.HalaNative)document.querySelector("meta[name=viewport]").setAttribute("content","width=1920")})()</script>
+<script>(function(){var d='auto';try{d=JSON.parse(localStorage.getItem('dev'))||'auto'}catch(e){}var sm=Math.min(screen.width,screen.height)<700&&(navigator.maxTouchPoints>0||'ontouchstart' in window),m=(d=='phone'||(d=='auto'&&sm))?'ph':(d=='tv'||window.HalaNative)?'tv':'';document.documentElement.className=m;if(m=='tv'&&window.HalaNative)document.querySelector("meta[name=viewport]").setAttribute("content","width=1920")})()</script>
 <title>هلا TV</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
@@ -222,6 +222,49 @@ html.ph .card0 .ruq{font-size:56px}html.ph #pm .ri{font-size:18px}html.ph #osd{f
 .pg.gvw #p-l.gv{grid-template-columns:repeat(3,1fr);grid-auto-rows:calc((100vh - 250px)/3 - 10px)}.pg.gvw .gv .li{aspect-ratio:auto;height:auto}
 .gv .li span:not(.fvb){font-size:20px;line-height:1.3}
 html.ph .pg.gvw #p-l.gv{grid-auto-rows:auto}html.ph .pg.gvw .gv .li{aspect-ratio:2/3}html.ph .gv .li span:not(.fvb){font-size:13px}
+
+/* ===== ثيم tvOS: ترتيب الأقسام + الإعدادات ===== */
+#page{padding:34px 4vw 36px}
+.ph{gap:16px;margin-bottom:22px}
+.ph h2{font-size:clamp(36px,3.6vw,60px)}
+.ph .pill{padding:10px 30px;font-size:clamp(18px,1.5vw,26px)}
+.pill,.circ,.gi,.li,.ai,#set .btn{transition:transform .18s,background .18s,box-shadow .18s}
+.pill:focus,.circ:focus{background:var(--hi);color:var(--ov);transform:scale(1.06)}
+.pg{grid-template-columns:var(--cg,19%) 7% 1fr 31%;gap:24px}
+.pg.gvw{grid-template-columns:var(--cg,19%) 7% 1fr}
+.pg>div{background:rgba(128,128,128,.10);border:0;border-radius:28px;padding:14px}
+.gi{min-height:64px;padding:10px 20px;font-size:clamp(20px,1.7vw,30px);border-radius:18px}
+.gi+.gi,.li+.li{margin-top:6px}
+.li{padding:8px 18px;border-radius:20px;font-size:clamp(20px,1.8vw,30px)}
+html:not(.ph) #p-l:not(.gv) .li{height:clamp(84px,calc((100vh - 270px)/6),132px)}
+.ai{padding:8px 0;border-radius:14px}
+.gi.on:not(:focus),.ai.on:not(:focus){background:rgba(128,128,128,.30)}
+.gi:focus,.li:focus,.ai:focus{background:var(--hi);color:var(--ov);border-color:transparent;transform:scale(1.03);box-shadow:0 14px 34px rgba(0,0,0,.45);z-index:2}
+.gv .li:focus{background:transparent;color:#fff;box-shadow:0 0 0 4px var(--hi),0 18px 40px rgba(0,0,0,.5);transform:scale(1.04)}
+/* الإعدادات: شبكة 3 أعمدة */
+body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;gap:20px 24px;padding:36px 5vw 60px}
+#set>.ph,#set .sh3,#set>.sub,#set>p{grid-column:1/-1}
+#set .sh3{margin:18px 0 0;padding-bottom:8px;border-bottom:1px solid var(--ln);font-size:clamp(22px,1.8vw,32px)}
+#set .btn{width:100%!important;min-height:clamp(84px,10vh,120px);display:flex;align-items:center;padding:18px 26px;border-radius:24px;background:rgba(128,128,128,.14);border:0;font-size:clamp(20px,1.6vw,28px)}
+#set .btn:focus{background:var(--hi);color:var(--ov);transform:scale(1.05);box-shadow:0 18px 40px rgba(0,0,0,.45);z-index:2}
+#set input{width:100%}
+html.ph body[data-v=set] #set{grid-template-columns:1fr}
+@media(max-width:900px){body[data-v=set] #set{grid-template-columns:1fr}}
+
+/* ===== سرعة + أحجام ثابتة ===== */
+*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#scene{display:none}
+.tile .bgi{filter:none;opacity:.12}
+#wx,#nt,.fvb{filter:none}
+.cd,.hero,.tile,.gi,.li,.ai,.pill,.circ,#set .btn{transition:transform .12s ease-out,background-color .12s}
+.cd:focus,.hero:focus,.tile:focus{box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.gi:focus,.li:focus,.ai:focus,#set .btn:focus{box-shadow:0 6px 14px rgba(0,0,0,.4)}
+.tile,.hero{will-change:transform}
+.pg>div{contain:layout paint}
+@media(min-width:901px){
+ html:not(.ph) .sug{flex:none;height:34vh}
+ html:not(.ph) #wg{flex:none}
+}
 </style>
 </head>
 <body data-v="login"><div id="fx"></div>
@@ -438,7 +481,7 @@ function mk(it,kind,fn,fk){
 }
 var pv=null,pvT;
 function killPv(){clearTimeout(pvT);if(pv){try{pv.destroy()}catch(e){}pv=null}$$('.hero video,#p-pv video').forEach(v=>{v.removeAttribute('src');v.load()})}
-function prevPlay(v,u,d){if(S.mc==1)return 0;return setTimeout(()=>{if(!v.offsetParent)return;
+function prevPlay(v,u,d){return setTimeout(()=>{if(!v.offsetParent)return;
  if(/\.m3u8(\?|$)/i.test(u)&&window.Hls&&Hls.isSupported()){pv=new Hls({maxBufferLength:6,startLevel:0});pv.loadSource(u);pv.attachMedia(v);pv.on(Hls.Events.ERROR,(e,x)=>{if(x.fatal)killPv()})}else v.src=u;
  v.onplaying=()=>v.classList.add('on');v.play().catch(()=>{})},d)}
 function hero(it,fk,fn){
@@ -513,7 +556,7 @@ function setPv(it,fk){
  if(it.logo){const i=document.createElement('img');i.src=it.logo;i.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(fk=='lv'?'contain;padding:12%':'cover');i.onerror=()=>i.remove();b.append(i)}
  if(fk=='lv'&&it.url){const v=document.createElement('video');v.muted=true;v.playsInline=true;b.append(v);pvT=prevPlay(v,it.url,200)}
 }
-$('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(r&&r._it)setPv(r._it,r._fk)});
+var spT;$('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(!r||!r._it)return;clearTimeout(spT);spT=setTimeout(()=>{if(document.activeElement===r)setPv(r._it,r._fk)},260)});
 const AL=c=>!c?'':'أإآٱ'.includes(c)?'ا':c=='ى'?'ي':c=='ة'?'ه':c.toUpperCase(),first=n=>AL(((n||'').replace(/^[^A-Za-z\u0621-\u064A]+/,'')[0])||'');
 const LET=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'];
 function renderPage(){
@@ -523,7 +566,7 @@ function renderPage(){
  const gs=[...new Set(all.map(c=>c.group).filter(Boolean))],cl=vod&&!q?contList(k=='__mv'?'mv':'sr'):[],ng=fv||gs.length<2;
  if(S.grp==='__c'?!cl.length:(S.grp&&!gs.includes(S.grp)&&S.grp[0]!='@'&&S.grp!='__nw'))S.grp='';
  S.view=S.grp==='__c'?cl:all.filter(c=>gm(c)&&(!S.let||first(c.name)==S.let)&&c.name.toLowerCase().includes(q));if(!fv&&S.grp!=='__c')S.view.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
- $('#p-n').textContent=S.view.length;$('#pg').classList.toggle('ng',ng);
+ $('#p-n').textContent=S.view.length;$('#p-vm').style.display=vod?'':'none';$('#pg').classList.toggle('ng',ng);
  const G=$('#p-g');G.innerHTML='';
  const kd=KD(k),canLk=!!kd&&!fv&&k!='__s';S.lo=S.lo||{};
  $('#p-lock').style.display=canLk?'':'none';$('#p-lock').textContent=t(S.manage?'lockdone':'lockmgr');$('#p-lock').classList.toggle('on',!!S.manage);
@@ -541,7 +584,7 @@ function renderPage(){
    G.append(e)})}
  const A=$('#p-a');A.innerHTML='';const have=new Set(all.filter(c=>gm(c)&&c.name.toLowerCase().includes(q)).map(c=>first(c.name)));
  [['','•'],...LET.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.let||'')===v?' on':'')+(v&&!have.has(v)?' dim':'');e.tabIndex=0;e.textContent=n;e.onclick=()=>{S.let=v;S.limit=100;renderPage();focusEl($('#p-a .ai.on'))};A.append(e)});
- const Li=$('#p-l');Li.innerHTML='';const gv=store.get('vm')=='grid';Li.classList.toggle('gv',gv);$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=gv?'☰ '+t('vml'):'▦ '+t('vmg');
+ const Li=$('#p-l');Li.innerHTML='';const gv=vod&&store.get('vm')=='grid';Li.classList.toggle('gv',gv);$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=gv?'☰ '+t('vml'):'▦ '+t('vmg');
  if(!S.view.length){Li.innerHTML='<div class="none">'+t(fv?'nofav':'empty')+'</div>';setPv(null);return}
  S.view.slice(0,S.limit).forEach(c=>{const fk=fv?c.kind:vod?(k=='__mv'?'mv':'sr'):KM.get(c)||'lv',e=document.createElement('div');e.className='li';e.tabIndex=0;e._it=c;e._fk=fk||'lv';e.dataset.id=c.id||'';
   if(c.logo){const i=document.createElement('img');i.loading='lazy';i.src=c.logo;i.onerror=()=>i.remove();e.append(i)}
@@ -553,7 +596,7 @@ $('#p-back').onclick=showHome;let qT;$('#p-q').oninput=()=>{clearTimeout(qT);qT=
 
 /* ===== التشغيل ===== */
 function start(c){
- S.sub=null;S.spq='';hqi=-1;clearSub();showMsg('');const v=$('#v');if(hls){hls.destroy();hls=null}
+ killPv();S.sub=null;S.spq='';hqi=-1;clearSub();showMsg('');const v=$('#v');if(hls){hls.destroy();hls=null}
  const pr=S.track&&getProg()[S.track.id];
  if(pr&&pr.url==c.url&&pr.t>5)v.addEventListener('loadedmetadata',()=>{v.currentTime=pr.t},{once:true});
  v.controls=S.vod;
@@ -789,6 +832,7 @@ async function xinfo(it,fk){
  return {plot:i.plot||i.description,cast:i.cast||i.actors,rating:i.rating,year:(i.releasedate||i.releaseDate||'').slice(0,4),genre:i.genre};
 }
 async function showDet(it,fk){
+ killPv();
  S.dFrom=(V()=='det'||V()=='app')?S.dFrom:V();S.det={it,fk};S.lastId=it.id;setView('det');
  const b=$('#det'),q=x=>b.querySelector(x);
  b.innerHTML='<div class="di"><h2 class="ruq" dir="auto"></h2><div class="dm"></div><p class="dx" dir="auto"></p><p class="dc" dir="auto"></p><div class="ss"></div><div class="ee"></div><div class="db"><button class="btn" tabindex="0" id="d-play"></button><button class="btn sec" tabindex="0" id="d-fav"></button><button class="btn sec" tabindex="0" id="d-back"></button></div></div>';
