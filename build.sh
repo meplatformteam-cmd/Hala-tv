@@ -2,7 +2,7 @@ set -e
 [ -f logo.png ] || { echo 'logo.png is missing next to build.sh'; exit 1; }
 mkdir -p android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
-sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g" android/app/src/main/assets/index.html
+sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-}|g" android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
 pluginManagement {
   repositories { google(); mavenCentral(); gradlePluginPortal() }
@@ -76,6 +76,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.util.Base64;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -144,6 +145,7 @@ public class MainActivity extends Activity {
             JSONObject r = new JSONObject();
             r.put("status", code);
             r.put("body", bo.toString("UTF-8"));
+            if (url.contains("/subtitleserve/")) r.put("b64", Base64.encodeToString(bo.toByteArray(), Base64.NO_WRAP));
             out = r.toString();
           } catch (Exception e) {
             out = "{\"status\":0,\"body\":\"\"}";
