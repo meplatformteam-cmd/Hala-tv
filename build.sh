@@ -43,7 +43,12 @@ android {
     targetCompatibility JavaVersion.VERSION_17
   }
 }
-dependencies { implementation 'androidx.core:core:1.12.0' }
+dependencies {
+  implementation 'androidx.core:core:1.12.0'
+  implementation 'androidx.media3:media3-exoplayer:1.4.1'
+  implementation 'androidx.media3:media3-exoplayer-hls:1.4.1'
+  implementation 'androidx.media3:media3-ui:1.4.1'
+}
 EOF
 cat > android/app/src/main/AndroidManifest.xml <<'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -108,12 +113,91 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
+import android.view.SurfaceView;
+import android.widget.FrameLayout;
+import androidx.media3.common.AudioAttributes;
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.common.TrackGroup;
+import androidx.media3.common.TrackSelectionOverride;
+import androidx.media3.common.TrackSelectionParameters;
+import androidx.media3.common.Tracks;
+import androidx.media3.common.VideoSize;
+import androidx.media3.common.text.CueGroup;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.media3.ui.SubtitleView;
 
 public class MainActivity extends Activity {
   private WebView web;
   private ValueCallback<Uri[]> fcb;
+  private FrameLayout exoRoot;
+  private AspectRatioFrameLayout exoFrame;
+  private SurfaceView exoSurface;
+  private SubtitleView exoSubs;
+  private ExoPlayer exo;
+  private final Handler hnd = new Handler(Looper.getMainLooper());
+  private final java.util.ArrayList<Object[]> aTr = new java.util.ArrayList<Object[]>();
+  private final java.util.ArrayList<Object[]> tTr = new java.util.ArrayList<Object[]>();
+  private boolean sideSub = false;
+  private int subN = 0;
+  private java.io.File lastSub;
+  private final Runnable tick = new Runnable() {
+    public void run() {
+      if (exo == null || exoRoot.getVisibility() != View.VISIBLE) return;
+      long d = exo.getDuration();
+      boolean live = exo.isCurrentMediaItemLive() || d == C.TIME_UNSET;
+      js("time", "{\"t\":" + exo.getCurrentPosition() + ",\"d\":" + (live ? -1 : d) + "}");
+      hnd.postDelayed(this, 500);
+    }
+  };
 
   public class Bridge {
+    @JavascriptInterface
+    public void exoPlay(final String url, final long startMs) { runOnUiThread(new Runnable() { public void run() { exoStart(url, startMs); } }); }
+
+    @JavascriptInterface
+    public void exoResume() { runOnUiThread(new Runnable() { public void run() { if (exo != null) exo.play(); } }); }
+
+    @JavascriptInterface
+    public void exoPause() { runOnUiThread(new Runnable() { public void run() { if (exo != null) exo.pause(); } }); }
+
+    @JavascriptInterface
+    public void exoSeek(final long ms) { runOnUiThread(new Runnable() { public void run() { if (exo != null) exo.seekTo(Math.max(0, ms)); } }); }
+
+    @JavascriptInterface
+    public void exoStop() { runOnUiThread(new Runnable() { public void run() { exoHalt(); } }); }
+
+    @JavascriptInterface
+    public void exoFit(final int m) {
+      runOnUiThread(new Runnable() { public void run() {
+        exoFrame.setResizeMode(m == 1 ? AspectRatioFrameLayout.RESIZE_MODE_ZOOM : m == 2 ? AspectRatioFrameLayout.RESIZE_MODE_FILL : AspectRatioFrameLayout.RESIZE_MODE_FIT);
+      } });
+    }
+
+    @JavascriptInterface
+    public void exoSub(final String vtt, final String lang) { runOnUiThread(new Runnable() { public void run() { exoSetSub(vtt, lang); } }); }
+
+    @JavascriptInterface
+    public void exoSubClear() { runOnUiThread(new Runnable() { public void run() { exoClearSub(); } }); }
+
+    @JavascriptInterface
+    public void exoTrack(final int type, final int idx) { runOnUiThread(new Runnable() { public void run() { exoPick(type, idx); } }); }
+
     @JavascriptInterface
     public String ssid() {
       try {
@@ -231,8 +315,22 @@ public class MainActivity extends Activity {
         && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
       requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
+    getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+    FrameLayout root = new FrameLayout(this);
+    exoRoot = new FrameLayout(this);
+    exoRoot.setVisibility(View.GONE);
+    exoFrame = new AspectRatioFrameLayout(this);
+    exoSurface = new SurfaceView(this);
+    exoFrame.addView(exoSurface, new FrameLayout.LayoutParams(-1, -1));
+    exoRoot.addView(exoFrame, new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER));
+    exoSubs = new SubtitleView(this);
+    exoSubs.setUserDefaultStyle();
+    exoSubs.setFractionalTextSize(0.06f);
+    exoRoot.addView(exoSubs, new FrameLayout.LayoutParams(-1, -1));
+    root.addView(exoRoot, new FrameLayout.LayoutParams(-1, -1));
     web = new WebView(this);
-    setContentView(web);
+    root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+    setContentView(root);
     WebSettings s = web.getSettings();
     s.setJavaScriptEnabled(true);
     s.setDomStorageEnabled(true);
@@ -275,6 +373,158 @@ public class MainActivity extends Activity {
     web.requestFocus();
   }
 
+
+  private void js(String k, String json) {
+    if (web == null) return;
+    web.evaluateJavascript("window.__exo&&window.__exo('" + k + "'," + json + ")", null);
+  }
+
+  private void exoEnsure() {
+    if (exo != null) return;
+    DefaultLoadControl lc = new DefaultLoadControl.Builder().setBufferDurationsMs(15000, 60000, 2500, 5000).build();
+    DefaultHttpDataSource.Factory hf = new DefaultHttpDataSource.Factory()
+      .setAllowCrossProtocolRedirects(true)
+      .setConnectTimeoutMs(15000)
+      .setReadTimeoutMs(30000)
+      .setUserAgent(web.getSettings().getUserAgentString());
+    exo = new ExoPlayer.Builder(this, new DefaultRenderersFactory(this).setEnableDecoderFallback(true))
+      .setMediaSourceFactory(new DefaultMediaSourceFactory(new DefaultDataSource.Factory(this, hf)))
+      .setLoadControl(lc)
+      .build();
+    exo.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true);
+    exo.setVideoSurfaceView(exoSurface);
+    exo.addListener(new Player.Listener() {
+      @Override public void onPlaybackStateChanged(int st) {
+        if (st == Player.STATE_BUFFERING) js("buf", "1");
+        else if (st == Player.STATE_READY) {
+          long d = exo.getDuration();
+          js("ready", "{\"d\":" + ((d == C.TIME_UNSET || exo.isCurrentMediaItemLive()) ? -1 : d) + "}");
+        } else if (st == Player.STATE_ENDED) js("end", "1");
+      }
+      @Override public void onIsPlayingChanged(boolean p) { if (p) js("play", "1"); }
+      @Override public void onPlayWhenReadyChanged(boolean pw, int reason) { js("pw", pw ? "true" : "false"); }
+      @Override public void onVideoSizeChanged(VideoSize vs) {
+        if (vs.height > 0) exoFrame.setAspectRatio(vs.width * vs.pixelWidthHeightRatio / vs.height);
+        js("size", "{\"h\":" + vs.height + "}");
+      }
+      @Override public void onCues(CueGroup g) { exoSubs.setCues(g.cues); }
+      @Override public void onTracksChanged(Tracks t) { exoTracks(t); }
+      @Override public void onPlayerError(PlaybackException e) {
+        if (e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) { exo.seekToDefaultPosition(); exo.prepare(); return; }
+        js("err", JSONObject.quote(e.getErrorCodeName()));
+      }
+    });
+  }
+
+  private void exoStart(String url, long startMs) {
+    exoEnsure();
+    sideSub = false;
+    aTr.clear();
+    tTr.clear();
+    exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().clearOverrides().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).build());
+    exoSubs.setCues(java.util.Collections.<androidx.media3.common.text.Cue>emptyList());
+    exoRoot.setVisibility(View.VISIBLE);
+    web.setBackgroundColor(Color.TRANSPARENT);
+    exo.setMediaItem(MediaItem.fromUri(url), startMs > 0 ? startMs : C.TIME_UNSET);
+    exo.prepare();
+    exo.setPlayWhenReady(true);
+    hnd.removeCallbacks(tick);
+    hnd.post(tick);
+  }
+
+  private void exoHalt() {
+    hnd.removeCallbacks(tick);
+    if (exo != null) { exo.stop(); exo.clearMediaItems(); }
+    if (exoRoot != null) exoRoot.setVisibility(View.GONE);
+    if (web != null) web.setBackgroundColor(0xFF000000);
+  }
+
+  private void exoReload(java.util.List<MediaItem.SubtitleConfiguration> subs) {
+    MediaItem cur = exo.getCurrentMediaItem();
+    if (cur == null) return;
+    long pos = exo.getCurrentPosition();
+    boolean pw = exo.getPlayWhenReady();
+    exo.setMediaItem(cur.buildUpon().setSubtitleConfigurations(subs).build(), pos);
+    exo.prepare();
+    exo.setPlayWhenReady(pw);
+  }
+
+  private void exoSetSub(String vtt, String lang) {
+    if (exo == null || exo.getCurrentMediaItem() == null) return;
+    try {
+      java.io.File f = new java.io.File(getCacheDir(), "sub" + (++subN) + ".vtt");
+      java.io.FileOutputStream os = new java.io.FileOutputStream(f);
+      os.write(vtt.getBytes("UTF-8"));
+      os.close();
+      if (lastSub != null) lastSub.delete();
+      lastSub = f;
+      MediaItem.SubtitleConfiguration sc = new MediaItem.SubtitleConfiguration.Builder(Uri.fromFile(f))
+        .setMimeType(MimeTypes.TEXT_VTT)
+        .setLanguage(lang == null || lang.length() == 0 ? null : lang)
+        .setLabel("OpenSubtitles")
+        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+        .build();
+      sideSub = true;
+      exoReload(java.util.Collections.singletonList(sc));
+    } catch (Exception e) {}
+  }
+
+  private void exoClearSub() {
+    if (exo == null || !sideSub) return;
+    sideSub = false;
+    exoReload(java.util.Collections.<MediaItem.SubtitleConfiguration>emptyList());
+  }
+
+  private void exoPick(int type, int idx) {
+    if (exo == null) return;
+    int ty = type == 0 ? C.TRACK_TYPE_AUDIO : C.TRACK_TYPE_TEXT;
+    java.util.ArrayList<Object[]> l = type == 0 ? aTr : tTr;
+    TrackSelectionParameters.Builder b = exo.getTrackSelectionParameters().buildUpon();
+    if (idx < 0 || idx >= l.size()) {
+      if (ty == C.TRACK_TYPE_TEXT) b.setTrackTypeDisabled(ty, true);
+    } else {
+      Object[] e = l.get(idx);
+      b.setTrackTypeDisabled(ty, false).setOverrideForType(new TrackSelectionOverride((TrackGroup) e[0], (Integer) e[1]));
+    }
+    exo.setTrackSelectionParameters(b.build());
+  }
+
+  private void exoTracks(Tracks tr) {
+    aTr.clear();
+    tTr.clear();
+    org.json.JSONArray ja = new org.json.JSONArray();
+    org.json.JSONArray jt = new org.json.JSONArray();
+    int audAll = 0, audOk = 0;
+    try {
+      for (Tracks.Group g : tr.getGroups()) {
+        int ty = g.getType();
+        if (ty != C.TRACK_TYPE_AUDIO && ty != C.TRACK_TYPE_TEXT) continue;
+        for (int i = 0; i < g.length; i++) {
+          if (ty == C.TRACK_TYPE_AUDIO) { audAll++; if (g.isTrackSupported(i)) audOk++; }
+          if (!g.isTrackSupported(i)) continue;
+          Format f = g.getTrackFormat(i);
+          int n = (ty == C.TRACK_TYPE_AUDIO ? aTr.size() : tTr.size()) + 1;
+          String l = f.label;
+          if (l == null && f.language != null && !"und".equals(f.language)) l = new java.util.Locale(f.language).getDisplayLanguage();
+          if (l == null) l = "#" + n;
+          if (ty == C.TRACK_TYPE_AUDIO && f.channelCount > 2) l += " " + f.channelCount + "ch";
+          JSONObject o = new JSONObject();
+          o.put("l", l);
+          o.put("s", g.isTrackSelected(i));
+          if (ty == C.TRACK_TYPE_AUDIO) { aTr.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i)}); ja.put(o); }
+          else { tTr.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i)}); jt.put(o); }
+        }
+      }
+    } catch (Exception e) {}
+    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + "}");
+  }
+
+  @Override
+  protected void onPause() {
+    if (exo != null) exo.pause();
+    super.onPause();
+  }
+
   @Override
   protected void onActivityResult(int rq, int rs, Intent d) {
     if (rq == 7 && fcb != null) {
@@ -299,6 +549,8 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onDestroy() {
+    hnd.removeCallbacks(tick);
+    if (exo != null) { exo.release(); exo = null; }
     if (web != null) web.destroy();
     super.onDestroy();
   }
