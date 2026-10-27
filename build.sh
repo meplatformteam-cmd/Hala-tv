@@ -2,7 +2,7 @@ set -e
 [ -f logo.png ] || { echo 'logo.png is missing next to build.sh'; exit 1; }
 mkdir -p android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
-sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g" android/app/src/main/assets/index.html
+sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g" android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
 pluginManagement {
   repositories { google(); mavenCentral(); gradlePluginPortal() }
