@@ -204,6 +204,9 @@ public class MainActivity extends Activity {
     public void exoTrack(final int type, final int idx) { runOnUiThread(new Runnable() { public void run() { exoPick(type, idx); } }); }
 
     @JavascriptInterface
+    public void exitApp() { runOnUiThread(new Runnable() { public void run() { finish(); } }); }
+
+    @JavascriptInterface
     public String ssid() {
       try {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -331,7 +334,14 @@ public class MainActivity extends Activity {
         && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
       requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
-    getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+    try {
+      android.graphics.Bitmap lb = android.graphics.BitmapFactory.decodeResource(getResources(), R.drawable.splash_logo);
+      android.graphics.drawable.BitmapDrawable lbd = new android.graphics.drawable.BitmapDrawable(getResources(), lb);
+      lbd.setGravity(Gravity.CENTER);
+      getWindow().setBackgroundDrawable(new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{new ColorDrawable(Color.BLACK), lbd}));
+    } catch (Exception e) {
+      getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+    }
     FrameLayout root = new FrameLayout(this);
     exoRoot = new FrameLayout(this);
     exoRoot.setVisibility(View.GONE);
@@ -360,7 +370,7 @@ public class MainActivity extends Activity {
     s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     s.setUseWideViewPort(true);
     s.setLoadWithOverviewMode(true);
-    web.setBackgroundColor(0xFF000000);
+    web.setBackgroundColor(Color.TRANSPARENT);
     web.setWebChromeClient(new WebChromeClient() {
       @Override
       public boolean onShowFileChooser(WebView w, ValueCallback<Uri[]> cb, FileChooserParams p) {
@@ -615,6 +625,11 @@ def make(w, h, path, scale):
     im.save(path)
 make(320, 180, 'android/app/src/main/res/drawable/banner.png', 0.78)
 make(192, 192, 'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png', 0.62)
+import os
+os.makedirs('android/app/src/main/res/drawable-nodpi', exist_ok=True)
+k = 324.0 / logo.height
+sl = logo.resize((max(1, int(logo.width * k)), 324), Image.LANCZOS)
+sl.save('android/app/src/main/res/drawable-nodpi/splash_logo.png')
 EOF
 pip install pillow
 python3 android/gen.py
