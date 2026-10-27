@@ -19,7 +19,8 @@ EOF
 printf "android.useAndroidX=true\n" > android/gradle.properties
 [ -f hala.jks ] && cp hala.jks android/hala.jks || true
 printf '<?xml version="1.0" encoding="utf-8"?>\n<paths><cache-path name="u" path="updates/"/></paths>\n' > android/app/src/main/res/xml/fp.xml
-cat > android/app/build.gradle <<'EOF'
+VC=$(printf '%s' "${APP_VER:-1}" | tr -dc '0-9'); VC=${VC:-1}
+cat > android/app/build.gradle <<EOF
 plugins { id 'com.android.application' }
 android {
   namespace 'com.hala.tv'
@@ -28,7 +29,7 @@ android {
     applicationId 'com.hala.tv'
     minSdk 21
     targetSdk 34
-    versionCode ${APP_VER:-1}
+    versionCode $VC
     versionName '${APP_VER:-1}'
   }
   signingConfigs {
