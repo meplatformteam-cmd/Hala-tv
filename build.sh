@@ -18,7 +18,7 @@ cat > android/build.gradle <<'EOF'
 plugins { id 'com.android.application' version '8.5.2' apply false }
 EOF
 printf "android.useAndroidX=true\n" > android/gradle.properties
-[ -f hala.jks ] && cp hala.jks android/hala.jks || true
+if [ -n "${KEYSTORE_B64:-}" ]; then echo "$KEYSTORE_B64" | base64 -d > android/hala.jks; elif [ -f hala.jks ]; then cp hala.jks android/hala.jks; fi
 printf '<?xml version="1.0" encoding="utf-8"?>\n<paths><cache-path name="u" path="updates/"/></paths>\n' > android/app/src/main/res/xml/fp.xml
 VC=$(printf '%s' "${APP_VER:-1}" | tr -dc '0-9'); VC=${VC:-1}
 cat > android/app/build.gradle <<EOF
@@ -35,7 +35,7 @@ android {
   }
   signingConfigs {
     debug {
-      if (file('../hala.jks').exists()) { storeFile file('../hala.jks'); storePassword 'halatv123'; keyAlias 'hala'; keyPassword 'halatv123' }
+      if (file('../hala.jks').exists()) { storeFile file('../hala.jks'); storePassword '${KS_PASS:-halatv123}'; keyAlias '${KS_ALIAS:-hala}'; keyPassword '${KS_PASS:-halatv123}' }
     }
   }
   compileOptions {
@@ -61,6 +61,7 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
     android:banner="@drawable/banner"
     android:usesCleartextTraffic="true"
     android:hardwareAccelerated="true"
+    android:largeHeap="true"
     android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
     <provider android:name="androidx.core.content.FileProvider" android:authorities="com.hala.tv.fp" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/fp"/></provider>
     <activity
@@ -125,6 +126,14 @@ public class MainActivity extends Activity {
       } catch (Exception e) {
         return "";
       }
+    }
+
+    @JavascriptInterface
+    public String lastCrash() {
+      android.content.SharedPreferences p = getSharedPreferences("h", 0);
+      String s = p.getString("crash", "");
+      p.edit().remove("crash").apply();
+      return s;
     }
 
     @JavascriptInterface
@@ -232,7 +241,14 @@ public class MainActivity extends Activity {
     s.setLoadWithOverviewMode(true);
     web.setBackgroundColor(0xFF000000);
     web.setWebChromeClient(new WebChromeClient());
-    web.setWebViewClient(new WebViewClient());
+    web.setWebViewClient(new WebViewClient() {
+      @Override
+      public boolean onRenderProcessGone(WebView view, android.webkit.RenderProcessGoneDetail detail) {
+        getSharedPreferences("h", 0).edit().putString("crash", detail.didCrash() ? "renderer crashed" : "renderer killed (memory)").apply();
+        runOnUiThread(new Runnable() { public void run() { recreate(); } });
+        return true;
+      }
+    });
     web.addJavascriptInterface(new Bridge(), "HalaNative");
     web.loadUrl("file:///android_asset/index.html");
     web.requestFocus();

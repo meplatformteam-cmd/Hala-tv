@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.className="tv";document.querySelector("meta[name=viewport]").setAttribute("content","width=1920")</script>
+<script>function elog(m){try{var a=JSON.parse(localStorage.getItem('elog')||'[]');a.unshift(new Date().toLocaleString('en-GB')+' '+String(m).slice(0,300));localStorage.setItem('elog',JSON.stringify(a.slice(0,40)))}catch(e){}}
+window.addEventListener('error',function(e){elog('JS: '+e.message+' @'+(e.lineno||''))});window.addEventListener('unhandledrejection',function(e){elog('Promise: '+(e.reason&&e.reason.message||e.reason))});</script>
+<script>(function(){var c=document.createElement.bind(document);document.createElement=function(t,o){var e=c(t,o);if(t==="img")e.decoding="async";return e}})();document.documentElement.className="tv";document.querySelector("meta[name=viewport]").setAttribute("content","width=1920")</script>
 <title>هلا TV</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
@@ -288,6 +290,23 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
 .tile .lb{gap:1.2vw;padding:0 1.6vw}
 .sug{height:41vh}
 .sh{margin-top:3vh}
+
+/* ===== سرعة القوائم ===== */
+#p-l:not(.gv) .li{content-visibility:auto;contain-intrinsic-size:auto 110px}
+
+/* ===== ميزات جديدة ===== */
+.sug{height:39vh}
+#cw{margin-inline-start:auto;display:flex;gap:14px}
+.cwc{position:relative;display:flex;align-items:center;gap:12px;width:clamp(260px,19vw,360px);height:clamp(64px,8vh,88px);padding:6px 12px 10px;border-radius:18px;background:rgba(128,128,128,.14);border:2px solid transparent;overflow:hidden;cursor:pointer;transition:transform .12s}
+.cwc img{height:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;flex:none}
+.cwt{min-width:0;display:flex;flex-direction:column}
+.cwt b{font-size:clamp(15px,1.15vw,20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cwt small{color:var(--mu);font-size:clamp(12px,.9vw,15px)}
+.cwc>i{position:absolute;left:0;bottom:0;height:4px;background:var(--hi)}
+.cwc:focus{background:var(--hi);color:var(--ov);transform:scale(1.05)}.cwc:focus small{color:var(--ov)}
+#bf{position:absolute;top:50%;left:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border:6px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:bfs .9s linear infinite;display:none;z-index:7;pointer-events:none}@keyframes bfs{to{transform:rotate(360deg)}}
+#st-logt{display:none;grid-column:1/-1;white-space:pre-wrap;direction:ltr;text-align:left;font-size:15px;color:var(--mu);max-height:30vh;overflow:hidden}#st-logt.on{display:block}
+#upb{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:90;background:var(--hi);color:var(--ov);padding:10px 26px;border-radius:999px;font-weight:700;font-size:clamp(16px,1.4vw,24px);display:none}
 </style>
 </head>
 <body data-v="login"><div id="fx"></div>
@@ -317,7 +336,7 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
  </header><div id="wg"></div>
  <div class="nav" id="tiles"></div>
  <div class="sug" id="sug"></div>
- <div class="sh"><h3 data-i="sug"></h3><button class="circ" tabindex="0" id="b-fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" tabindex="0" id="b-new"><svg viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.7 0 2.9-.9 3.9-2.2M13.1 9.2C14.1 7.9 15.3 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button><button class="circ" tabindex="0" id="b-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button><button class="circ" tabindex="0" id="b-set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button class="circ" tabindex="0" id="b-th"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button><button class="circ" tabindex="0" id="b-out"><svg viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/></svg></button></div>
+ <div class="sh"><h3 data-i="sug"></h3><button class="circ" tabindex="0" id="b-fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" tabindex="0" id="b-new"><svg viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.7 0 2.9-.9 3.9-2.2M13.1 9.2C14.1 7.9 15.3 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button><button class="circ" tabindex="0" id="b-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button><button class="circ" tabindex="0" id="b-set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button class="circ" tabindex="0" id="b-th"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button><button class="circ" tabindex="0" id="b-out"><svg viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/></svg></button><div id="cw"></div></div>
 </div>
 
 <div id="page">
@@ -325,7 +344,7 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
  <div class="pg" id="pg"><div id="p-g"></div><div id="p-a"></div><div id="p-l"></div><div id="p-pv"></div></div>
 </div>
 
-<div id="app"><video id="v" autoplay playsinline></video><div id="msg"></div><div id="pm"></div><div id="sp"><div class="spc">
+<div id="app"><video id="v" autoplay playsinline></video><div id="bf"></div><div id="msg"></div><div id="pm"></div><div id="sp"><div class="spc">
  <div class="sph"><h2 class="ruq" data-i="subs"></h2><button class="circ sx" id="sp-x" tabindex="0"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
  <div class="spr" id="sp-ch"><button class="btn sx" id="sp-e" tabindex="0" data-i="subemb"></button><button class="btn sx" id="sp-a" tabindex="0" data-i="subauto"></button></div>
  <div class="spr" id="sp-sr" style="display:none"><button class="pill sx on" tabindex="0" data-sl="ar">العربية</button><button class="pill sx" tabindex="0" data-sl="en">English</button><input class="sx" id="sp-q" dir="auto" tabindex="0" data-ip="subq"><button class="btn sx" id="sp-go" tabindex="0" data-i="subgo"></button></div>
@@ -334,7 +353,7 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button><button class="pill sx" tabindex="0" id="sp-off" data-i="suboff"></button></div>
 </div></div>
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
-<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="kb"><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
+<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt"></pre><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="kb"><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
 <script>
 /* ===== النصوص (عربي أردني عامي / English) — كل الكلام بمكان واحد وسهل تعدّله ===== */
@@ -368,6 +387,10 @@ dn:{mv:['Wadi Rum','Petra','Nashama','Amman Nights'],sr:['Amman Evenings','House
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],enc=encodeURIComponent;
 let S={now:null,lang:'ar',mode:'m3u',chans:[],live:[],mv:[],sr:[],view:[],cur:-1,from:null,page:null,limit:72,conf:null,demo:false,demoProg:{},name:'',vod:false,track:null,lastId:null},hls=null,osdT,lastSave=0,L=37,R=39;
 const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const idb={db:null,open(){return this.db||(this.db=new Promise((r,j)=>{const q=indexedDB.open('hala',1);q.onupgradeneeded=()=>q.result.createObjectStore('k');q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)}))},
+async get(k){const d=await this.open();return new Promise(r=>{const q=d.transaction('k').objectStore('k').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})},
+async set(k,v){const d=await this.open();return new Promise(r=>{const x=d.transaction('k','readwrite');x.objectStore('k').put(v,k);x.oncomplete=()=>r();x.onerror=()=>r()})}};
+function saveCache(){try{idb.set('lists',{sig:JSON.stringify(store.get('conf')),conf:S.conf,chans:S.chans,mv:S.mv,sr:S.sr,acc:S.acc}).catch(()=>{})}catch(e){}}
 const t=(k,...a)=>{const v=T[S.lang][k];return typeof v=='function'?v(...a):v};
 const V=()=>document.body.dataset.v, setView=v=>{document.body.dataset.v=v;if(v!="home")killPv()};
 const MV=/movie|film|vod|cinema|أفلام|فيلم|افلام|سينما/i,SR=/series|مسلسل|حلقات|season|show/i,JO=/رؤيا|roya|المملكة|mamlaka|الأردن|الاردن|jordan|jrtv|petra|بترا|عمان|amman/i,SP=/sport|رياض|كرة|football|soccer|bein/i,NW=/news|أخبار|اخبار|نشرة|cnn|bbc|jazeera|الجزيرة|العربية/i;
@@ -424,19 +447,19 @@ async function check(c){
  S.acc=t('accok',ds,dd?Math.ceil((dd-new Date())/864e5):0)+(u.max_connections?` · ${u.active_cons||0}/${u.max_connections}`:'');
 }
 async function load(conf){
- S.acc='';S.mc=0;
+ if(!S.cm)S.acc='';S.mc=0;
  const m=conf.mode=='m3u'&&(conf.url||'').match(/^(https?:\/\/[^\/?#]+)\/(?:get|player_api)\.php\?(.*)$/i);
  if(m){const q=new URLSearchParams(m[2]);if(q.get('username')&&q.get('password'))conf={mode:'xt',server:m[1],user:q.get('username'),pass:q.get('password')}}
- S.conf=conf;S.mv=[];S.sr=[];
+ S.conf=conf;if(!S.cm){S.mv=[];S.sr=[]}
  if(conf.mode=='m3u'){
   if(!conf.url)throw new Error(t('needurl'));
   const r=await fetch(conf.url);if(!r.ok)throw new Error(t('err')+r.status);
-  parseM3U(await r.text());classify();
+  parseM3U(await r.text());classify();saveCache();
  }else{
   if(!conf.server||!conf.user||!conf.pass)throw new Error(t('fill'));
   await check(conf);
   const g=async a=>{const r=await jget(xapi(a));if(!r.ok)throw new Error(t('deny'));return r.json()};
-  S.lv=1;const cat=a=>g(a).then(l=>{const o={};(Array.isArray(l)?l:[]).forEach(x=>o[x.category_id]=x.category_name);return o}).catch(()=>({}));
+  S.lv=S.cm?0:1;const cat=a=>g(a).then(l=>{const o={};(Array.isArray(l)?l:[]).forEach(x=>o[x.category_id]=x.category_name);return o}).catch(()=>({}));
   const vp=Promise.all([g('get_vod_streams'),g('get_series'),cat('get_vod_categories'),cat('get_series_categories')]);vp.catch(()=>{});
   const [c,st]=await Promise.all([g('get_live_categories'),g('get_live_streams')]);
   if(!Array.isArray(st))throw new Error(t('badacc'));
@@ -446,7 +469,7 @@ async function load(conf){
   vp.then(([v,s2,vc,sc])=>{
    if(Array.isArray(v))S.mv=v.map(x=>({id:'v'+x.stream_id,name:x.name,logo:x.stream_icon,group:vc[x.category_id]||t('ungr'),url:`${conf.server}/movie/${enc(conf.user)}/${enc(conf.pass)}/${x.stream_id}.${x.container_extension||'mp4'}`}));
    if(Array.isArray(s2))S.sr=s2.map(x=>({id:'s'+x.series_id,name:x.name,logo:x.cover,group:sc[x.category_id]||t('ungr'),sid:x.series_id}));
-   S.lv=0;if(V()=='home'){renderSug();accUI()}else if(V()=='page')renderPage();
+   S.lv=0;saveCache();if(V()=='home'){renderSug();accUI()}else if(V()=='page')renderPage();
   }).catch(()=>{S.lv=0;if(V()=='home')accUI()});
  }
  if(!S.chans.length)throw new Error(t('nochan'));
@@ -476,11 +499,17 @@ function showHome(){
  renderHome(); net(); weather();
  const e=$('#home');e.classList.remove('tvon');void e.offsetWidth;e.classList.add('tvon');
 }
+function renderCW(){const b=$('#cw');if(!b)return;b.innerHTML='';
+ Object.values(getProg()).filter(p=>p.d>0&&p.url).sort((x,y)=>y.ts-x.ts).slice(0,2).forEach(p=>{const d=document.createElement('div');d.className='cwc';d.tabIndex=0;
+  if(p.logo){const i=document.createElement('img');i.src=p.logo;i.onerror=()=>i.remove();d.append(i)}
+  const x=document.createElement('div'),n=document.createElement('b'),m=document.createElement('small'),pc=Math.min(100,Math.round(p.t/p.d*100));x.className='cwt';n.dir='auto';n.textContent=cleanTitle(p.name)||p.name;
+  m.textContent=(p.kind=='sr'&&p.se?t('season')+' '+p.se+' · '+t('episode')+' '+p.ep:t('cont'))+' · '+pc+'%';x.append(n,m);d.append(x);
+  const pb=document.createElement('i');pb.style.width=pc+'%';d.append(pb);d.onclick=()=>direct(p,p.kind);b.append(d)})}
 function renderHome(){
  const h=new Date().getHours();
  $('#hi').textContent=t('hi',S.name);
  $('#sub').textContent=t('g'+(h<5?0:h<12?1:h<17?2:h<21?3:4))+t('sugg');
- renderSug(); tick(); accUI(); renderWidgets(); loadPrayer();
+ renderSug(); tick(); accUI(); renderWidgets(); loadPrayer(); renderCW();
 }
 const favs=()=>store.get('favs')||[];
 const isFav=id=>favs().some(f=>f.id==id);
@@ -550,20 +579,24 @@ function tick(){const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padSt
 setInterval(()=>{if(V()=='home')tick()},15000);
 const WX=c=>c==0?['☀️',0]:c<=2?['⛅',1]:c==3?['☁️',2]:c<=48?['🌫️',3]:c<=67?['🌧️',4]:c<=77?['❄️',5]:c<=82?['🌦️',6]:['⛈️',7];
 async function weather(){
- try{const j=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude=31.9539&longitude=35.9106&current=temperature_2m,weather_code&timezone=Asia%2FAmman')).json();
+ const c=store.get('pc')||{city:'Amman',country:'Jordan'},key=(c.city||'Amman')+'|'+S.lang;
+ if(S.wT&&S.wK==key&&Date.now()-S.wT<6e5&&S.wTx){$('#wx').textContent=S.wTx;return}
+ try{let g=store.get('wxg');
+  if(!g||g.k!=key){const r=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language='+(S.lang=='ar'?'ar':'en')+'&name='+enc(c.city||'Amman'))).json(),x=(r.results||[])[0];if(!x)throw 0;g={k:key,lat:x.latitude,lon:x.longitude,n:x.name,tz:x.timezone||'auto'};store.set('wxg',g)}
+  const j=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lon}&current=temperature_2m,weather_code&timezone=${enc(g.tz)}`)).json();
   const tp=Math.round(j.current.temperature_2m),[ic,i]=WX(j.current.weather_code);
-  $('#wx').textContent=`${ic} ${t('city')} ${tp}° · ${t('w')[i]} · ${t('c')[tp<=8?0:tp<=16?1:tp<=27?2:tp<=34?3:4]}`;
+  $('#wx').textContent=S.wTx=`${ic} ${g.n} ${tp}° · ${t('w')[i]} · ${t('c')[tp<=8?0:tp<=16?1:tp<=27?2:tp<=34?3:4]}`;S.wT=Date.now();S.wK=key;
  }catch(e){$('#wx').textContent=t('wfail')}
 }
 /* الشبكة والسرعة: اسم الواي فاي بيطلع بس على تلفزيونات سامسونج (Tizen) و LG (webOS) */
 async function net(){
- const el=$('#nt');el.textContent='📶 '+t('meas');let ssid='',sp='';
+ const el=$('#nt');if(S.nT&&Date.now()-S.nT<3e5){el.textContent=S.nTx;return}el.textContent='📶 '+t('meas');let ssid='',sp='';
  try{if(window.HalaNative)ssid=HalaNative.ssid()||''}catch(e){}
  try{if(!ssid&&window.tizen&&tizen.systeminfo)await new Promise(r=>tizen.systeminfo.getPropertyValue('WIFI_NETWORK',n=>{ssid=n.ssid||'';r()},()=>r()))}catch(e){}
  try{if(!ssid&&window.webOS&&webOS.service)await new Promise(r=>webOS.service.request('luna://com.webos.service.connectionmanager',{method:'getStatus',parameters:{},onSuccess:x=>{ssid=(x.wifi&&x.wifi.ssid)||'';r()},onFailure:()=>r()}))}catch(e){}
  try{const t0=performance.now(),b=await (await fetch('https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js?n='+Date.now(),{cache:'no-store'})).arrayBuffer();sp='≈ '+Math.max(1,Math.round(b.byteLength*8/((performance.now()-t0)/1000)/1e6))+' Mbps'}
  catch(e){const c=navigator.connection;if(c&&c.downlink)sp='≈ '+c.downlink+' Mbps'}
- const s=[ssid,sp].filter(Boolean).join(' · ');el.textContent='📶 '+(s||t('netna'));
+ const s=[ssid,sp].filter(Boolean).join(' · ');el.textContent=S.nTx='📶 '+(s||t('netna'));S.nT=Date.now();
 }
 
 /* ===== صفحات الأقسام (كل قسم لحاله) ===== */
@@ -580,6 +613,7 @@ function setPv(it,fk){
  if(fk=='lv'&&it.url){const v=document.createElement('video');v.muted=true;v.playsInline=true;b.append(v);pvT=prevPlay(v,it.url,200)}
 }
 var spT;$('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(!r||!r._it)return;clearTimeout(spT);spT=setTimeout(()=>{if(document.activeElement===r)setPv(r._it,r._fk)},260)});
+let COL;try{COL=new Intl.Collator('ar')}catch(e){COL={compare:(a,b)=>a<b?-1:a>b?1:0}}
 const AL=c=>!c?'':'أإآٱ'.includes(c)?'ا':c=='ى'?'ي':c=='ة'?'ه':c.toUpperCase(),first=n=>AL(((n||'').replace(/^[^A-Za-z\u0621-\u064A]+/,'')[0])||'');
 const LET=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'];
 function renderPage(){
@@ -588,7 +622,7 @@ function renderPage(){
  $('#p-t').textContent=t(PM[k]);
  const gs=[...new Set(all.map(c=>c.group).filter(Boolean))],cl=vod&&!q?contList(k=='__mv'?'mv':'sr'):[],ng=fv||gs.length<2;
  if(S.grp==='__c'?!cl.length:(S.grp&&!gs.includes(S.grp)&&S.grp[0]!='@'&&S.grp!='__nw'))S.grp='';
- S.view=S.grp==='__c'?cl:all.filter(c=>gm(c)&&(!S.let||first(c.name)==S.let)&&c.name.toLowerCase().includes(q));if(!fv&&S.grp!=='__c')S.view.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+ S.view=S.grp==='__c'?cl:all.filter(c=>gm(c)&&(!S.let||first(c.name)==S.let)&&c.name.toLowerCase().includes(q));if(!fv&&S.grp!=='__c')S.view.sort((a,b)=>COL.compare(String(a.name),String(b.name)));
  $('#p-n').textContent=S.view.length;$('#pg').classList.toggle('ng',ng);
  const G=$('#p-g');G.innerHTML='';
  const kd=KD(k),canLk=!!kd&&!fv&&k!='__s';S.lo=S.lo||{};
@@ -596,7 +630,7 @@ function renderPage(){
  if(!ng){const gsF=gs.filter(g=>!S.gl||first(strip(g))==S.gl),lt=[...new Set(gs.map(g=>first(strip(g))).filter(Boolean))].sort();
   if(lt.length>1){const r=document.createElement('div');r.style.cssText='display:flex;flex-wrap:wrap;gap:2px;padding:4px';[['','•'],...lt.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.gl||'')===v?' on':'');e.tabIndex=0;e.style.cssText='flex:none;min-width:1.6em;padding:2px 6px';e.textContent=n;e.onclick=()=>{S.gl=v;renderPage();focusEl($$('#p-g .ai').find(x=>x.textContent==n))};r.append(e)});G.append(r)}
   const lgs={};gsF.forEach(g=>{const l=langOf(g);(lgs[l]=lgs[l]||[]).push(g)});
-  const lc2=Object.keys(lgs).filter(Boolean).sort((a,b)=>a=='AR'?-1:b=='AR'?1:a.localeCompare(b)),ent=[],srt=a=>[...a].sort((x,y)=>strip(x).localeCompare(strip(y),'ar')).map(g=>[g,strip(g),'g']);
+  const lc2=Object.keys(lgs).filter(Boolean).sort((a,b)=>a=='AR'?-1:b=='AR'?1:a.localeCompare(b)),ent=[],srt=a=>[...a].sort((x,y)=>COL.compare(strip(x),strip(y))).map(g=>[g,strip(g),'g']);
   if(cl.length)ent.push(['__c',t('cont'),'c']);ent.push(['',t('allg'),'c']);if(k=='__all')ent.push(['__nw','📰 '+t('p_nw'),'c']);
   if(lc2.length>=2){lc2.forEach(c=>{ent.push(['@'+c,LN[c]+' · '+lgs[c].length,'l']);if(S.lo[c]||langOf(S.grp)==c||S.grp=='@'+c)ent.push(...srt(lgs[c]))});ent.push(...srt(lgs['']||[]))}else ent.push(...srt(gsF));
   ent.forEach(([v,n,ty])=>{const e=document.createElement('div'),hd=ty=='g'&&isHid(kd,v);e.className='gi'+((S.grp||'')===v?' on':'')+(hd?' hid':'');e.tabIndex=0;e.dir='auto';const sp=document.createElement('span');sp.textContent=n;e.append(sp);
@@ -619,17 +653,27 @@ $('#p-back').onclick=showHome;let qT;$('#p-q').oninput=()=>{clearTimeout(qT);qT=
 
 /* ===== التشغيل ===== */
 function start(c){
- killPv();S.sub=null;S.spq='';hqi=-1;clearSub();showMsg('');const v=$('#v');if(hls){hls.destroy();hls=null}
+ killPv();bfShow();S.sub=null;S.spq='';hqi=-1;clearSub();showMsg('');const v=$('#v');if(hls){hls.destroy();hls=null}
  const pr=S.track&&getProg()[S.track.id];
  if(pr&&pr.url==c.url&&pr.t>5)v.addEventListener('loadedmetadata',()=>{v.currentTime=pr.t},{once:true});
  v.controls=S.vod;
  if(/\.m3u8(\?|$)/i.test(c.url)&&window.Hls&&Hls.isSupported()){
   hls=new Hls({maxBufferLength:20});hls.on(Hls.Events.MANIFEST_PARSED,()=>{if(hls&&hls.levels.length>1){let b=0;hls.levels.forEach((l,i)=>{const o=hls.levels[b];if((l.height||0)>(o.height||0)||((l.height||0)==(o.height||0)&&(l.bitrate||0)>(o.bitrate||0)))b=i});hqi=b;hls.currentLevel=b}});hls.loadSource(c.url);hls.attachMedia(v);
-  hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){hls.destroy();hls=null;v.src=c.url;v.play().catch(()=>{})}});
+  hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){elog('HLS '+d.type+' '+d.details);hls.destroy();hls=null;v.src=c.url;v.play().catch(()=>{})}});
  }else v.src=c.url;
  v.play().catch(()=>{});osd((c.label||c.name)+(S.vod?'    '+t('subhint'):''));
 }
+var bfT,bfR=0,bfW;
+function bfShow(){$('#bf').style.display='block'}
+function bfHide(){$('#bf').style.display='none';clearTimeout(bfW);clearTimeout(bfT)}
+function bfRetry(){if(V()!='app'||!S.now||S.vod)return;if(bfR>=4){bfHide();showMsg(S.lang=='ar'?'انقطع البث، جرّب قناة ثانية':'Stream lost, try another channel');return}bfR++;bfShow();setTimeout(()=>{if(V()=='app'&&S.now&&!S.vod)start(S.now.it)},1200*bfR)}
+(function(){const v=$('#v');v.addEventListener('waiting',()=>{clearTimeout(bfW);bfW=setTimeout(bfShow,400);clearTimeout(bfT);bfT=setTimeout(bfRetry,12000)});
+['playing','canplay'].forEach(e=>v.addEventListener(e,()=>{bfHide();showMsg('');if(e=='playing')bfR=0}));
+v.addEventListener('error',()=>{elog('video error '+(v.error&&v.error.code));bfRetry()})})();
+function prevChan(){const p=S.pv2;if(!p||S.vod)return;S.cur=S.view.indexOf(p);direct(p,null)}
+function goNum(){const n=+S.nb;S.nb='';if(S.vod||!S.view.length)return;if(n>=1&&n<=S.view.length){S.cur=n-1;direct(S.view[S.cur],null)}else osd(S.lang=='ar'?'رقم غير موجود':'No such number')}
 function direct(c,kind){
+ if(!kind&&S.now&&S.now.k=='lv'&&S.now.it!==c)S.pv2=S.now.it;bfR=0;
  try{RA.pause()}catch(e){}S.epBack=false;S.now={it:c,k:kind||'lv'};S.from=(V()=='det'?S.dFrom:V())=='home'?'home':'page';S.vod=!!kind;S.track=kind?{...c,kind}:null;if(kind)S.cur=-1;setView('app');start(c);
 }
 function playLive(c){S.view=S.from=='page'||V()=='page'?S.view:S.live;if(!S.view.includes(c))S.view=S.live;S.cur=S.view.indexOf(c);direct(c,null)}
@@ -797,7 +841,7 @@ document.addEventListener('keydown',e=>{
   return;
  }
  if(v=='home'||v=='page'||v=='set'){
-  const sel=v=='set'?'#set .btn,#set .pill,#set input':v=='home'?'#home .hero:not(.empty),#home .tile,#home .circ,#home input,#home .wd[tabindex]':'#page .gi,#page .lk,#page .ai,#page .li,#page .pill,#page input';
+  const sel=v=='set'?'#set .btn,#set .pill,#set input':v=='home'?'#home .hero:not(.empty),#home .tile,#home .circ,#home input,#home .wd[tabindex],#home .cwc':'#page .gi,#page .lk,#page .ai,#page .li,#page .pill,#page input';
   if(BACK.includes(k)&&!typing){e.preventDefault();if(v=='page'||v=='set')showHome();return}
   if(typing&&(k==37||k==39))return;
   if((k==405||k==70)&&!typing&&a&&a._it){e.preventDefault();toggleFavEl(a);return}
@@ -818,6 +862,8 @@ document.addEventListener('keydown',e=>{
   if(k>=37&&k<=40){e.preventDefault();spatial(k,'#pm .ri')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}
   return;
  }
+ if(!S.vod&&((k>=48&&k<=57)||(k>=96&&k<=105))){e.preventDefault();const dg=k>=96?k-96:k-48;if(dg==0&&!S.nb){prevChan();return}S.nb=((S.nb||'')+dg).slice(-4);osd('# '+S.nb);clearTimeout(S.nbT);S.nbT=setTimeout(goNum,1500);return}
+ if(!S.vod&&k==13&&S.nb){e.preventDefault();clearTimeout(S.nbT);goNum();return}
  if(k==405||k==70||k==48){e.preventDefault();favNow()}
  else if(S.vod&&(k==406||k==67||k==82||k==77||k==93)){e.preventDefault();openSubs()}
  else if(S.vod&&(k==38||k==40)){e.preventDefault()}
@@ -882,8 +928,8 @@ function renderSeasons(j,it){
  const ss=$('#det .ss'),ee=$('#det .ee');if(!ss)return;
  const eps=j.episodes||{},seasons=Object.keys(eps).filter(k=>Array.isArray(eps[k])&&eps[k].length).sort((a,b)=>a-b),pr=getProg()[it.id];
  if(!seasons.length){ss.classList.remove('on');ee.classList.add('on');ee.textContent=t('epfail');return}
- ss.classList.add('on');ss.innerHTML='<h4></h4><div class="row"></div>';ss.querySelector('h4').textContent=t('seasons')+' ('+seasons.length+')';
- const row=ss.querySelector('.row');
+ if(seasons.length==1)S.selSe={sid:it.sid,s:seasons[0]};
+ if(seasons.length==1){ss.classList.remove('on');ss.innerHTML=''}else ss.classList.add('on');let row=document.createElement('div');if(seasons.length>1){ss.innerHTML='<h4></h4><div class="row"></div>';ss.querySelector('h4').textContent=t('seasons')+' ('+seasons.length+')';row=ss.querySelector('.row')}
  seasons.forEach(s=>{const p=document.createElement('button');p.className='pill'+(S.selSe&&S.selSe.sid==it.sid&&S.selSe.s==s?' on':'');p.tabIndex=0;
   p.textContent=t('season')+' '+s+(pr&&String(pr.se)==s?' ●':'');p.title=eps[s].length+' '+t('episodes');
   p.onclick=()=>{S.selSe={sid:it.sid,s};renderSeasons(j,it);const c=$('#det .ee .ep.cur')||$('#det .ee .ep');focusEl(c)};row.append(p)});
@@ -944,8 +990,11 @@ function pwdKey(e){if(!$('#pwd').classList.contains('on'))return false;const k=e
  if(k>=37&&k<=40){if(ty&&(k==37||k==39))return true;e.preventDefault();spatial(k,'#pwd input,#pwd .btn')}return true}
 function kidKey(e){if(!(store.get('kid')&&V()=='app'))return false;e.preventDefault();S.kq=(S.kq||[]).concat(e.keyCode).slice(-4);if(S.kq.join()=='38,38,40,40'){store.set('kid',false);S.kq=[];osd(t('kidoff'))}return true}
 const DV=()=>store.get('dev')||'auto',vmTxt=()=>t('vm')+': '+t(store.get('vm')=='grid'?'vmg':'vml'),dvTxt=()=>t('dev')+': '+t({auto:'deva',tv:'devt',phone:'devp'}[DV()]);
-function showSet(){setView('set');buildSetW();$('#st-vm').textContent=vmTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'');focusEl($('#st-pw'))}
+function showSet(){setView('set');buildSetW();$('#st-vm').textContent=vmTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'');setLogUI();focusEl($('#st-pw'))}
 $('#b-set').onclick=showSet;
+function setLogUI(){const ar=S.lang=='ar';$('#st-logh').textContent=ar?'سجل الأخطاء':'Error log';$('#st-log').textContent=ar?'📋 عرض آخر الأخطاء':'📋 Show recent errors';$('#st-logc').textContent=ar?'🗑 مسح السجل':'🗑 Clear log';$('#st-logt').classList.remove('on')}
+$('#st-log').onclick=()=>{const p=$('#st-logt'),a=store.get('elog')||[];p.textContent=a.length?a.slice(0,15).join('\n'):(S.lang=='ar'?'ما في أخطاء مسجلة':'No errors logged');p.classList.toggle('on')};
+$('#st-logc').onclick=()=>{store.set('elog',[]);$('#st-logt').textContent='';$('#st-logt').classList.remove('on')};
 $('#p-vm').onclick=()=>{store.set('vm',store.get('vm')=='grid'?'list':'grid');renderPage();focusEl($('#p-vm'))};
 $('#st-vm').onclick=()=>{store.set('vm',store.get('vm')=='grid'?'list':'grid');$('#st-vm').textContent=vmTxt()};
 $('#st-dev').onclick=()=>{const o=['auto','tv','phone'];store.set('dev',o[(o.indexOf(DV())+1)%3]);location.reload()};
@@ -1039,11 +1088,17 @@ $('#st-upd').onclick=async()=>{const b=$('#st-upd');b.textContent=t('upd_chk');
   if(cur&&n<=cur){b.textContent=t('upd_ok');return}
   b.textContent=t('upd_dl');if(window.HalaNative&&HalaNative.install)HalaNative.install(a.browser_download_url);else window.open(a.browser_download_url)}
  catch(e){b.textContent=t('upd_fail')}};
+function upBanner(x){let e=$('#upb');if(!e){e=document.createElement('div');e.id='upb';document.body.append(e)}e.textContent=x;e.style.display='block';setTimeout(()=>e.style.display='none',15000)}
+async function autoUpd(){try{const cur=+APP_VER||0;if(!cur)return;const r=await xhttp('GET','https://api.github.com/repos/'+REPO+'/releases/latest',{Accept:'application/vnd.github+json'}),j=jp(r.body),n=+((j.tag_name||j.name||'').match(/(\d+)/)||[])[1]||0,a=(j.assets||[]).find(x=>/\.apk$/i.test(x.name));if(a&&n>cur)upBanner(S.lang=='ar'?'🔔 يوجد تحديث جديد (v'+n+') — الإعدادات ← تحديث':'🔔 New update (v'+n+') — Settings → Update')}catch(e){}}
+setTimeout(autoUpd,9000);
 /* ===== أول ما يفتح ===== */
 S.lang=store.get('lang')||'ar';S.name=store.get('name')||'';applyLang();
 if(S.name)$('#nm').value=S.name;
+try{const lc=window.HalaNative&&HalaNative.lastCrash&&HalaNative.lastCrash();if(lc)elog('ANDROID: '+lc)}catch(e){}
 const saved=store.get('conf');
-if(PAIR){setView('pair');applyLang();focusEl($('#pr-n'))}else if(saved&&S.name){load(saved).then(showHome).catch(()=>{setView('login');$('#err').textContent=t('savedfail');startPair()})}else{focusEl($('.lg.on'));startPair()}
+if(PAIR){setView('pair');applyLang();focusEl($('#pr-n'))}else if(saved&&S.name){
+ const fresh=()=>load(saved).then(showHome).catch(()=>{setView('login');$('#err').textContent=t('savedfail');startPair()});
+ idb.get('lists').then(c=>{if(c&&c.sig===JSON.stringify(saved)&&c.chans&&c.chans.length&&c.conf){S.conf=c.conf;S.chans=c.chans;S.live=c.chans;S.mv=c.mv||[];S.sr=c.sr||[];S.lv=0;S.acc=c.acc||'';S.cm=1;showHome();load(saved).then(()=>{S.cm=0;if(V()=='home')renderHome()}).catch(e=>{S.cm=0;elog('refresh: '+(e&&e.message))})}else fresh()}).catch(fresh)}else{focusEl($('.lg.on'));startPair()}
 </script>
 </body>
 </html>
