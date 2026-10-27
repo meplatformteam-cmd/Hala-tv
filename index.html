@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var d='auto';try{d=JSON.parse(localStorage.getItem('dev'))||'auto'}catch(e){}var sm=Math.min(screen.width,screen.height)<700&&(navigator.maxTouchPoints>0||'ontouchstart' in window),m=(d=='phone'||(d=='auto'&&sm))?'ph':(d=='tv'||window.HalaNative)?'tv':'';document.documentElement.className=m;if(m=='tv'&&window.HalaNative)document.querySelector("meta[name=viewport]").setAttribute("content","width=1920")})()</script>
+<script>document.documentElement.className="tv";document.querySelector("meta[name=viewport]").setAttribute("content","width=1920")</script>
 <title>هلا TV</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
@@ -223,12 +223,34 @@ html.ph .card0 .ruq{font-size:56px}html.ph #pm .ri{font-size:18px}html.ph #osd{f
 .gv .li span:not(.fvb){font-size:20px;line-height:1.3}
 html.ph .pg.gvw #p-l.gv{grid-auto-rows:auto}html.ph .pg.gvw .gv .li{aspect-ratio:2/3}html.ph .gv .li span:not(.fvb){font-size:13px}
 
-/* ===== ثيم tvOS: ترتيب الأقسام + الإعدادات ===== */
+/* ===== تلفزيون فقط: ثيم tvOS ===== */
+#st-dev{display:none!important}
+#scene{display:none}
+.tile .bgi{filter:none;opacity:.12}
+.cd,.hero,.tile,.gi,.li,.ai,.pill,.circ,#set .btn{transition:transform .12s ease-out,background-color .12s}
+.cd:focus,.hero:focus,.tile:focus{box-shadow:0 8px 20px rgba(0,0,0,.5)}
+/* الرئيسية */
+#home{padding:30px 4vw 22px}
+header{align-items:stretch;gap:3vw}
+header>div:first-child{display:flex;flex-direction:column;justify-content:center;flex:1;min-width:0}
+#hi{font-size:clamp(44px,4.8vw,80px)}
+#sub{font-size:clamp(18px,1.5vw,26px);margin:6px 0 18px}
+#hq{width:min(560px,100%);margin:0}
+.tw{display:grid;grid-template-columns:auto 1fr;gap:6px 26px;min-width:min(44vw,820px);padding:0;background:none;border:0;border-radius:0;align-content:center}
+#clk{font-size:clamp(40px,3.4vw,60px)}
+#dt{align-self:center;font-size:clamp(17px,1.4vw,24px)}
+#ac{display:contents}
+#wx,#nt,#ac>div{grid-column:1/-1;margin:0;font-size:clamp(17px,1.3vw,23px);color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nt{color:var(--mu)}
+#ac>div:first-child::before{content:"🔑 "}#ac>div:last-child::before{content:"📺 "}
+.nav{height:17vh;min-height:96px;margin-top:2vh}
+.sug{flex:none;height:32vh}
+#wg{flex:none}
+/* القوائم من جوا */
 #page{padding:34px 4vw 36px}
 .ph{gap:16px;margin-bottom:22px}
 .ph h2{font-size:clamp(36px,3.6vw,60px)}
 .ph .pill{padding:10px 30px;font-size:clamp(18px,1.5vw,26px)}
-.pill,.circ,.gi,.li,.ai,#set .btn{transition:transform .18s,background .18s,box-shadow .18s}
 .pill:focus,.circ:focus{background:var(--hi);color:var(--ov);transform:scale(1.06)}
 .pg{grid-template-columns:var(--cg,19%) 7% 1fr 31%;gap:24px}
 .pg.gvw{grid-template-columns:var(--cg,19%) 7% 1fr}
@@ -236,35 +258,19 @@ html.ph .pg.gvw #p-l.gv{grid-auto-rows:auto}html.ph .pg.gvw .gv .li{aspect-ratio
 .gi{min-height:64px;padding:10px 20px;font-size:clamp(20px,1.7vw,30px);border-radius:18px}
 .gi+.gi,.li+.li{margin-top:6px}
 .li{padding:8px 18px;border-radius:20px;font-size:clamp(20px,1.8vw,30px)}
-html:not(.ph) #p-l:not(.gv) .li{height:clamp(84px,calc((100vh - 270px)/6),132px)}
+#p-l:not(.gv) .li{height:clamp(84px,calc((100vh - 270px)/6),132px)}
 .ai{padding:8px 0;border-radius:14px}
 .gi.on:not(:focus),.ai.on:not(:focus){background:rgba(128,128,128,.30)}
-.gi:focus,.li:focus,.ai:focus{background:var(--hi);color:var(--ov);border-color:transparent;transform:scale(1.03);box-shadow:0 14px 34px rgba(0,0,0,.45);z-index:2}
-.gv .li:focus{background:transparent;color:#fff;box-shadow:0 0 0 4px var(--hi),0 18px 40px rgba(0,0,0,.5);transform:scale(1.04)}
-/* الإعدادات: شبكة 3 أعمدة */
+.gi:focus,.li:focus,.ai:focus{background:var(--hi);color:var(--ov);border-color:transparent;transform:scale(1.03);box-shadow:0 6px 14px rgba(0,0,0,.4);z-index:2}
+.gv .li:focus{background:transparent;color:#fff;box-shadow:0 0 0 4px var(--hi),0 14px 30px rgba(0,0,0,.5);transform:scale(1.04)}
+/* الإعدادات: شبكة */
 body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;gap:20px 24px;padding:36px 5vw 60px}
 #set>.ph,#set .sh3,#set>.sub,#set>p{grid-column:1/-1}
 #set .sh3{margin:18px 0 0;padding-bottom:8px;border-bottom:1px solid var(--ln);font-size:clamp(22px,1.8vw,32px)}
 #set .btn{width:100%!important;min-height:clamp(84px,10vh,120px);display:flex;align-items:center;padding:18px 26px;border-radius:24px;background:rgba(128,128,128,.14);border:0;font-size:clamp(20px,1.6vw,28px)}
-#set .btn:focus{background:var(--hi);color:var(--ov);transform:scale(1.05);box-shadow:0 18px 40px rgba(0,0,0,.45);z-index:2}
+#set .btn:focus{background:var(--hi);color:var(--ov);transform:scale(1.05);box-shadow:0 8px 20px rgba(0,0,0,.45);z-index:2}
 #set input{width:100%}
-html.ph body[data-v=set] #set{grid-template-columns:1fr}
-@media(max-width:900px){body[data-v=set] #set{grid-template-columns:1fr}}
-
-/* ===== سرعة + أحجام ثابتة ===== */
-*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#scene{display:none}
-.tile .bgi{filter:none;opacity:.12}
-#wx,#nt,.fvb{filter:none}
-.cd,.hero,.tile,.gi,.li,.ai,.pill,.circ,#set .btn{transition:transform .12s ease-out,background-color .12s}
-.cd:focus,.hero:focus,.tile:focus{box-shadow:0 8px 20px rgba(0,0,0,.5)}
-.gi:focus,.li:focus,.ai:focus,#set .btn:focus{box-shadow:0 6px 14px rgba(0,0,0,.4)}
-.tile,.hero{will-change:transform}
-.pg>div{contain:layout paint}
-@media(min-width:901px){
- html:not(.ph) .sug{flex:none;height:34vh}
- html:not(.ph) #wg{flex:none}
-}
+#st-ver{color:var(--mu);font-size:clamp(17px,1.3vw,22px);direction:ltr}
 </style>
 </head>
 <body data-v="login"><div id="fx"></div>
@@ -311,7 +317,7 @@ html.ph body[data-v=set] #set{grid-template-columns:1fr}
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button><button class="pill sx" tabindex="0" id="sp-off" data-i="suboff"></button></div>
 </div></div>
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
-<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="kb"><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
+<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="kb"><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
 <script>
 /* ===== النصوص (عربي أردني عامي / English) — كل الكلام بمكان واحد وسهل تعدّله ===== */
@@ -566,7 +572,7 @@ function renderPage(){
  const gs=[...new Set(all.map(c=>c.group).filter(Boolean))],cl=vod&&!q?contList(k=='__mv'?'mv':'sr'):[],ng=fv||gs.length<2;
  if(S.grp==='__c'?!cl.length:(S.grp&&!gs.includes(S.grp)&&S.grp[0]!='@'&&S.grp!='__nw'))S.grp='';
  S.view=S.grp==='__c'?cl:all.filter(c=>gm(c)&&(!S.let||first(c.name)==S.let)&&c.name.toLowerCase().includes(q));if(!fv&&S.grp!=='__c')S.view.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
- $('#p-n').textContent=S.view.length;$('#p-vm').style.display=vod?'':'none';$('#pg').classList.toggle('ng',ng);
+ $('#p-n').textContent=S.view.length;$('#pg').classList.toggle('ng',ng);
  const G=$('#p-g');G.innerHTML='';
  const kd=KD(k),canLk=!!kd&&!fv&&k!='__s';S.lo=S.lo||{};
  $('#p-lock').style.display=canLk?'':'none';$('#p-lock').textContent=t(S.manage?'lockdone':'lockmgr');$('#p-lock').classList.toggle('on',!!S.manage);
@@ -584,7 +590,7 @@ function renderPage(){
    G.append(e)})}
  const A=$('#p-a');A.innerHTML='';const have=new Set(all.filter(c=>gm(c)&&c.name.toLowerCase().includes(q)).map(c=>first(c.name)));
  [['','•'],...LET.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.let||'')===v?' on':'')+(v&&!have.has(v)?' dim':'');e.tabIndex=0;e.textContent=n;e.onclick=()=>{S.let=v;S.limit=100;renderPage();focusEl($('#p-a .ai.on'))};A.append(e)});
- const Li=$('#p-l');Li.innerHTML='';const gv=vod&&store.get('vm')=='grid';Li.classList.toggle('gv',gv);$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=gv?'☰ '+t('vml'):'▦ '+t('vmg');
+ const Li=$('#p-l');Li.innerHTML='';const gv=store.get('vm')=='grid';Li.classList.toggle('gv',gv);$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=gv?'☰ '+t('vml'):'▦ '+t('vmg');
  if(!S.view.length){Li.innerHTML='<div class="none">'+t(fv?'nofav':'empty')+'</div>';setPv(null);return}
  S.view.slice(0,S.limit).forEach(c=>{const fk=fv?c.kind:vod?(k=='__mv'?'mv':'sr'):KM.get(c)||'lv',e=document.createElement('div');e.className='li';e.tabIndex=0;e._it=c;e._fk=fk||'lv';e.dataset.id=c.id||'';
   if(c.logo){const i=document.createElement('img');i.loading='lazy';i.src=c.logo;i.onerror=()=>i.remove();e.append(i)}
@@ -921,7 +927,7 @@ function pwdKey(e){if(!$('#pwd').classList.contains('on'))return false;const k=e
  if(k>=37&&k<=40){if(ty&&(k==37||k==39))return true;e.preventDefault();spatial(k,'#pwd input,#pwd .btn')}return true}
 function kidKey(e){if(!(store.get('kid')&&V()=='app'))return false;e.preventDefault();S.kq=(S.kq||[]).concat(e.keyCode).slice(-4);if(S.kq.join()=='38,38,40,40'){store.set('kid',false);S.kq=[];osd(t('kidoff'))}return true}
 const DV=()=>store.get('dev')||'auto',vmTxt=()=>t('vm')+': '+t(store.get('vm')=='grid'?'vmg':'vml'),dvTxt=()=>t('dev')+': '+t({auto:'deva',tv:'devt',phone:'devp'}[DV()]);
-function showSet(){setView('set');buildSetW();$('#st-vm').textContent=vmTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'');focusEl($('#st-pw'))}
+function showSet(){setView('set');buildSetW();$('#st-vm').textContent=vmTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'');focusEl($('#st-pw'))}
 $('#b-set').onclick=showSet;
 $('#p-vm').onclick=()=>{store.set('vm',store.get('vm')=='grid'?'list':'grid');renderPage();focusEl($('#p-vm'))};
 $('#st-vm').onclick=()=>{store.set('vm',store.get('vm')=='grid'?'list':'grid');$('#st-vm').textContent=vmTxt()};
@@ -1009,7 +1015,7 @@ document.addEventListener('keydown',kbKey,true);
 document.addEventListener('click',e=>{const a=e.target;if(a.tagName=='INPUT'&&useKb()&&!kbOpen())kbShow(a)});
 document.addEventListener('focusin',e=>{if(e.target.tagName=='INPUT'&&e.target.id!='pr-n')e.target.inputMode=useKb()?'none':(e.target.type=='password'&&e.target.id=='pw-i'?'numeric':'')});
 $('#st-kb').onclick=()=>{const o=['auto','app','sys'];store.set('kbm',o[(o.indexOf(store.get('kbm')||'auto')+1)%3]);showSet();focusEl($('#st-kb'))};
-const APP_VER='__APP_VER__',REPO='meplatformteam-cmd/Hala-tv';
+const BLD='__BUILD__',APP_VER='__APP_VER__',REPO='meplatformteam-cmd/Hala-tv';
 $('#st-upd').onclick=async()=>{const b=$('#st-upd');b.textContent=t('upd_chk');
  try{const r=await xhttp('GET','https://api.github.com/repos/'+REPO+'/releases/latest',{Accept:'application/vnd.github+json'}),j=jp(r.body),n=+((j.tag_name||j.name||'').match(/(\d+)/)||[])[1]||0,cur=+APP_VER||0,a=(j.assets||[]).find(x=>/\.apk$/i.test(x.name));
   if(!a){b.textContent=t('upd_none');return}
