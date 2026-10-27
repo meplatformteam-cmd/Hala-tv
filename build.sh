@@ -326,6 +326,7 @@ public class MainActivity extends Activity {
     exoSubs = new SubtitleView(this);
     exoSubs.setUserDefaultStyle();
     exoSubs.setFractionalTextSize(0.06f);
+    exoSubs.setBottomPaddingFraction(0.08f);
     exoRoot.addView(exoSubs, new FrameLayout.LayoutParams(-1, -1));
     root.addView(exoRoot, new FrameLayout.LayoutParams(-1, -1));
     web = new WebView(this);
@@ -407,7 +408,7 @@ public class MainActivity extends Activity {
         if (vs.height > 0) exoFrame.setAspectRatio(vs.width * vs.pixelWidthHeightRatio / vs.height);
         js("size", "{\"h\":" + vs.height + "}");
       }
-      @Override public void onCues(CueGroup g) { exoSubs.setCues(g.cues); }
+      @Override public void onCues(CueGroup g) { exoSubs.setCues(g.cues); js("cues", String.valueOf(g.cues.size())); }
       @Override public void onTracksChanged(Tracks t) { exoTracks(t); }
       @Override public void onPlayerError(PlaybackException e) {
         if (e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) { exo.seekToDefaultPosition(); exo.prepare(); return; }
@@ -494,14 +495,14 @@ public class MainActivity extends Activity {
     tTr.clear();
     org.json.JSONArray ja = new org.json.JSONArray();
     org.json.JSONArray jt = new org.json.JSONArray();
-    int audAll = 0, audOk = 0;
+    int audAll = 0, audOk = 0, txtBad = 0;
     try {
       for (Tracks.Group g : tr.getGroups()) {
         int ty = g.getType();
         if (ty != C.TRACK_TYPE_AUDIO && ty != C.TRACK_TYPE_TEXT) continue;
         for (int i = 0; i < g.length; i++) {
           if (ty == C.TRACK_TYPE_AUDIO) { audAll++; if (g.isTrackSupported(i)) audOk++; }
-          if (!g.isTrackSupported(i)) continue;
+          if (!g.isTrackSupported(i)) { if (ty == C.TRACK_TYPE_TEXT) txtBad++; continue; }
           Format f = g.getTrackFormat(i);
           int n = (ty == C.TRACK_TYPE_AUDIO ? aTr.size() : tTr.size()) + 1;
           String l = f.label;
@@ -511,12 +512,15 @@ public class MainActivity extends Activity {
           JSONObject o = new JSONObject();
           o.put("l", l);
           o.put("s", g.isTrackSelected(i));
+          o.put("g", f.language == null ? "" : f.language);
+          String mt = f.sampleMimeType == null ? "" : f.sampleMimeType;
+          o.put("c", mt.contains("subrip") ? "SRT" : mt.contains("ssa") ? "ASS" : mt.contains("pgs") ? "PGS" : mt.contains("vtt") ? "VTT" : mt.contains("ttml") ? "TTML" : mt.contains("cea") ? "CC" : "");
           if (ty == C.TRACK_TYPE_AUDIO) { aTr.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i)}); ja.put(o); }
           else { tTr.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i)}); jt.put(o); }
         }
       }
     } catch (Exception e) {}
-    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + "}");
+    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + ",\"nu\":" + txtBad + "}");
   }
 
   @Override
