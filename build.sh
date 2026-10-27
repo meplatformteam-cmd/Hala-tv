@@ -1,8 +1,8 @@
 set -e
 [ -f logo.png ] || { echo 'logo.png is missing next to build.sh'; exit 1; }
-mkdir -p android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
+mkdir -p android/app/src/main/res/xml android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
-sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-}|g" android/app/src/main/assets/index.html
+sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g" android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
 pluginManagement {
   repositories { google(); mavenCentral(); gradlePluginPortal() }
@@ -16,7 +16,9 @@ EOF
 cat > android/build.gradle <<'EOF'
 plugins { id 'com.android.application' version '8.5.2' apply false }
 EOF
-echo "android.useAndroidX=false" > android/gradle.properties
+printf "android.useAndroidX=true\n" > android/gradle.properties
+[ -f hala.jks ] && cp hala.jks android/hala.jks || true
+printf '<?xml version="1.0" encoding="utf-8"?>\n<paths><cache-path name="u" path="updates/"/></paths>\n' > android/app/src/main/res/xml/fp.xml
 cat > android/app/build.gradle <<'EOF'
 plugins { id 'com.android.application' }
 android {
@@ -26,14 +28,20 @@ android {
     applicationId 'com.hala.tv'
     minSdk 21
     targetSdk 34
-    versionCode 1
-    versionName '1.0'
+    versionCode ${APP_VER:-1}
+    versionName '${APP_VER:-1}'
+  }
+  signingConfigs {
+    debug {
+      if (file('../hala.jks').exists()) { storeFile file('../hala.jks'); storePassword 'halatv123'; keyAlias 'hala'; keyPassword 'halatv123' }
+    }
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
   }
 }
+dependencies { implementation 'androidx.core:core:1.12.0' }
 EOF
 cat > android/app/src/main/AndroidManifest.xml <<'EOF'
 <?xml version="1.0" encoding="utf-8"?>
@@ -42,6 +50,7 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
   <uses-feature android:name="android.software.leanback" android:required="false"/>
   <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
   <application
@@ -51,6 +60,7 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
     android:usesCleartextTraffic="true"
     android:hardwareAccelerated="true"
     android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+    <provider android:name="androidx.core.content.FileProvider" android:authorities="com.hala.tv.fp" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/fp"/></provider>
     <activity
       android:name=".MainActivity"
       android:exported="true"
@@ -70,6 +80,7 @@ package com.hala.tv;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -112,6 +123,40 @@ public class MainActivity extends Activity {
       } catch (Exception e) {
         return "";
       }
+    }
+
+    @JavascriptInterface
+    public void install(final String url) {
+      new Thread(new Runnable() {
+        public void run() {
+          try {
+            java.io.File dir = new java.io.File(getCacheDir(), "updates");
+            dir.mkdirs();
+            final java.io.File f = new java.io.File(dir, "app.apk");
+            HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+            c.setConnectTimeout(15000);
+            c.setReadTimeout(60000);
+            InputStream is = c.getInputStream();
+            java.io.FileOutputStream os = new java.io.FileOutputStream(f);
+            byte[] buf = new byte[16384];
+            int n;
+            while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
+            os.close();
+            is.close();
+            runOnUiThread(new Runnable() {
+              public void run() {
+                try {
+                  android.net.Uri u = androidx.core.content.FileProvider.getUriForFile(MainActivity.this, "com.hala.tv.fp", f);
+                  Intent i = new Intent(Intent.ACTION_VIEW);
+                  i.setDataAndType(u, "application/vnd.android.package-archive");
+                  i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                  startActivity(i);
+                } catch (Exception e) {}
+              }
+            });
+          } catch (Exception e) {}
+        }
+      }).start();
     }
 
     @JavascriptInterface
