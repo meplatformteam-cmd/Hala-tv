@@ -25,7 +25,7 @@ cat > android/app/build.gradle <<EOF
 plugins { id 'com.android.application' }
 android {
   namespace 'com.hala.tv'
-  compileSdk 35
+  compileSdk 36
   defaultConfig {
     applicationId 'com.hala.tv'
     minSdk 21
