@@ -271,6 +271,23 @@ body[data-v=set] #set{display:grid!important;grid-template-columns:repeat(3,minm
 #set .btn:focus{background:var(--hi);color:var(--ov);transform:scale(1.05);box-shadow:0 8px 20px rgba(0,0,0,.45);z-index:2}
 #set input{width:100%}
 #st-ver{color:var(--mu);font-size:clamp(17px,1.3vw,22px);direction:ltr}
+
+/* ===== تعديلات الرئيسية (2) ===== */
+#hi{font-size:clamp(40px,4vw,68px)}
+#sub{margin:4px 0 14px}
+.tw{min-width:min(30vw,560px);gap:3px 18px}
+#clk{font-size:clamp(28px,2.3vw,42px)}
+#dt{font-size:clamp(14px,1.05vw,18px)}
+#wx,#nt,#ac>div{font-size:clamp(14px,1.05vw,18px)}
+.nav{height:12vh;min-height:76px;margin-top:1.6vh;width:min(1100px,100%);margin-inline:auto;gap:1.4vw}
+.tile{background:rgba(128,128,128,.13)!important;border:1px solid rgba(255,255,255,.07);border-radius:20px}
+.tile .bgi{opacity:.07}
+.tile .ic{font-size:clamp(30px,3vw,52px)}
+.tile .ruq{font-size:clamp(24px,2.4vw,40px)}
+.tile small{font-size:clamp(14px,1vw,18px)}
+.tile .lb{gap:1.2vw;padding:0 1.6vw}
+.sug{height:41vh}
+.sh{margin-top:3vh}
 </style>
 </head>
 <body data-v="login"><div id="fx"></div>
@@ -904,8 +921,8 @@ function embSubs(){
 $('#sp-e').onclick=embSubs;$('#sp-a').onclick=()=>{$('#sp-sr').style.display='';osSearch(true)};
 $('#hq').onkeydown=e=>{if(e.keyCode!=13)return;e.preventDefault();e.stopPropagation();const q=$('#hq').value.trim();if(!q)return;$('#p-q').value=q;S.grp='';S.let='';S.limit=100;S.lastId=null;showPage('__s',true)};
 let cm=0;
-function chime(){try{const C=new (window.AudioContext||window.webkitAudioContext)(),g=C.createGain(),n=C.currentTime;C.resume();g.connect(C.destination);g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.2,n+.06);g.gain.exponentialRampToValueAtTime(.0001,n+2);
- [523.25,659.25,783.99,1046.5].forEach((f,i)=>{const o=C.createOscillator();o.frequency.value=f;o.connect(g);o.start(n+i*.13);o.stop(n+2)});
+function chime(){try{const C=new (window.AudioContext||window.webkitAudioContext)(),n=C.currentTime+.05,m=C.createGain(),lp=C.createBiquadFilter(),dl=C.createDelay(),fb=C.createGain();C.resume();lp.type='lowpass';lp.frequency.value=2400;m.gain.value=.55;dl.delayTime.value=.34;fb.gain.value=.4;lp.connect(m);lp.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(m);m.connect(C.destination);
+ [[392,0],[493.88,.32],[587.33,.64],[783.99,1],[987.77,1.45]].forEach(([f,t])=>{[[f,1],[f*2,.12]].forEach(([q,a])=>{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.value=q;g.gain.setValueAtTime(.0001,n+t);g.gain.linearRampToValueAtTime(.16*a,n+t+.14);g.gain.exponentialRampToValueAtTime(.0001,n+t+3.2);o.connect(g);g.connect(lp);o.start(n+t);o.stop(n+t+3.3)})});
  setTimeout(()=>{if(C.state=='running')cm=1;else{C.close();const h=()=>{if(!cm){cm=1;chime()}};document.addEventListener('keydown',h,{once:true});document.addEventListener('click',h,{once:true})}},150)}catch(e){}}
 chime();$('#fx').addEventListener('animationend',e=>{if(e.target.id=='fx')e.target.remove()});
 function applyTheme(){document.documentElement.dataset.th=store.get('th')||'dark'}
