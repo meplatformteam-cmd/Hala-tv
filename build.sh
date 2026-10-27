@@ -1,4 +1,5 @@
 set -e
+[ -f logo.png ] || { echo 'logo.png is missing next to build.sh'; exit 1; }
 mkdir -p android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
@@ -83,6 +84,13 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Iterator;
 
 public class MainActivity extends Activity {
   private WebView web;
@@ -102,6 +110,51 @@ public class MainActivity extends Activity {
       } catch (Exception e) {
         return "";
       }
+    }
+
+    @JavascriptInterface
+    public void http(final String id, final String method, final String url, final String headers, final String body) {
+      new Thread(new Runnable() {
+        public void run() {
+          String out;
+          try {
+            HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+            c.setRequestMethod(method);
+            c.setConnectTimeout(15000);
+            c.setReadTimeout(30000);
+            JSONObject h = new JSONObject(headers);
+            Iterator<String> it = h.keys();
+            while (it.hasNext()) { String k = it.next(); c.setRequestProperty(k, h.getString(k)); }
+            if (body != null && body.length() > 0) {
+              c.setDoOutput(true);
+              OutputStream os = c.getOutputStream();
+              os.write(body.getBytes("UTF-8"));
+              os.close();
+            }
+            int code = c.getResponseCode();
+            InputStream is = code >= 400 ? c.getErrorStream() : c.getInputStream();
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            if (is != null) {
+              byte[] buf = new byte[8192];
+              int n;
+              while ((n = is.read(buf)) > 0) bo.write(buf, 0, n);
+              is.close();
+            }
+            JSONObject r = new JSONObject();
+            r.put("status", code);
+            r.put("body", bo.toString("UTF-8"));
+            out = r.toString();
+          } catch (Exception e) {
+            out = "{\"status\":0,\"body\":\"\"}";
+          }
+          final String res = out;
+          runOnUiThread(new Runnable() {
+            public void run() {
+              web.evaluateJavascript("window.__http('" + id + "'," + JSONObject.quote(res) + ")", null);
+            }
+          });
+        }
+      }).start();
     }
   }
 
@@ -127,7 +180,7 @@ public class MainActivity extends Activity {
     s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     s.setUseWideViewPort(true);
     s.setLoadWithOverviewMode(true);
-    web.setBackgroundColor(0xFF0B1326);
+    web.setBackgroundColor(0xFF000000);
     web.setWebChromeClient(new WebChromeClient());
     web.setWebViewClient(new WebViewClient());
     web.addJavascriptInterface(new Bridge(), "HalaNative");
@@ -153,21 +206,16 @@ public class MainActivity extends Activity {
 }
 EOF
 cat > android/gen.py <<'EOF'
-from PIL import Image, ImageDraw, ImageFont
-def make(w, h, path, fs):
-    im = Image.new('RGB', (w, h), (11, 19, 38))
-    d = ImageDraw.Draw(im)
-    d.rectangle([0, int(h * .72), w, h], fill=(123, 30, 59))
-    try:
-        f = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', fs)
-    except Exception:
-        f = ImageFont.load_default()
-    t = 'HALA TV'
-    bb = d.textbbox((0, 0), t, font=f)
-    d.text(((w - (bb[2] - bb[0])) // 2, int(h * .22)), t, fill=(217, 195, 148), font=f)
+from PIL import Image
+logo = Image.open('logo.png').convert('RGBA')
+def make(w, h, path, scale):
+    im = Image.new('RGB', (w, h), (0, 0, 0))
+    k = min(w * scale / logo.width, h * scale / logo.height)
+    l = logo.resize((max(1, int(logo.width * k)), max(1, int(logo.height * k))), Image.LANCZOS)
+    im.paste(l, ((w - l.width) // 2, (h - l.height) // 2), l)
     im.save(path)
-make(320, 180, 'android/app/src/main/res/drawable/banner.png', 46)
-make(192, 192, 'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png', 34)
+make(320, 180, 'android/app/src/main/res/drawable/banner.png', 0.78)
+make(192, 192, 'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png', 0.62)
 EOF
 pip install pillow
 python3 android/gen.py
