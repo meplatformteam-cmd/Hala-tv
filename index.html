@@ -116,6 +116,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:30p
 .spr .pill{font-size:clamp(17px,2.6vh,24px)}.pill.on{background:var(--hi);color:var(--ov);font-weight:700}
 #subov{position:fixed;left:6vw;right:6vw;bottom:9vh;z-index:6;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;text-align:center;font-weight:700;font-size:clamp(22px,4.4vh,48px);line-height:1.35;color:#fff}#subov span{background:rgba(0,0,0,.45);padding:2px 14px;border-radius:8px;text-shadow:0 0 6px #000,0 2px 4px #000;unicode-bidi:plaintext}#sp-cfg{display:none;flex-direction:column;gap:10px;margin-bottom:10px}#sp-cfg.on{display:flex}#sp-cfg input{margin:0;font-size:clamp(17px,2.6vh,24px)}#sp-cfg .btn{color:#000}
 #sp-st{color:var(--mu);min-height:30px;font-size:clamp(16px,2.4vh,22px)}
+#sp-dg{color:var(--mu);font:14px/1.35 monospace;direction:ltr;text-align:left;white-space:pre-wrap;margin:4px 0;opacity:.85}
 #sp-list{display:flex;flex-direction:column;gap:8px;margin:6px 0}
 .ri{display:flex;justify-content:space-between;gap:16px;padding:12px 20px;border:2px solid var(--ln);border-radius:16px;cursor:pointer;background:var(--ip);font-size:clamp(16px,2.4vh,22px)}.ri small{color:var(--mu);white-space:nowrap}
 .ri:focus{border-color:var(--hi);box-shadow:0 0 0 3px rgba(128,128,128,.4)}
@@ -385,7 +386,7 @@ html.exo-on,html.exo-on body,html.exo-on #app,html.exo-on video#v{background:tra
  <div class="sph"><h2 class="ruq" data-i="subs"></h2><button class="circ sx" id="sp-x" tabindex="0"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
  <div class="spr" id="sp-ch"><button class="btn sx" id="sp-e" tabindex="0" data-i="subsrv"></button><button class="btn sx" id="sp-a" tabindex="0" data-i="subosa"></button><button class="btn sx" id="sp-off" tabindex="0" data-i="suboff"></button></div>
  <div class="spr" id="sp-sr" style="display:none"><input class="sx" id="sp-q" dir="auto" tabindex="0" data-ip="subq"><button class="btn sx" id="sp-go" tabindex="0" data-i="subgo"></button></div>
- <div id="sp-st"></div>
+ <div id="sp-st"></div><div id="sp-dg"></div>
  <div id="sp-list"></div>
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><button class="pill sx" tabindex="0" id="sp-m1">− 0.1</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-p1">+ 0.1</button><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button></div>
 </div></div>
@@ -401,7 +402,7 @@ netfail:'ما قدرنا نوصل للرابط. افتح الملف بمتصفح
 needurl:'اكتب الرابط',fill:'عبّي كل الخانات',deny:'السيرفر رفض الدخول',badacc:'الحساب مش مزبوط',nochan:'ما لقينا قنوات',savedfail:'الدخول المحفوظ ما زبط، اكتب بياناتك من جديد',err:'خطأ ',
 hi:n=>`يا هلا فيك يا ${n}`,g0:'لسا صاحي؟ يلا اختار شو بدك تشوف.',g1:'صباح الخير، شو بدك تشوف اليوم؟',g2:'شو الأخبار؟ شو بدك تتفرج عليه هسا؟',g3:'مسا الخير، شو بدك تشوف هسا؟',g4:'سهرة حلوة، اختار اللي بعجبك.',sugg:' جبتلك كم اقتراح.',
 sec_mv:'أفلام بتسوى',sec_sr:'مسلسلات للسهرة',sec_lv:'ع الهوا هسا',nomv:'ما لقينا أفلام بالقائمة',nosr:'ما لقينا مسلسلات بالقائمة',nolv:'ما في قنوات',
-all:'كل القنوات',newsug:'غيّرلي الاقتراحات',subs:'الترجمة',subq:'اسم الفيلم أو المسلسل',subgo:'دوّر',subsearching:'عم ندوّر…',subnone:'ما لقينا ترجمة، جرّب اسم تاني',subbadfmt:'هاد الملف مش ترجمة مدعومة. استخدم ملف SRT أو VTT (ما منقدر نفتح ASS أو صور)',subnopick:'جهازك ما فيه تطبيق لاختيار الملفات. استخدم زر الرابط بدل الملف',subdl:'عم ننزّل الترجمة…',subok:'تم تحميل الترجمة ✓',subfail:'ما زبط: ',suboff:'بدون ترجمة',subsync:'تزبيط التوقيت',subkey:'API Key',subusr:'اليوزر',subpw:'كلمة السر',subsave:'احفظ',subneed:'سجّل بموقع opensubtitles.com (مجاني) وحط المفتاح واليوزر وكلمة السر هون مرة وحدة',subnet:'ما قدرنا نوصل لـ OpenSubtitles',sublimit:'خلص حد التنزيل اليومي',subbad:'المفتاح أو اليوزر أو الباسوورد مش مزبوط',subsrv:'ترجمة السيرفر',subosa:'OpenSubtitles عربي',subnotr:'ما لقينا ترجمة حقيقية، لا بالمشغّل ولا من السيرفر',subunsup:n=>`${n} ترجمة بصيغة غير مدعومة (صورية مثل PGS/VobSub)`,subwebmkv:'المشغّل العادي ما بيقرا الترجمة اللي جوا ملف MKV، فعّل ExoPlayer',subblk:'موقع OpenSubtitles حاجب الوصول التلقائي. حط مفتاح API بالبناء (OS_KEY) أو جرّب لاحقاً',subshown:'الترجمة ظاهرة ع الفيديو ✓',subnodelay:'تأخير التوقيت مش متاح للترجمة المدمجة بـ ExoPlayer',subcache:'من الكاش',subhint:'↓ ترجمة   ↑ ♥',sug:'اقتراحات إلك',lab_mv:'فيلم إلك',lab_sr:'مسلسل إلك',lab_lv:'ع الهوا هسا',play:'▶ شغّل',p_fav:'المفضلة',favadd:'انضاف للمفضلة ♥',favdel:'انشال من المفضلة',nofav:'ما في إشي بالمفضلة لسا. وانت عم تتفرج دوس ♥ أو الزر الأصفر بالريموت',out:'خروج',lang:'English',
+all:'كل القنوات',newsug:'غيّرلي الاقتراحات',subs:'الترجمة',subq:'اسم الفيلم أو المسلسل',subgo:'دوّر',subsearching:'عم ندوّر…',subnone:'ما لقينا ترجمة، جرّب اسم تاني',subbadfmt:'ما قدرنا نقرا الملف كترجمة (المدعوم: SRT / VTT / ASS، مش صور)',subnopick:'جهازك ما فيه تطبيق لاختيار الملفات. استخدم زر الرابط بدل الملف',subdl:'عم ننزّل الترجمة…',subok:'تم تحميل الترجمة ✓',subfail:'ما زبط: ',suboff:'بدون ترجمة',subsync:'تزبيط التوقيت',subkey:'API Key',subusr:'اليوزر',subpw:'كلمة السر',subsave:'احفظ',subneed:'سجّل بموقع opensubtitles.com (مجاني) وحط المفتاح واليوزر وكلمة السر هون مرة وحدة',subnet:'ما قدرنا نوصل لـ OpenSubtitles',sublimit:'خلص حد التنزيل اليومي',subbad:'المفتاح أو اليوزر أو الباسوورد مش مزبوط',subsrv:'ترجمة السيرفر',subosa:'OpenSubtitles عربي',subnotr:'ما لقينا ترجمة حقيقية، لا بالمشغّل ولا من السيرفر',subunsup:n=>`${n} ترجمة بصيغة غير مدعومة (صورية مثل PGS/VobSub)`,subwebmkv:'المشغّل العادي ما بيقرا الترجمة اللي جوا ملف MKV، فعّل ExoPlayer',subblk:'موقع OpenSubtitles حاجب الوصول التلقائي. حط مفتاح API بالبناء (OS_KEY) أو جرّب لاحقاً',subshown:'الترجمة ظاهرة ع الفيديو ✓',subsel:'اخترنا الترجمة، ناطرين المشغّل يعرضها…',subloaded:'تحمّلت الترجمة، ناطرين أول سطر يظهر…',subnoshow:'الترجمة مختارة بس ما ظهر منها نص ع الفيديو',subrefused:'المشغّل ما قبل هالترجمة',subcur:'الترجمة: ',subnodelay:'تأخير التوقيت مش متاح للترجمة المدمجة بـ ExoPlayer',subcache:'من الكاش',subhint:'↓ ترجمة   ↑ ♥',sug:'اقتراحات إلك',lab_mv:'فيلم إلك',lab_sr:'مسلسل إلك',lab_lv:'ع الهوا هسا',play:'▶ شغّل',p_fav:'المفضلة',favadd:'انضاف للمفضلة ♥',favdel:'انشال من المفضلة',nofav:'ما في إشي بالمفضلة لسا. وانت عم تتفرج دوس ♥ أو الزر الأصفر بالريموت',out:'خروج',lang:'English',
 p_mv:'أفلام',p_sr:'مسلسلات',p_sp:'رياضة',p_nw:'أخبار',p_ch:'قنوات',back:'رجوع',search:'دوّر هون',cont:'كمّل من وين وقفت',more:'كمان',empty:'ما في إشي هون',
 city:'عمّان',w:['صحو','شوية غيم','غيم','ضباب','عم تشتي','تلج','زخّات مطر','رعد وبرق'],c:['الدنيا برد كتير، دفّي حالك','الجو بارد شوي','الجو تحفة','الدنيا حامية شوي','الدنيا نار، شغّل المكيّف'],
 wfail:'ما قدرنا نجيب الجو هسا',meas:'عم نقيس النت…',netna:'ما قدرنا نقيس النت',wait:'ثواني…',serfail:'ما قدرنا نفتح المسلسل هسا',sfail:'ما اشتغل البث',ch:'قناة',ungr:'غير مصنّف',am:'ص',pm:'م',
@@ -414,7 +415,7 @@ netfail:'Couldn\u2019t reach the link. Open the file in a normal browser (Chrome
 needurl:'Enter the link',fill:'Fill in all fields',deny:'The server rejected the login',badacc:'Invalid account',nochan:'No channels found',savedfail:'Saved login failed, please enter your details again',err:'Error ',
 hi:n=>`Welcome, ${n}`,g0:'Still up? Pick something to watch.',g1:'Good morning, what are you watching today?',g2:'Good afternoon, what are you in the mood for?',g3:'Good evening, what will it be tonight?',g4:'Enjoy your night, pick what you like.',sugg:' Here are a few picks.',
 sec_mv:'Movies for you',sec_sr:'Series for tonight',sec_lv:'Live now',nomv:'No movies found in this list',nosr:'No series found in this list',nolv:'No channels',
-all:'All channels',newsug:'Shuffle picks',subs:'Subtitles',subq:'Movie or series title',subgo:'Search',subsearching:'Searching…',subnone:'No subtitles found, try another name',subbadfmt:'This file is not a supported subtitle. Use .srt or .vtt (ASS and image subtitles are not supported)',subnopick:'This device has no file-picker app. Use the Link option instead',subdl:'Downloading subtitle…',subok:'Subtitle loaded ✓',subfail:'Failed: ',suboff:'Subtitles off',subsync:'Sync',subkey:'API Key',subusr:'Username',subpw:'Password',subsave:'Save',subneed:'Sign up at opensubtitles.com (free) and enter your API key, username and password once',subnet:'Couldn\u2019t reach OpenSubtitles',sublimit:'Daily download limit reached',subbad:'API key, username or password is invalid',subsrv:'Server Subtitles',subosa:'OpenSubtitles Arabic',subnotr:'No real subtitle tracks found in the player or from the server',subunsup:n=>`${n} track(s) in an unsupported format (image-based such as PGS/VobSub)`,subwebmkv:'The Web Player cannot read tracks inside MKV files. Enable ExoPlayer',subblk:'OpenSubtitles is blocking automated page access. Add an API key at build (OS_KEY) or try later',subshown:'Subtitles showing on video ✓',subnodelay:'Timing offset is not available for ExoPlayer embedded tracks',subcache:'cached',subhint:'↓ Subtitles   ↑ ♥',sug:'Picks for you',lab_mv:'A movie for you',lab_sr:'A series for you',lab_lv:'Live now',play:'▶ Play',p_fav:'Favorites',favadd:'Added to favorites ♥',favdel:'Removed from favorites',nofav:'No favorites yet. While watching, tap ♥ or press the yellow remote button',out:'Sign out',lang:'\u0639\u0631\u0628\u064a',
+all:'All channels',newsug:'Shuffle picks',subs:'Subtitles',subq:'Movie or series title',subgo:'Search',subsearching:'Searching…',subnone:'No subtitles found, try another name',subbadfmt:'Could not read this file as a subtitle (supported: SRT / VTT / ASS, not image subtitles)',subnopick:'This device has no file-picker app. Use the Link option instead',subdl:'Downloading subtitle…',subok:'Subtitle loaded ✓',subfail:'Failed: ',suboff:'Subtitles off',subsync:'Sync',subkey:'API Key',subusr:'Username',subpw:'Password',subsave:'Save',subneed:'Sign up at opensubtitles.com (free) and enter your API key, username and password once',subnet:'Couldn\u2019t reach OpenSubtitles',sublimit:'Daily download limit reached',subbad:'API key, username or password is invalid',subsrv:'Server Subtitles',subosa:'OpenSubtitles Arabic',subnotr:'No real subtitle tracks found in the player or from the server',subunsup:n=>`${n} track(s) in an unsupported format (image-based such as PGS/VobSub)`,subwebmkv:'The Web Player cannot read tracks inside MKV files. Enable ExoPlayer',subblk:'OpenSubtitles is blocking automated page access. Add an API key at build (OS_KEY) or try later',subshown:'Subtitles showing on video ✓',subsel:'Track selected, waiting for the player to render it…',subloaded:'Subtitle loaded, waiting for the first line…',subnoshow:'Subtitle is selected but no text has appeared on the video',subrefused:'The player did not accept this track',subcur:'Subtitle: ',subnodelay:'Timing offset is not available for ExoPlayer embedded tracks',subcache:'cached',subhint:'↓ Subtitles   ↑ ♥',sug:'Picks for you',lab_mv:'A movie for you',lab_sr:'A series for you',lab_lv:'Live now',play:'▶ Play',p_fav:'Favorites',favadd:'Added to favorites ♥',favdel:'Removed from favorites',nofav:'No favorites yet. While watching, tap ♥ or press the yellow remote button',out:'Sign out',lang:'\u0639\u0631\u0628\u064a',
 p_mv:'Movies',p_sr:'Series',p_sp:'Sports',p_nw:'News',p_ch:'Channels',back:'Back',search:'Search here',cont:'Continue watching',more:'More',empty:'Nothing here',
 city:'Amman',w:['Clear','Partly cloudy','Cloudy','Fog','Rain','Snow','Showers','Thunderstorm'],c:['Freezing, bundle up','A bit chilly','Lovely weather','Getting warm','Scorching, turn on the AC'],
 wfail:'Couldn\u2019t get the weather',meas:'Measuring internet…',netna:'Couldn\u2019t measure internet',wait:'One moment…',serfail:'Couldn\u2019t open the series',sfail:'Stream unavailable',ch:'Channel',ungr:'Other',am:'AM',pm:'PM',
@@ -692,7 +693,8 @@ $('#p-back').onclick=showHome;let qT;$('#p-q').oninput=()=>{clearTimeout(qT);qT=
 
 /* ===== التشغيل ===== */
 function start(c){
- killPv();bfShow();S.sub=null;S.spq='';SUB.mode='';SUB.extFor=null;SUB.ext=null;hqi=-1;clearSub();setTimeout(()=>{try{subAuto()}catch(e){}},1200);showMsg('');const v=$('#v');if(hls){hls.destroy();hls=null}
+ killPv();bfShow();SUB.sess++;SUB.pend=null;SUB.st='none';SUB.err='';SUB.log=[];clearTimeout(SUB.at);S.sub=null;S.spq='';SUB.mode='';SUB.extFor=null;SUB.ext=null;hqi=-1;clearSub();SUB.at=setTimeout(()=>{try{subAuto()}catch(e){}},1200);showMsg('');const v=$('#v');if(hls){hls.destroy();hls=null}
+ if(!EXO.run){try{v.pause();v.removeAttribute('src');v.load()}catch(e){}}
  const pr=S.track&&getProg()[S.track.id];
  if(pr&&pr.url==c.url&&pr.t>5)v.addEventListener('loadedmetadata',()=>{v.currentTime=pr.t},{once:true});
  v.controls=S.vod;
@@ -733,7 +735,7 @@ function saveProg(){
 $('#v').ontimeupdate=()=>{if(Date.now()-lastSave>5000){lastSave=Date.now();saveProg()}};
 $('#v').onended=()=>{markSeen(S.track);const q=S.epq;if(!S.vod||!S.track||!q||q.i+1>=q.list.length||!S.track.url||S.track.url.indexOf('/'+q.list[q.i].id+'.')<0)return;playEp(q.it,q.s,q.list,q.i+1)};
 $('#v').onerror=()=>showMsg(t('sfail'));$('#v').onplaying=()=>showMsg('');
-function exitPlayer(){window.exoStop&&exoStop();$('#sp').classList.remove('on');$('#pm').classList.remove('on');saveProg();const v=$('#v');v.pause();if(hls){hls.destroy();hls=null}S.track=null;if(S.epBack&&S.det&&S.det.it&&S.det.it.sid){S.epBack=false;showDet(S.det.it,S.det.fk);return}S.from=='page'?showPage(S.page,true):showHome()}
+function exitPlayer(){SUB.sess++;clearTimeout(SUB.at);clearTimeout(SUB.pt);clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#pm').classList.remove('on');saveProg();const v=$('#v');v.pause();window.exoStop&&exoStop();if(hls){hls.destroy();hls=null}try{v.removeAttribute('src');v.load()}catch(e){}clearSub();S.track=null;if(S.epBack&&S.det&&S.det.it&&S.det.it.sid){S.epBack=false;showDet(S.det.it,S.det.fk);return}S.from=='page'?showPage(S.page,true):showHome()}
 function showMsg(x){const m=$('#msg');m.textContent=x;m.style.display=x?'flex':'none'}
 function osd(x){const o=$('#osd'),f=$('#fv');o.textContent=x;o.style.display='block';if(V()=='app'&&S.now){f.classList.toggle('on',isFav(S.now.it.id));if(S.vod)$('#cc').style.display='flex';f.style.display='flex'}clearTimeout(osdT);osdT=setTimeout(()=>{o.style.display='none';f.style.display='none';$('#cc').style.display='none'},2500)}
 function step(d){if(S.vod||!S.view.length||S.cur<0)return;S.cur=(S.cur+d+S.view.length)%S.view.length;direct(S.view[S.cur],null)}
@@ -755,7 +757,7 @@ const osCfg=()=>({k:'__OS_KEY__',u:'__OS_USER__',p:'__OS_PASS__'}),osOK=()=>{con
 const osH=(auth)=>{const c=osCfg(),h={'Api-Key':c.k||'','Content-Type':'application/json','Accept':'application/json','User-Agent':OS.ua};if(auth&&OS.tok)h.Authorization='Bearer '+OS.tok;return h};
 const jp=x=>{try{return JSON.parse(x)}catch(e){return {}}};
 const pwdOpen=()=>$('#pwd').classList.contains('on'),spOpen=()=>$('#sp').classList.contains('on');
-const spSt=x=>$('#sp-st').textContent=x||'';
+const spSt=x=>{$('#sp-st').textContent=x||'';dgUpd()};
 const UA={'User-Agent':'HalaTV v1.0 (Android TV; subtitle fetch)'};
 
 /* ---------- title cleaning / season-episode / retry ladder ---------- */
@@ -849,8 +851,10 @@ const dec=u=>{let x;
  if(u[0]==0xFF&&u[1]==0xFE)x=new TextDecoder('utf-16le').decode(u.subarray(2));
  else if(u[0]==0xFE&&u[1]==0xFF)x=new TextDecoder('utf-16be').decode(u.subarray(2));
  else try{x=new TextDecoder('utf-8',{fatal:true}).decode(u)}catch(e){
+  const l=new TextDecoder('utf-8').decode(u),bad=(l.match(/\uFFFD/g)||[]).length;
+  if(bad<=Math.max(3,l.length*.002))x=l;else{
   const a=new TextDecoder('windows-1256').decode(u),ar=(a.match(/[\u0600-\u06FF]/g)||[]).length;
-  x=ar>a.length*.1||OS.lang=='ar'&&ar>20?a:new TextDecoder('windows-1252').decode(u)}
+  x=ar>a.length*.1||OS.lang=='ar'&&ar>20?a:new TextDecoder('windows-1252').decode(u)}}
  return x.replace(/^\uFEFF/,'')};
 
 /* ---------- parsing SRT / VTT / ASS into cues ---------- */
@@ -893,7 +897,7 @@ const SC={ix:()=>store.get('subc_ix')||[],
   if(!store.get('subc:'+k)){ix=ix.slice(-4);const keep=ix.slice();SC.ix().forEach(a=>{if(!keep.includes(a))try{localStorage.removeItem('subc:'+a)}catch(e){}});store.set('subc_ix',keep);store.set('subc:'+k,{x,name:name||'',ts:Date.now()})}}};
 
 /* ---------- active subtitle state + on-video renderer ---------- */
-const SUB={mode:'',ext:null,extFor:null,tm:0,txt:null};
+const SUB={mode:'',ext:null,extFor:null,tm:0,txt:null,sess:0,gs:0,pend:null,pt:0,at:0,dt:0,log:[],err:'',st:'none',apiMsg:''};
 const subNow=()=>window.exoNow?exoNow():$('#v').currentTime||0;
 function subStart(){clearInterval(SUB.tm);SUB.tm=setInterval(subTick,120);subTick()}
 function subTick(){
@@ -904,10 +908,11 @@ function subTick(){
   else tx=cuesAt(S.sub.cues,tm);
  }
  if(tx===SUB.txt)return;SUB.txt=tx;o.textContent='';
+ if(tx&&S.sub&&!S.sub.shown){S.sub.shown=1;SUB.st='shown';clearTimeout(SUB.pt);if(spOpen())spSt(t('subshown')+' \u00B7 '+(S.sub.name||''))}
  if(tx)tx.split('\n').forEach(l=>{const s=document.createElement('span');s.textContent=l;s.dir=AR_RE.test(l)?'rtl':'ltr';o.append(s)});
 }
 function subStop(keepNative){
- clearInterval(SUB.tm);SUB.tm=0;S.sub=null;SUB.txt=null;const o=$('#subov');if(o)o.textContent='';
+ clearInterval(SUB.tm);SUB.tm=0;S.sub=null;SUB.txt=null;clearTimeout(SUB.pt);SUB.pend=null;SUB.st='none';const o=$('#subov');if(o)o.textContent='';
  const v=$('#v');try{[...v.textTracks].forEach(x=>{if(x.kind!='metadata')x.mode='disabled'})}catch(e){}
  if(hls&&!keepNative){try{hls.subtitleTrack=-1}catch(e){}}
 }
@@ -915,28 +920,30 @@ const clearSub=()=>subStop();
 function setDelayUI(){$('#sp-o').textContent=((S.sub&&S.sub.off)||0).toFixed(1)+'s'}
 function subOff(d){
  if(!S.sub){spSt(window.EXO&&EXO.run&&EXO.txt&&EXO.txt.some(x=>x.s)?t('subnodelay'):t('suboff'));return}
- S.sub.off=Math.round((S.sub.off+d)*10)/10;setDelayUI();if(S.sub.key)store.set('subdl:'+S.sub.key,S.sub.off);subTick();
+ S.sub.off=Math.round((S.sub.off+d)*10)/10;setDelayUI();if(S.sub.key){store.set('subdl:'+(S.sub.dk||S.sub.key),S.sub.off);if(S.sub.dk&&S.sub.dk!==S.sub.key)store.set('subdl:'+S.sub.key,S.sub.off)}subTick();
 }
 function nativeTextOff(){if(window.EXO&&EXO.run&&window.HalaNative&&HalaNative.exoTrack){try{HalaNative.exoTrack(1,-1)}catch(e){}EXO.txt.forEach(x=>x.s=false)}}
 function setSub(x,lang,meta){
  meta=meta||{};let cues;try{cues=parseSub(x)}catch(e){cues=[]}
- if(!cues.length){spSt(t('subbadfmt'));return false}
- subStop();nativeTextOff();
- S.sub={kind:'cues',cues,lang:lang||'ar',off:meta.off!=null?meta.off:(meta.key&&store.get('subdl:'+meta.key))||0,name:meta.name||'',key:meta.key||''};
- subStart();setDelayUI();spSt(t('subok')+' \u00B7 '+cues.length+(meta.cached?' \u00B7 '+t('subcache'):''));
+ if(!cues.length){SUB.err='decode: 0 cues parsed from '+(x?x.length:0)+' chars';spSt(t('subbadfmt'));return false}
+ subStop();nativeTextOff();SUB.err='';
+ const dk=meta.key?meta.key+(meta.rel?'|'+meta.rel:''):'';let o0=meta.off;
+ if(o0==null&&dk)o0=store.get('subdl:'+dk);if(o0==null&&meta.key)o0=store.get('subdl:'+meta.key);if(o0==null)o0=0;
+ S.sub={kind:'cues',cues,lang:lang||'ar',off:o0,name:meta.name||'',key:meta.key||'',dk,shown:0};
+ SUB.st='loaded';subStart();setDelayUI();spSt(t('subloaded')+' \u00B7 '+cues.length+' \u00B7 '+(S.sub.name||'')+(meta.cached?' \u00B7 '+t('subcache'):''));
  if(meta.key&&meta.save){SC.put(meta.key,x,meta.name);store.set('subauto:'+meta.key,1)}
- return true;
+ subWatch();return true;
 }
 function setSubOff(){subStop();nativeTextOff();SUB.mode='';const ti=trackInfo();store.set('subauto:'+ckey(ti.title,ti.se,ti.ep),0);$('#sp-sr').style.display='none';$('#sp-list').innerHTML='';spSt(t('suboff'));setDelayUI()}
 
 /* ---------- panel ---------- */
 function openSubs(){
- if(!S.vod)return;$('#sp').classList.add('on');$('#v').controls=false;pmHide();
- $('#sp-sr').style.display=SUB.mode=='os'?'':'none';$('#sp-list').innerHTML='';spSt('');setDelayUI();
+ if(!S.vod)return;$('#sp').classList.add('on');clearInterval(SUB.dt);SUB.dt=setInterval(dgUpd,1000);$('#v').controls=false;pmHide();
+ $('#sp-sr').style.display=SUB.mode=='os'?'':'none';$('#sp-list').innerHTML='';spSt(S.sub?t('subcur')+(S.sub.name||S.sub.lang)+(S.sub.shown?' \u2713':''):'');setDelayUI();
  $('#sp-q').value=S.spq||trackInfo().title;focusEl($('#sp-e'));
  if(SUB.mode=='srv')srvSubs();
 }
-function closeSubs(){$('#sp').classList.remove('on');$('#v').controls=S.vod}
+function closeSubs(){clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#v').controls=S.vod}
 window.spRefresh=()=>{if(spOpen()&&SUB.mode=='srv')srvSubs(true)};
 const curMark=d=>{$$('#sp-list .ri').forEach(x=>x.classList.toggle('cur',x===d))};
 function listRow(name,small,fn,cur){
@@ -944,6 +951,50 @@ function listRow(name,small,fn,cur){
  const l=document.createElement('span'),m=document.createElement('small');l.textContent=name;m.textContent=small||'';d.append(l,m);
  d.onclick=async()=>{curMark(d);await fn()};$('#sp-list').append(d);return d;
 }
+
+/* ---------- honest status, watchdog and diagnostics ---------- */
+const subSay=m=>spOpen()?spSt(m):osd(m);
+function subWatch(){
+ clearTimeout(SUB.pt);let n=0;
+ const chk=()=>{
+  if(S.sub&&!S.sub.shown){const tm=subNow()-(S.sub.off||0),near=S.sub.cues.some(c=>c.e>tm&&c.s<tm+45);
+   if(!near&&n++<4){SUB.pt=setTimeout(chk,9000);return}
+   SUB.st='not-shown';subSay(t('subnoshow')+(near?'':' (no cue near this time)'));dgUpd();return}
+  if(SUB.pend&&!SUB.pend.shown){const a=window.EXO&&EXO.txt[SUB.pend.i];
+   if(!a||!a.s){SUB.st='refused';subSay(t('subrefused'))}
+   else if(n++<2){SUB.pt=setTimeout(chk,9000);return}
+   else{SUB.st='no-cues';subSay(t('subnoshow'))}
+   dgUpd()}
+ };
+ SUB.pt=setTimeout(chk,9000);
+}
+function subVerdict(){
+ const X=window.EXO&&EXO.run;
+ if(SUB.err)return 'DECODE FAILED ('+SUB.err+')';
+ if(S.sub)return S.sub.shown?'OK, text displayed':'LOADED, not displayed yet (no cue at this time, or render problem)';
+ if(X){
+  if(SUB.pend&&SUB.pend.shown)return 'OK, text displayed by the player';
+  if(SUB.pend){const a=EXO.txt[SUB.pend.i];if(!a||!a.s)return EXO.td?'UNSELECTED: text renderer disabled':'PLAYER DID NOT SELECT THE TRACK';
+   return (EXO.cn||0)>SUB.pend.c0?'SELECTED + DECODED, waiting to render':'SELECTED, no cues decoded yet (no dialogue yet, decode failure or unsupported codec)'}
+  if(!EXO.txt.length)return EXO.nu?'UNSUPPORTED: only unsupported track formats found':'MISSING: no embedded subtitle track';
+  return 'UNSELECTED: tracks exist, none chosen'}
+ return 'no subtitle active';
+}
+function subDiag(){
+ const L=[],X=window.EXO&&EXO.run;
+ L.push('player: '+(X?'ExoPlayer':'Web')+' | stage: '+SUB.st);
+ if(X){L.push('embedded text tracks: '+EXO.txt.length+' usable, '+(EXO.nu||0)+' unsupported'+(EXO.td?' | text renderer DISABLED':''));
+  (EXO.tall||[]).forEach(a=>L.push(' - '+a.l+' ['+(a.m||'?')+'] '+(a.u?'':'UNSUPPORTED ')+(a.s?'SELECTED':'')));
+  L.push('native cues received: '+(EXO.cn||0)+(EXO.cl?' (last '+Math.round((Date.now()-EXO.cl)/1000)+'s ago)':''))}
+ else if(hls&&hls.subtitleTracks)L.push('hls subtitle tracks: '+hls.subtitleTracks.length);
+ if(S.sub)L.push('overlay: '+(S.sub.kind=='cues'?S.sub.cues.length+' cues':'text track')+' | offset '+(S.sub.off||0).toFixed(1)+'s | displayed: '+(S.sub.shown?'yes':'not yet'));
+ SUB.log.slice(-4).forEach(x=>L.push('server: '+x));
+ L.push('verdict: '+subVerdict());return L.join('\n');
+}
+function dgUpd(){const d=document.getElementById('sp-dg');if(d&&spOpen())d.textContent=subDiag()}
+const REL_TOK=/\b(2160p|1080p|720p|480p|bluray|brrip|bdrip|webrip|web[ .-]?dl|hdtv|dvdrip|remux|x264|x265|hevc|h264|h265|xvid|amzn|nf|dsnp|hmax|atvp)\b/g;
+function relTokens(n){n=(n||'').toLowerCase();const o=new Set((n.match(REL_TOK)||[]).map(x=>x.replace(/web[ .-]?dl/,'webdl')));const g=n.match(/-([a-z0-9]{2,12})(?:\.[a-z0-9]{2,4})?\s*$/);if(g)o.add('grp:'+g[1]);return o}
+function relKey(n){return (n||'').toLowerCase().replace(/[^a-z0-9\u0600-\u06ff]+/g,'').slice(0,40)}
 
 /* ---------- Server Subtitles: real tracks from the player + server files ---------- */
 function subNorm(a,out){
@@ -970,7 +1021,7 @@ async function srvTracks(){
 const isAr=(n,g)=>/^ar/i.test(g||'')||/\u0639\u0631\u0628|arab|\bara\b|\bar\b/i.test(n||'');
 function playerTracks(){
  const v=$('#v'),it=[];let unsup=0;
- if(window.EXO&&EXO.run){EXO.txt.forEach((x,i)=>it.push({n:x.l+(x.c?' \u00B7 '+x.c:''),ar:isAr(x.l,x.g),cur:x.s,src:'exo',go:()=>{subStop();HalaNative.exoTrack(1,i);EXO.txt.forEach((y,j)=>y.s=j==i);SUB.exoWait=1;SUB.mode='srv';spSt(t('subok'))}}));unsup=EXO.nu||0}
+ if(window.EXO&&EXO.run){EXO.txt.forEach((x,i)=>it.push({n:x.l+(x.c?' \u00B7 '+x.c:''),ar:isAr(x.l,x.g),cur:x.s,src:'exo',go:()=>{subStop();SUB.pend={i,n:x.l,c0:EXO.cn||0,t0:Date.now(),shown:0};SUB.st='selected';SUB.exoWait=1;SUB.mode='srv';HalaNative.exoTrack(1,i);spSt(t('subsel')+' \u00B7 '+x.l);subWatch()}}));unsup=EXO.nu||0}
  else if(hls&&hls.subtitleTracks&&hls.subtitleTracks.length)hls.subtitleTracks.forEach((x,i)=>it.push({n:x.name||x.lang||'#'+(i+1),ar:isAr(x.name,x.lang),cur:hls.subtitleTrack==i&&S.sub&&S.sub.kind=='tt',src:'hls',go:()=>{subStop(true);hls.subtitleDisplay=false;hls.subtitleTrack=i;
    let n=0;const find=()=>{const tt=[...v.textTracks].find(y=>y.kind!='metadata'&&((y.label&&y.label==x.name)||(y.language&&y.language==x.lang)))||[...v.textTracks].find(y=>y.kind!='metadata'&&y.mode!='disabled');
     if(tt){tt.mode='hidden';S.sub={kind:'tt',tt,lang:x.lang||'',off:0,key:''};subStart();setDelayUI();spSt(t('subok'))}else if(n++<20)setTimeout(find,250);else spSt(t('subfail'))};find()}}));
@@ -981,9 +1032,9 @@ async function srvSubs(quiet){
  SUB.mode='srv';$('#sp-sr').style.display='none';const L=$('#sp-list'),tr=S.track;
  if(!quiet){L.innerHTML='';spSt(t('subsearching'))}
  const pt=playerTracks();
- if(SUB.extFor!==tr){SUB.ext=null;SUB.extFor=tr;
-  srvTracks().then(async sv=>{const ok=[];
-   await Promise.all(sv.slice(0,6).map(async o=>{try{const r=await xbytes(o.url,UA);if(r.status!=200||!r.bytes)return;const x=dec(extractSub(r.bytes)),c=parseSub(x);if(c.length)ok.push({n:'\u{1F310} '+o.name,ar:o.lang=='ar'||isAr(o.name,''),src:'ext',x,lang:o.lang})}catch(e){}}));
+ if(SUB.extFor!==tr){SUB.ext=null;SUB.extFor=tr;SUB.log=[];
+  srvTracks().then(async sv=>{const ok=[];SUB.log.push('server lists '+sv.length+' subtitle URL(s)');
+   await Promise.all(sv.slice(0,6).map(async o=>{try{const r=await xbytes(o.url,UA);if(r.status!=200||!r.bytes){SUB.log.push(o.name+': HTTP '+r.status);return}const x=dec(extractSub(r.bytes)),c=parseSub(x);if(!c.length)SUB.log.push(o.name+': 0 cues');if(c.length)ok.push({n:'\u{1F310} '+o.name,ar:o.lang=='ar'||isAr(o.name,''),src:'ext',x,lang:o.lang})}catch(e){SUB.log.push(o.name+': '+(e&&e.message))}}));
    if(S.track===tr){SUB.ext=ok;if(spOpen()&&SUB.mode=='srv')srvSubs(true)}});
  }
  const all=pt.it.concat((SUB.ext||[]).map(o=>Object.assign(o,{go:()=>setSub(o.x,o.lang,{name:o.n})}))).sort((a,b)=>(b.ar?1:0)-(a.ar?1:0));
@@ -996,7 +1047,7 @@ async function srvSubs(quiet){
  if(!(window.EXO&&EXO.run)&&!(hls&&hls.subtitleTracks))m+='\n'+t('subwebmkv');
  spSt(m);
 }
-window.spExoCue=()=>{if(SUB.exoWait&&spOpen()){SUB.exoWait=0;spSt(t('subshown'))}};
+window.spExoCue=()=>{if(SUB.pend){SUB.pend.shown=1;SUB.st='shown';clearTimeout(SUB.pt)}if(SUB.exoWait&&spOpen()){SUB.exoWait=0;spSt(t('subshown')+(SUB.pend?' \u00B7 '+SUB.pend.n:''))}};
 
 /* ---------- OpenSubtitles Arabic (website via the app's HTTP client, official REST API fallback) ---------- */
 const WB='https://www.opensubtitles.org',DLB='https://dl.opensubtitles.org';
@@ -1014,9 +1065,10 @@ function parseResults(html){
 }
 function parseMovieLinks(html){const o=[],seen={};let m;const re=/<a[^>]+href="[^"]*idmovie-(\d+)[^"]*"[^>]*>([\s\S]*?)<\/a>/gi;while(m=re.exec(html)){if(seen[m[1]])continue;seen[m[1]]=1;o.push({id:m[1],name:htmlText(m[2])})}return o}
 function scoreRes(x,se,ep,raw){
- let s=Math.log10((x.n||0)+1)*3;const nm=x.name||'';
+ let s=Math.log10((x.n||0)+1)*3+(x.pen||0);const nm=x.name||'';
  if(se&&ep){const sm=nm.match(/\bS0*(\d+)\s*E0*(\d+)\b/i)||nm.match(/\b0*(\d+)x0*(\d+)\b/i);if(sm){if(+sm[1]==se&&+sm[2]==ep)s+=60;else s-=100}}
  (raw||'').toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2).forEach(w=>{if(nm.toLowerCase().includes(w))s+=2});
+ const A=relTokens(raw),B=relTokens(nm);A.forEach(k=>{if(B.has(k))s+=k.startsWith('grp:')?12:6});
  return s;
 }
 async function webFind(q,se,ep,raw){
@@ -1042,18 +1094,18 @@ async function webGet(x){
  }
  spSt(t('subfail')+'opensubtitles.org');return false;
 }
-function finishGet(text,name){const ti=trackInfo(),q=qParse($('#sp-q').value||ti.title),k=ckey(q.title,q.se||ti.se,q.ep||ti.ep);return setSub(text,'ar',{name,key:k,save:1,off:store.get('subdl:'+k)||0})}
+function finishGet(text,name){if(SUB.gs!==SUB.sess)return false;const ti=trackInfo(),q=qParse($('#sp-q').value||ti.title),k=ckey(q.title,q.se||ti.se,q.ep||ti.ep);return setSub(text,'ar',{name,key:k,save:1,rel:relKey(name)})}
 async function osLogin(){
  if(OS.tok)return true;
  const c=osCfg(),r=await xhttp('POST',OS.base+'/login',osH(false),JSON.stringify({username:c.u,password:c.p})),j=jp(r.body);
  if(r.status==200&&j.token){OS.tok=j.token;if(j.base_url)OS.base='https://'+j.base_url.replace(/^https?:\/\//,'')+'/api/v1';return true}
  spSt(r.status==0?t('subnet'):t('subbad'));return false;
 }
-async function osFind(q,se,ep){
+async function osFind(q,se,ep,raw){
  const r=await xhttp('GET',OS.base+'/subtitles?query='+enc(q.toLowerCase())+'&languages=ar&order_by=download_count&order_direction=desc'+(se&&ep?'&season_number='+se+'&episode_number='+ep:''),osH(false)),j=jp(r.body);
- if(r.status==0){spSt(t('subnet'));return null}
- if(r.status==401||r.status==403){spSt(t('subbad'));return null}
- return (j.data||[]).filter(x=>x.attributes&&x.attributes.files&&x.attributes.files[0]).slice(0,10).map(x=>({name:x.attributes.release||x.attributes.files[0].file_name||'\u2014',n:x.attributes.download_count||0,get:()=>osGet(x.attributes)}));
+ if(r.status==0){SUB.apiMsg=t('subnet');spSt(SUB.apiMsg);return null}
+ if(r.status==401||r.status==403){SUB.apiMsg=t('subbad');spSt(SUB.apiMsg);return null}
+ return (j.data||[]).filter(x=>x.attributes&&x.attributes.files&&x.attributes.files[0]).map(x=>({name:x.attributes.release||x.attributes.files[0].file_name||'\u2014',n:x.attributes.download_count||0,pen:(x.attributes.ai_translated||x.attributes.machine_translated)?-8:0,get:()=>osGet(x.attributes)})).sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw)).slice(0,10);
 }
 async function osGet(at){
  spSt(t('subdl'));if(!(await osLogin()))return false;const fid=at.files[0].file_id,body=JSON.stringify({file_id:fid,sub_format:'srt'});
@@ -1074,24 +1126,24 @@ async function srvGet(id,name){
  return finishGet(r.body,name);
 }
 async function subFind(title,se,ep,raw){
- let blocked=0,net=0;
+ let blocked=0,net=0,apiDead=0;SUB.apiMsg='';
  for(const q of queryLadder(title)){
   if(!$('#sp').classList.contains('on'))return[];
   spSt(t('subsearching')+' '+q);
   if(srvOK())try{const a=await srvFind(q,se,ep);if(a.length)return a}catch(e){}
+  if(osOK()&&!apiDead){const b=await osFind(q,se,ep,raw);if(b&&b.length)return b;if(b===null)apiDead=1}
   try{const w=await webFind(q,se,ep,raw);if(w.items.length)return w.items;if(w.blocked)blocked=1}catch(e){net=1}
-  if(osOK()){const b=await osFind(q,se,ep);if(b&&b.length)return b;if(b===null)return[]}
  }
- spSt(blocked&&!osOK()?t('subblk'):net?t('subnet'):t('subnone'));return[];
+ spSt(apiDead&&SUB.apiMsg?SUB.apiMsg:blocked&&!osOK()?t('subblk'):net?t('subnet'):t('subnone'));return[];
 }
 async function osSearch(auto){
- SUB.mode='os';$('#sp-sr').style.display='';const ti=trackInfo(),inp=$('#sp-q').value.trim()||ti.title;if(!inp)return;S.spq=inp;
+ SUB.mode='os';SUB.gs=SUB.sess;$('#sp-sr').style.display='';const ti=trackInfo(),inp=$('#sp-q').value.trim()||ti.title;if(!inp)return;S.spq=inp;
  const q=qParse(inp),manual=inp!==ti.title,se=manual?q.se:(ti.se||q.se),ep=manual?q.ep:(ti.ep||q.ep),title=q.title;
  $('#sp-list').innerHTML='';
  const k=ckey(title,se,ep),ca=SC.get(k);
- if(ca&&auto){setSub(ca.x,'ar',{name:ca.name,key:k,cached:1})}
+ if(ca&&auto){setSub(ca.x,'ar',{name:ca.name,key:k,cached:1,rel:relKey(ca.name)})}
  const a=await subFind(title,se,ep,ti.raw);
- if(!a.length){return}
+ if(!a.length){focusEl($('#sp-q'));return}
  spSt(ca&&auto&&S.sub?t('subok')+' \u00B7 '+S.sub.cues.length+' \u00B7 '+t('subcache'):'');
  a.forEach(x=>listRow(x.name,x.n?'\u2B07 '+x.n:'',()=>x.get()));
  focusEl($('#sp-list .ri'));
@@ -1100,7 +1152,7 @@ async function osSearch(auto){
 function subAuto(){
  if(!S.vod||!S.track)return;const ti=trackInfo(),k=ckey(ti.title,ti.se,ti.ep);
  if(!store.get('subauto:'+k))return;const ca=SC.get(k);if(!ca)return;
- SUB.mode='os';setSub(ca.x,'ar',{name:ca.name,key:k,cached:1});
+ SUB.mode='os';setSub(ca.x,'ar',{name:ca.name,key:k,cached:1,rel:relKey(ca.name)});
 }
 $('#sp-go').onclick=()=>osSearch();$('#sp-x').onclick=closeSubs;
 $('#sp-m').onclick=()=>subOff(-.5);$('#sp-pl').onclick=()=>subOff(.5);$('#sp-m1').onclick=()=>subOff(-.1);$('#sp-p1').onclick=()=>subOff(.1);
@@ -1428,6 +1480,7 @@ setTimeout(autoUpd,9000);
 
 /* ===== ExoPlayer الداخلي (أندرويد) ===== */
 const EXO={on:false,run:false,u:'',t:0,d:NaN,p:true,h:0,ready:false,aud:[],txt:[],sub:false,bad:{},er:{},use(u){return this.on&&!S.demo&&!this.bad[u]}};
+window.EXO=EXO;
 (function(){
  const HN=window.HalaNative;if(!(HN&&HN.exoPlay))return;
  EXO.on=store.get('exo')!=='0';
@@ -1444,10 +1497,10 @@ const EXO={on:false,run:false,u:'',t:0,d:NaN,p:true,h:0,ready:false,aud:[],txt:[
 
  Object.defineProperty(v,'src',{configurable:true,get(){return EXO.run?EXO.u:dsrc.get.call(v)},set(u){
   if(EXO.use(u)){
-   EXO.run=true;EXO.u=u;EXO.t=0;EXO.d=NaN;EXO.p=false;EXO.h=0;EXO.ready=false;EXO.aud=[];EXO.txt=[];EXO.sub=false;
+   EXO.run=true;EXO.u=u;EXO.t=0;EXO.d=NaN;EXO.p=false;EXO.h=0;EXO.ready=false;EXO.aud=[];EXO.txt=[];EXO.sub=false;EXO.sid=(EXO.sid||0)+1;EXO.tall=[];EXO.cn=0;EXO.cl=0;EXO.nu=0;EXO.td=0;
    dco.set.call(v,false);document.documentElement.classList.add('exo-on');
    const pr=S.vod&&S.track&&getProg()[S.track.id];
-   HN.exoPlay(u,pr&&pr.url==u&&pr.t>5?Math.round(pr.t*1000):0);
+   HN.exoPlay(u,pr&&pr.url==u&&pr.t>5?Math.round(pr.t*1000):0,EXO.sid);
   }else{stopNative();dsrc.set.call(v,u)}}});
  Object.defineProperty(v,'currentTime',{configurable:true,get(){return EXO.run?EXO.t:dct.get.call(v)},set(x){
   if(EXO.run){x=Math.max(0,EXO.d>0?Math.min(x,EXO.d):x);EXO.t=x;EXO.w=performance.now();HN.exoSeek(Math.round(x*1000));xbShow()}else dct.set.call(v,x)}});
@@ -1458,7 +1511,7 @@ const EXO={on:false,run:false,u:'',t:0,d:NaN,p:true,h:0,ready:false,aud:[],txt:[
  v.play=()=>{if(EXO.run){EXO.p=false;HN.exoResume();return Promise.resolve()}return P.play.call(v)};
  v.pause=()=>{if(EXO.run){EXO.p=true;HN.exoPause();return}P.pause.call(v)};
 
- window.__exo=(k,o)=>{if(!EXO.run)return;
+ window.__exo=(k,o,sid)=>{if(!EXO.run||sid!==EXO.sid)return;
   if(k=='time'){EXO.t=o.t/1000;EXO.w=performance.now();if(o.d>0)EXO.d=o.d/1000;ev('timeupdate');if($('#xb').classList.contains('on'))xbUpd()}
   else if(k=='buf')ev('waiting');
   else if(k=='ready'){EXO.d=o.d>0?o.d/1000:NaN;if(!EXO.ready){EXO.ready=true;ev('loadedmetadata')}ev('canplay')}
@@ -1466,8 +1519,8 @@ const EXO={on:false,run:false,u:'',t:0,d:NaN,p:true,h:0,ready:false,aud:[],txt:[
   else if(k=='pw'){EXO.p=!o;if(!o){ev('pause');xbShow()}}
   else if(k=='end'){ev('ended')}
   else if(k=='size'){EXO.h=o.h}
-  else if(k=='tracks'){EXO.aud=o.a;EXO.txt=o.t;EXO.nu=o.nu||0;if(o.na)osd(t('noaud'));window.spRefresh&&spRefresh()}
-  else if(k=='cues'){if(o>0)window.spExoCue&&spExoCue()}
+  else if(k=='tracks'){EXO.aud=o.a;EXO.txt=o.t;EXO.nu=o.nu||0;EXO.tall=o.all||[];EXO.td=o.td||0;if(SUB.pend){const a=EXO.txt[SUB.pend.i];if(a&&a.s){SUB.st=SUB.pend.shown?'shown':'selected-by-player';if(spOpen()&&!SUB.pend.shown)spSt(t('subsel')+' \u2713 '+SUB.pend.n)}}if(o.na)osd(t('noaud'));window.spRefresh&&spRefresh()}
+  else if(k=='cues'){EXO.cn=o.c||0;if(o.n>0){EXO.cl=Date.now();window.spExoCue&&spExoCue()}}
   else if(k=='err'){const u=EXO.u;elog('ExoPlayer '+o);EXO.er[u]=(EXO.er[u]||0)+1;
    if(S.vod||EXO.er[u]>=3){EXO.bad[u]=1;stopNative();if(S.now&&V()=='app')start(S.now.it)}else ev('error')}};
 

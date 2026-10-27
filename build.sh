@@ -141,6 +141,7 @@ import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.ui.AspectRatioFrameLayout;
 import androidx.media3.ui.SubtitleView;
+import androidx.media3.ui.CaptionStyleCompat;
 
 public class MainActivity extends Activity {
   private WebView web;
@@ -154,6 +155,9 @@ public class MainActivity extends Activity {
   private final java.util.ArrayList<Object[]> aTr = new java.util.ArrayList<Object[]>();
   private final java.util.ArrayList<Object[]> tTr = new java.util.ArrayList<Object[]>();
   private boolean sideSub = false;
+  private int sid = 0;
+  private int cueTotal = 0;
+  private Player.Listener exoListener;
   private int subN = 0;
   private java.io.File lastSub;
   private final Runnable tick = new Runnable() {
@@ -162,13 +166,13 @@ public class MainActivity extends Activity {
       long d = exo.getDuration();
       boolean live = exo.isCurrentMediaItemLive() || d == C.TIME_UNSET;
       js("time", "{\"t\":" + exo.getCurrentPosition() + ",\"d\":" + (live ? -1 : d) + "}");
-      hnd.postDelayed(this, 500);
+      hnd.postDelayed(this, 250);
     }
   };
 
   public class Bridge {
     @JavascriptInterface
-    public void exoPlay(final String url, final long startMs) { runOnUiThread(new Runnable() { public void run() { exoStart(url, startMs); } }); }
+    public void exoPlay(final String url, final long startMs, final int session) { runOnUiThread(new Runnable() { public void run() { exoStart(url, startMs, session); } }); }
 
     @JavascriptInterface
     public void exoResume() { runOnUiThread(new Runnable() { public void run() { if (exo != null) exo.play(); } }); }
@@ -262,22 +266,33 @@ public class MainActivity extends Activity {
         public void run() {
           String out;
           try {
-            HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
-            c.setRequestMethod(method);
-            c.setConnectTimeout(15000);
-            c.setReadTimeout(url.contains("/ai") ? 240000 : 30000);
             JSONObject h = new JSONObject(headers);
             boolean raw = h.has("X-Hala-Raw");
             h.remove("X-Hala-Raw");
-            Iterator<String> it = h.keys();
-            while (it.hasNext()) { String k = it.next(); c.setRequestProperty(k, h.getString(k)); }
-            if (body != null && body.length() > 0) {
-              c.setDoOutput(true);
-              OutputStream os = c.getOutputStream();
-              os.write(body.getBytes("UTF-8"));
-              os.close();
+            String cur = url;
+            HttpURLConnection c;
+            int code;
+            for (int hop = 0; ; hop++) {
+              c = (HttpURLConnection) new URL(cur).openConnection();
+              c.setInstanceFollowRedirects(false);
+              c.setRequestMethod(method);
+              c.setConnectTimeout(15000);
+              c.setReadTimeout(url.contains("/ai") ? 240000 : 30000);
+              Iterator<String> it = h.keys();
+              while (it.hasNext()) { String k = it.next(); c.setRequestProperty(k, h.getString(k)); }
+              if (body != null && body.length() > 0) {
+                c.setDoOutput(true);
+                OutputStream os = c.getOutputStream();
+                os.write(body.getBytes("UTF-8"));
+                os.close();
+              }
+              code = c.getResponseCode();
+              if ("GET".equals(method) && hop < 5 && (code == 301 || code == 302 || code == 303 || code == 307 || code == 308)) {
+                String loc = c.getHeaderField("Location");
+                if (loc != null && loc.length() > 0) { cur = new URL(new URL(cur), loc).toString(); c.disconnect(); continue; }
+              }
+              break;
             }
-            int code = c.getResponseCode();
             InputStream is = code >= 400 ? c.getErrorStream() : c.getInputStream();
             ByteArrayOutputStream bo = new ByteArrayOutputStream();
             if (is != null) {
@@ -324,7 +339,9 @@ public class MainActivity extends Activity {
     exoFrame.addView(exoSurface, new FrameLayout.LayoutParams(-1, -1));
     exoRoot.addView(exoFrame, new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER));
     exoSubs = new SubtitleView(this);
-    exoSubs.setUserDefaultStyle();
+    exoSubs.setApplyEmbeddedStyles(false);
+    exoSubs.setApplyEmbeddedFontSizes(false);
+    exoSubs.setStyle(new CaptionStyleCompat(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_OUTLINE, Color.BLACK, null));
     exoSubs.setFractionalTextSize(0.06f);
     exoSubs.setBottomPaddingFraction(0.08f);
     exoRoot.addView(exoSubs, new FrameLayout.LayoutParams(-1, -1));
@@ -377,7 +394,7 @@ public class MainActivity extends Activity {
 
   private void js(String k, String json) {
     if (web == null) return;
-    web.evaluateJavascript("window.__exo&&window.__exo('" + k + "'," + json + ")", null);
+    web.evaluateJavascript("window.__exo&&window.__exo('" + k + "'," + json + "," + sid + ")", null);
   }
 
   private void exoEnsure() {
@@ -394,7 +411,7 @@ public class MainActivity extends Activity {
       .build();
     exo.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true);
     exo.setVideoSurfaceView(exoSurface);
-    exo.addListener(new Player.Listener() {
+    exoListener = new Player.Listener() {
       @Override public void onPlaybackStateChanged(int st) {
         if (st == Player.STATE_BUFFERING) js("buf", "1");
         else if (st == Player.STATE_READY) {
@@ -408,34 +425,48 @@ public class MainActivity extends Activity {
         if (vs.height > 0) exoFrame.setAspectRatio(vs.width * vs.pixelWidthHeightRatio / vs.height);
         js("size", "{\"h\":" + vs.height + "}");
       }
-      @Override public void onCues(CueGroup g) { exoSubs.setCues(g.cues); js("cues", String.valueOf(g.cues.size())); }
-      @Override public void onTracksChanged(Tracks t) { exoTracks(t); }
+      @Override public void onCues(CueGroup g) { exoSubs.setCues(g.cues); cueTotal += g.cues.size(); js("cues", "{\"n\":" + g.cues.size() + ",\"c\":" + cueTotal + "}"); }
+      @Override public void onTracksChanged(Tracks t) { if (exo != null) exoTracks(t); }
       @Override public void onPlayerError(PlaybackException e) {
         if (e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) { exo.seekToDefaultPosition(); exo.prepare(); return; }
         js("err", JSONObject.quote(e.getErrorCodeName()));
       }
-    });
+    };
+    exo.addListener(exoListener);
   }
 
-  private void exoStart(String url, long startMs) {
-    exoEnsure();
-    sideSub = false;
+  private void exoRelease() {
+    hnd.removeCallbacks(tick);
+    if (exo != null) {
+      try { if (exoListener != null) exo.removeListener(exoListener); } catch (Exception e) {}
+      try { exo.clearVideoSurface(); } catch (Exception e) {}
+      try { exo.stop(); exo.clearMediaItems(); } catch (Exception e) {}
+      try { exo.release(); } catch (Exception e) {}
+      exo = null;
+    }
+    exoListener = null;
     aTr.clear();
     tTr.clear();
+    sideSub = false;
+    cueTotal = 0;
+    if (exoSubs != null) exoSubs.setCues(java.util.Collections.<androidx.media3.common.text.Cue>emptyList());
+  }
+
+  private void exoStart(String url, long startMs, int session) {
+    exoRelease();
+    sid = session;
+    exoEnsure();
     exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().clearOverrides().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).build());
-    exoSubs.setCues(java.util.Collections.<androidx.media3.common.text.Cue>emptyList());
     exoRoot.setVisibility(View.VISIBLE);
     web.setBackgroundColor(Color.TRANSPARENT);
     exo.setMediaItem(MediaItem.fromUri(url), startMs > 0 ? startMs : C.TIME_UNSET);
     exo.prepare();
     exo.setPlayWhenReady(true);
-    hnd.removeCallbacks(tick);
     hnd.post(tick);
   }
 
   private void exoHalt() {
-    hnd.removeCallbacks(tick);
-    if (exo != null) { exo.stop(); exo.clearMediaItems(); }
+    exoRelease();
     if (exoRoot != null) exoRoot.setVisibility(View.GONE);
     if (web != null) web.setBackgroundColor(0xFF000000);
   }
@@ -496,14 +527,25 @@ public class MainActivity extends Activity {
     org.json.JSONArray ja = new org.json.JSONArray();
     org.json.JSONArray jt = new org.json.JSONArray();
     int audAll = 0, audOk = 0, txtBad = 0;
+    org.json.JSONArray jall = new org.json.JSONArray();
     try {
       for (Tracks.Group g : tr.getGroups()) {
         int ty = g.getType();
         if (ty != C.TRACK_TYPE_AUDIO && ty != C.TRACK_TYPE_TEXT) continue;
         for (int i = 0; i < g.length; i++) {
           if (ty == C.TRACK_TYPE_AUDIO) { audAll++; if (g.isTrackSupported(i)) audOk++; }
-          if (!g.isTrackSupported(i)) { if (ty == C.TRACK_TYPE_TEXT) txtBad++; continue; }
           Format f = g.getTrackFormat(i);
+          if (ty == C.TRACK_TYPE_TEXT) {
+            String m0 = f.sampleMimeType == null ? "" : f.sampleMimeType;
+            if (m0.contains("media3-cues") && f.codecs != null) m0 = f.codecs;
+            JSONObject al = new JSONObject();
+            al.put("l", f.label != null ? f.label : (f.language != null ? f.language : "#"));
+            al.put("m", m0);
+            al.put("u", g.isTrackSupported(i));
+            al.put("s", g.isTrackSelected(i));
+            jall.put(al);
+          }
+          if (!g.isTrackSupported(i)) { if (ty == C.TRACK_TYPE_TEXT) txtBad++; continue; }
           int n = (ty == C.TRACK_TYPE_AUDIO ? aTr.size() : tTr.size()) + 1;
           String l = f.label;
           if (l == null && f.language != null && !"und".equals(f.language)) l = new java.util.Locale(f.language).getDisplayLanguage();
@@ -514,13 +556,15 @@ public class MainActivity extends Activity {
           o.put("s", g.isTrackSelected(i));
           o.put("g", f.language == null ? "" : f.language);
           String mt = f.sampleMimeType == null ? "" : f.sampleMimeType;
+          if (mt.contains("media3-cues") && f.codecs != null) mt = f.codecs;
           o.put("c", mt.contains("subrip") ? "SRT" : mt.contains("ssa") ? "ASS" : mt.contains("pgs") ? "PGS" : mt.contains("vtt") ? "VTT" : mt.contains("ttml") ? "TTML" : mt.contains("cea") ? "CC" : "");
           if (ty == C.TRACK_TYPE_AUDIO) { aTr.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i)}); ja.put(o); }
           else { tTr.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i)}); jt.put(o); }
         }
       }
     } catch (Exception e) {}
-    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + ",\"nu\":" + txtBad + "}");
+    boolean td = exo != null && exo.getTrackSelectionParameters().disabledTrackTypes.contains(C.TRACK_TYPE_TEXT);
+    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + ",\"nu\":" + txtBad + ",\"all\":" + jall.toString() + ",\"td\":" + (td ? 1 : 0) + "}");
   }
 
   @Override
@@ -553,8 +597,7 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onDestroy() {
-    hnd.removeCallbacks(tick);
-    if (exo != null) { exo.release(); exo = null; }
+    exoRelease();
     if (web != null) web.destroy();
     super.onDestroy();
   }
