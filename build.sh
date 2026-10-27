@@ -72,6 +72,7 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
     <activity
       android:name=".MainActivity"
       android:exported="true"
+      android:windowSoftInputMode="adjustPan|stateHidden"
       android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout|uiMode|density">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
