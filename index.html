@@ -160,7 +160,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:30p
 .circ.sx:focus,.pill.sx:focus,#sp input:focus,#sp .btn:focus{border-color:var(--hi)!important;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
 video::cue{font:700 clamp(22px,2.4vw,44px) Cairo,Tahoma,Arial,sans-serif;background:rgba(0,0,0,.7);color:#fff}
 
-#app{position:fixed;inset:0;z-index:5;background:#000}
+#app{position:fixed;inset:0;z-index:5;background:#000;overflow:hidden}
 video{width:100%;height:100%;background:#000}
 video::-webkit-media-controls-overlay-play-button,video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
 video{object-fit:contain}
@@ -634,31 +634,70 @@ body.bgv .tile{background:rgba(0,0,0,.62)!important}
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
 <div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt"></pre><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
+<style id="tc-css">
+html{--u:2}
+#app{touch-action:manipulation}
+#tc{position:fixed;top:0;right:0;bottom:0;left:0;z-index:31;display:none;direction:ltr;color:#fff;font-weight:800;pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;font-size:calc(var(--u)*14px);line-height:1.2}
+#tc.on{display:block}
+#tc button{font:inherit;color:inherit;border:0;margin:0;-webkit-appearance:none;appearance:none;touch-action:manipulation;cursor:pointer;pointer-events:auto;outline:none}
+#tc .tb,#tc .bb,#tc .cc,#tc .br,#tc .sr{pointer-events:none}
+#tc .tb{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:calc(var(--u)*8px);padding:calc(var(--u)*10px) calc(var(--u)*14px) calc(var(--u)*28px);background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,0))}
+#tc .tt{flex:1;min-width:0;font-size:calc(var(--u)*15px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:start;unicode-bidi:plaintext}
+#tc .bt{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:calc(var(--u)*6px);min-width:calc(var(--u)*44px);height:calc(var(--u)*44px);padding:0 calc(var(--u)*12px);border-radius:999px;background:rgba(28,28,34,.78);box-shadow:0 0 0 1px rgba(255,255,255,.16) inset}
+#tc .bt:active{background:#fff;color:#000}
+#tc .bt svg{width:calc(var(--u)*22px);height:calc(var(--u)*22px);flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#tc .bt svg.fl,#tc #tc-pp svg{fill:currentColor;stroke:none}
+#tc .bt span{font-size:calc(var(--u)*12px);white-space:nowrap;font-weight:800}
+#tc .bt i{font-style:normal;font-size:calc(var(--u)*11px)}
+#tc .cc{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;justify-content:center;align-items:center;gap:calc(var(--u)*20px)}
+#tc .cc .bt{width:calc(var(--u)*54px);height:calc(var(--u)*54px);padding:0;background:rgba(0,0,0,.6)}
+#tc .cc .bt.k10{flex-direction:column;gap:0}
+#tc .cc #tc-pp{width:calc(var(--u)*70px);height:calc(var(--u)*70px)}
+#tc .cc #tc-pp svg{width:calc(var(--u)*34px);height:calc(var(--u)*34px)}
+#tc .cc .bt.s{width:calc(var(--u)*44px);height:calc(var(--u)*44px)}
+#tc .cc .bt.h,#tc.live .cc .k10{display:none}
+#tc .bb{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:calc(var(--u)*2px);padding:calc(var(--u)*30px) calc(var(--u)*16px) calc(var(--u)*10px);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.85))}
+#tc .sr{display:flex;align-items:center;gap:calc(var(--u)*10px)}
+#tc .tm{flex:none;min-width:calc(var(--u)*48px);text-align:center;font-size:calc(var(--u)*13px);font-variant-numeric:tabular-nums}
+#tc .sk{position:relative;flex:1;height:calc(var(--u)*40px);touch-action:none;pointer-events:auto}
+#tc .sk::before{content:'';position:absolute;left:0;right:0;top:50%;height:calc(var(--u)*4px);margin-top:calc(var(--u)*-2px);border-radius:9px;background:rgba(255,255,255,.3)}
+#tc .sk i{position:absolute;left:0;top:50%;width:0;height:calc(var(--u)*4px);margin-top:calc(var(--u)*-2px);border-radius:9px;background:#fff}
+#tc .sk b{position:absolute;left:0;top:50%;width:calc(var(--u)*16px);height:calc(var(--u)*16px);margin:calc(var(--u)*-8px) 0 0 calc(var(--u)*-8px);border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.7);transition:transform .12s}
+#tc .sk.dr b{transform:scale(1.5)}
+#tc.nd .sk,#tc.live .sk{visibility:hidden;pointer-events:none}
+#tc.nd .tm.d,#tc.live .tm.d{min-width:calc(var(--u)*120px)}
+#tc .br{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*8px)}
+#tc .jp{position:absolute;left:50%;top:calc(50% + var(--u)*50px);transform:translateX(-50%);padding:calc(var(--u)*5px) calc(var(--u)*16px);border-radius:999px;background:#fff;color:#000;font-size:calc(var(--u)*14px);display:none}
+#tc .jp.on{display:block}
+html.tcon #fv,html.tcon #cc{display:none!important}
+html.tcon #osd{bottom:calc(var(--u)*135px)}
+html.tcon #subov{bottom:calc(var(--u)*115px)}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* ===== النصوص (عربي أردني عامي / English) — كل الكلام بمكان واحد وسهل تعدّله ===== */
 const T={ar:{
-app:'هلا TV',on:'مفعّل',off:'مطفي',s_disp:'العرض والجهاز',s_sec:'الأمان',s_app:'التطبيق',s_w:'الويدجتس: اختار اللي بدك تظهر بالرئيسية',s_sub:'سيرفر الترجمة (Cloudflare Worker)',ph_srv:'https://اسمك.workers.dev',s_loc:'موقعك (لأوقات الصلاة)',s_rad:'الراديو',s_cus:'ويدجت خاص فيك',kbm:'⌨ الكيبورد',kba:'تلقائي',kbp:'كيبورد التطبيق',kbs:'كيبورد الجهاز',upd:'⬆ تحديث التطبيق',upd_chk:'عم نفحص…',upd_ok:'✓ عندك آخر إصدار',upd_dl:'عم ننزّل التحديث…',upd_fail:'ما قدرنا نفحص التحديث',upd_none:'ما لقينا ملف تحديث',qrT:'امسح الكود من تليفونك وعبّي البيانات',prT:'عبّي بيانات هلا TV من التليفون',prgo:'ابعت للتلفزيون',prok:'تم الإرسال ✓ شوف التلفزيون',prfail:'ما انرسل، تأكد من النت',kbsp:'مسافة',kbclr:'مسح',w_prayer:'🕌 أوقات الصلاة',w_fx:'💱 أسعار العملات',w_radio:'🎵 راديو / موسيقى',w_custom:'📝 ويدجت خاص فيّ',adh:'🔔 تنبيه وقت الأذان',ph_city:'المدينة (مثلاً Amman)',ph_country:'الدولة (مثلاً Jordan)',rn:'اسم المحطة',ru:'رابط البث (stream URL)',ct:'عنوان الويدجت',cx:'النص',next:'الصلاة الجاية',adhm:n=>`🕌 حان الآن موعد أذان ${n}`,vm:'طريقة العرض',vml:'قائمة',vmg:'مربعات',vmm:'مودرن',dev:'نوع الجهاز',deva:'تلقائي',devt:'شاشة',devp:'تليفون',setT:'الإعدادات',setpw:'🔑 عيّن كلمة سر للأقسام',chpw:'🔑 غيّر كلمة السر',oldpw:'اكتب كلمة السر',newpw:'اكتب كلمة سر جديدة',badpw:'كلمة السر غلط',kid:'👶 قفل الأطفال',kidoff:'انفتح قفل الأطفال',okb:'تأكيد',cnl:'إلغاء',kidhint:'للفتح بالريموت: ↑ ↑ ↓ ↓',seasons:'الأجزاء',season:'الجزء',episode:'حلقة',episodes:'الحلقات',pickse:'اختار الجزء',lockmgr:'🔒 إدارة الأقسام',lockdone:'تمام ✓',lockon:'انقفل القسم وانخبّى',lockoff:'رجع القسم',lastw:'آخر مشاهدة',epfail:'ما قدرنا نجيب الحلقات',subemb:'ترجمة الفيديو نفسه',sbai:'ترجمة بالذكاء الاصطناعي',sbfile:'ملف من فلاشة/جهاز',sburl:'من رابط',subai:'عم نترجم بالذكاء الاصطناعي… ممكن ياخد دقيقة أو اثنتين',subnosrv:'حط رابط سيرفر الترجمة من الإعدادات',subbadurl:'حط رابط مزبوط',subpasteurl:'الصق رابط ملف الترجمة بالخانة وكبس «من رابط» مرة تانية',subauto:'أوتوماتيك من opensubtitles.org',subnoemb:'ما لقينا ترجمة ظاهرة للتطبيق (ممكن تكون مدمجة جوا الملف ومش مدعومة)، جرّب البحث التلقائي أو الذكاء الاصطناعي',pm_play:'تشغيل',pm_pause:'إيقاف مؤقت',pm_fav:'أضف للمفضلة ♥',pm_unfav:'شيل من المفضلة',pm_fit:'حجم الصورة',fit0:'مناسب',fit1:'ملء الشاشة',fit2:'تمديد',pm_q:'الوضوح',auto:'تلقائي',pm_back:'رجوع للقائمة',pm_next:'الحلقة القادمة ▶',pm_prev:'◀ الحلقة السابقة',srv:'دوّر بكل القنوات والأفلام والمسلسلات',p_s:'نتائج البحث',cast:'الممثلين',noinfo:'ما لقينا نبذة',accok:(d,n)=>`✓ اشتراكك فعّال${d?' لحد '+d:''}${n>0?' · باقي '+n+' يوم':''}`,expd:d=>`اشتراكك منتهي${d?' من '+d:''}، لازم تجدده عند مزوّد الخدمة`,banned:'الحساب موقوف أو محظور، كلّم مزوّد الخدمة',badlogin:'اليوزر أو الباسوورد غلط، أو الحساب مش موجود',srvdown:'السيرفر ما ردّ: يا الرابط غلط، يا السيرفر واقف، يا النت فيه مشكلة',http:c=>'السيرفر رد بخطأ '+c,allg:'الكل',subnokey:'الترجمة الأوتوماتيك مش شغالة: ناقص مفتاح بالبناء',lsub:'يا هلا فيك! اكتب اسمك وحط رابط قنواتك وخلّينا نبلّش',nmph:'شو اسمك؟',tabm3u:'رابط M3U',xsph:'السيرفر  http://host:port',xuph:'اسم المستخدم',xpph:'كلمة السر',
+app:'هلا TV',on:'مفعّل',off:'مطفي',s_disp:'العرض والجهاز',s_sec:'الأمان',s_app:'التطبيق',s_w:'الويدجتس: اختار اللي بدك تظهر بالرئيسية',s_sub:'سيرفر الترجمة (Cloudflare Worker)',ph_srv:'https://اسمك.workers.dev',s_loc:'موقعك (لأوقات الصلاة)',s_rad:'الراديو',s_cus:'ويدجت خاص فيك',kbm:'⌨ الكيبورد',kba:'تلقائي',kbp:'كيبورد التطبيق',kbs:'كيبورد الجهاز',upd:'⬆ تحديث التطبيق',upd_chk:'عم نفحص…',upd_ok:'✓ عندك آخر إصدار',upd_dl:'عم ننزّل التحديث…',upd_fail:'ما قدرنا نفحص التحديث',upd_none:'ما لقينا ملف تحديث',qrT:'امسح الكود من تليفونك وعبّي البيانات',prT:'عبّي بيانات هلا TV من التليفون',prgo:'ابعت للتلفزيون',prok:'تم الإرسال ✓ شوف التلفزيون',prfail:'ما انرسل، تأكد من النت',kbsp:'مسافة',kbclr:'مسح',w_prayer:'🕌 أوقات الصلاة',w_fx:'💱 أسعار العملات',w_radio:'🎵 راديو / موسيقى',w_custom:'📝 ويدجت خاص فيّ',adh:'🔔 تنبيه وقت الأذان',ph_city:'المدينة (مثلاً Amman)',ph_country:'الدولة (مثلاً Jordan)',rn:'اسم المحطة',ru:'رابط البث (stream URL)',ct:'عنوان الويدجت',cx:'النص',next:'الصلاة الجاية',adhm:n=>`🕌 حان الآن موعد أذان ${n}`,vm:'طريقة العرض',vml:'قائمة',vmg:'مربعات',vmm:'مودرن',dev:'نوع الجهاز',deva:'تلقائي',devt:'شاشة',devp:'تليفون',setT:'الإعدادات',setpw:'🔑 عيّن كلمة سر للأقسام',chpw:'🔑 غيّر كلمة السر',oldpw:'اكتب كلمة السر',newpw:'اكتب كلمة سر جديدة',badpw:'كلمة السر غلط',kid:'👶 قفل الأطفال',kidoff:'انفتح قفل الأطفال',okb:'تأكيد',cnl:'إلغاء',kidhint:'للفتح بالريموت: ↑ ↑ ↓ ↓',seasons:'الأجزاء',season:'الجزء',episode:'حلقة',episodes:'الحلقات',pickse:'اختار الجزء',lockmgr:'🔒 إدارة الأقسام',lockdone:'تمام ✓',lockon:'انقفل القسم وانخبّى',lockoff:'رجع القسم',lastw:'آخر مشاهدة',epfail:'ما قدرنا نجيب الحلقات',subemb:'ترجمة الفيديو نفسه',sbai:'ترجمة بالذكاء الاصطناعي',sbfile:'ملف من فلاشة/جهاز',sburl:'من رابط',subai:'عم نترجم بالذكاء الاصطناعي… ممكن ياخد دقيقة أو اثنتين',subnosrv:'حط رابط سيرفر الترجمة من الإعدادات',subbadurl:'حط رابط مزبوط',subpasteurl:'الصق رابط ملف الترجمة بالخانة وكبس «من رابط» مرة تانية',subauto:'أوتوماتيك من opensubtitles.org',subnoemb:'ما لقينا ترجمة ظاهرة للتطبيق (ممكن تكون مدمجة جوا الملف ومش مدعومة)، جرّب البحث التلقائي أو الذكاء الاصطناعي',pm_play:'تشغيل',pm_pause:'إيقاف مؤقت',pm_fav:'أضف للمفضلة ♥',pm_unfav:'شيل من المفضلة',pm_fit:'حجم الصورة',fit0:'الأصلي',fit1:'مناسب',fit2:'ملء الشاشة',fit3:'تكبير',fit4:'16:9',fit5:'4:3',pm_q:'الوضوح',auto:'تلقائي',pm_back:'رجوع للقائمة',pm_next:'الحلقة القادمة ▶',pm_prev:'◀ الحلقة السابقة',srv:'دوّر بكل القنوات والأفلام والمسلسلات',p_s:'نتائج البحث',cast:'الممثلين',noinfo:'ما لقينا نبذة',accok:(d,n)=>`✓ اشتراكك فعّال${d?' لحد '+d:''}${n>0?' · باقي '+n+' يوم':''}`,expd:d=>`اشتراكك منتهي${d?' من '+d:''}، لازم تجدده عند مزوّد الخدمة`,banned:'الحساب موقوف أو محظور، كلّم مزوّد الخدمة',badlogin:'اليوزر أو الباسوورد غلط، أو الحساب مش موجود',srvdown:'السيرفر ما ردّ: يا الرابط غلط، يا السيرفر واقف، يا النت فيه مشكلة',http:c=>'السيرفر رد بخطأ '+c,allg:'الكل',subnokey:'الترجمة الأوتوماتيك مش شغالة: ناقص مفتاح بالبناء',lsub:'يا هلا فيك! اكتب اسمك وحط رابط قنواتك وخلّينا نبلّش',nmph:'شو اسمك؟',tabm3u:'رابط M3U',xsph:'السيرفر  http://host:port',xuph:'اسم المستخدم',xpph:'كلمة السر',
 go:'يلا نبلّش',demo:'جرّب الشكل بدون نت',needname:'اكتب اسمك أول شي',loading:'ثواني ونجيبلك القنوات…',fail:'ما زبطت: ',
 netfail:'ما قدرنا نوصل للرابط. افتح الملف بمتصفح عادي (كروم أو سفاري) مش من معاينة التطبيق، وتأكد من النت',
 needurl:'اكتب الرابط',fill:'عبّي كل الخانات',deny:'السيرفر رفض الدخول',badacc:'الحساب مش مزبوط',nochan:'ما لقينا قنوات',savedfail:'الدخول المحفوظ ما زبط، اكتب بياناتك من جديد',err:'خطأ ',
 hi:n=>`يا هلا فيك يا ${n}`,g0:'لسا صاحي؟ يلا اختار شو بدك تشوف.',g1:'صباح الخير، شو بدك تشوف اليوم؟',g2:'شو الأخبار؟ شو بدك تتفرج عليه هسا؟',g3:'مسا الخير، شو بدك تشوف هسا؟',g4:'سهرة حلوة، اختار اللي بعجبك.',sugg:' جبتلك كم اقتراح.',
 sec_mv:'أفلام بتسوى',sec_sr:'مسلسلات للسهرة',sec_lv:'ع الهوا هسا',nomv:'ما لقينا أفلام بالقائمة',nosr:'ما لقينا مسلسلات بالقائمة',nolv:'ما في قنوات',
-all:'كل القنوات',newsug:'غيّرلي الاقتراحات',subs:'الترجمة',subq:'اسم الفيلم أو المسلسل',subgo:'دوّر',subsearching:'عم ندوّر…',subnone:'ما لقينا ترجمة، جرّب اسم تاني',subbadfmt:'ما قدرنا نقرا الملف كترجمة (المدعوم: SRT / VTT / ASS، مش صور)',subnopick:'جهازك ما فيه تطبيق لاختيار الملفات. استخدم زر الرابط بدل الملف',subdl:'عم ننزّل الترجمة…',subok:'تم تحميل الترجمة ✓',subfail:'ما زبط: ',suboff:'بدون ترجمة',subsync:'تزبيط التوقيت',subkey:'API Key',subusr:'اليوزر',subpw:'كلمة السر',subsave:'احفظ',subneed:'سجّل بموقع opensubtitles.com (مجاني) وحط المفتاح واليوزر وكلمة السر هون مرة وحدة',subnet:'ما قدرنا نوصل لـ OpenSubtitles',sublimit:'خلص حد التنزيل اليومي',subbad:'المفتاح أو اليوزر أو الباسوورد مش مزبوط',subsrv:'ترجمة السيرفر',subosa:'OpenSubtitles عربي',subnotr:'ما لقينا ترجمة حقيقية، لا بالمشغّل ولا من السيرفر',subunsup:n=>`${n} ترجمة بصيغة غير مدعومة (صورية مثل PGS/VobSub)`,subwebmkv:'المشغّل العادي ما بيقرا الترجمة اللي جوا ملف MKV، فعّل ExoPlayer',subblk:'موقع OpenSubtitles حاجب الوصول التلقائي. حط مفتاح API بالبناء (OS_KEY) أو جرّب لاحقاً',subshown:'الترجمة ظاهرة ع الفيديو ✓',subsel:'اخترنا الترجمة، ناطرين المشغّل يعرضها…',subloaded:'تحمّلت الترجمة، ناطرين أول سطر يظهر…',subnoshow:'الترجمة مختارة بس ما ظهر منها نص ع الفيديو',subrefused:'المشغّل ما قبل هالترجمة',subcur:'الترجمة: ',subnodelay:'تأخير التوقيت مش متاح للترجمة المدمجة بـ ExoPlayer',subcache:'من الكاش',subhint:'↓ ترجمة   ↑ ♥',sug:'اقتراحات إلك',lab_mv:'فيلم إلك',lab_sr:'مسلسل إلك',lab_lv:'ع الهوا هسا',play:'▶ شغّل',p_fav:'المفضلة',favadd:'انضاف للمفضلة ♥',favdel:'انشال من المفضلة',nofav:'ما في إشي بالمفضلة لسا. وانت عم تتفرج دوس ♥ أو الزر الأصفر بالريموت',out:'خروج',lang:'English',
+all:'كل القنوات',newsug:'غيّرلي الاقتراحات',subs:'الترجمة',subq:'اسم الفيلم أو المسلسل',subgo:'دوّر',subsearching:'عم ندوّر…',subnone:'ما لقينا ترجمة، جرّب اسم تاني',subtimeout:'انتهى وقت البحث (45 ثانية) بدون نتيجة. جرّب اسم تاني أو ارجع حاول لاحقاً',subbadfmt:'ما قدرنا نقرا الملف كترجمة (المدعوم: SRT / VTT / ASS، مش صور)',subnopick:'جهازك ما فيه تطبيق لاختيار الملفات. استخدم زر الرابط بدل الملف',subdl:'عم ننزّل الترجمة…',subok:'تم تحميل الترجمة ✓',subfail:'ما زبط: ',suboff:'بدون ترجمة',subsync:'تزبيط التوقيت',subkey:'API Key',subusr:'اليوزر',subpw:'كلمة السر',subsave:'احفظ',subneed:'سجّل بموقع opensubtitles.com (مجاني) وحط المفتاح واليوزر وكلمة السر هون مرة وحدة',subnet:'ما قدرنا نوصل لـ OpenSubtitles',sublimit:'خلص حد التنزيل اليومي',subbad:'المفتاح أو اليوزر أو الباسوورد مش مزبوط',subsrv:'ترجمة السيرفر',subosa:'OpenSubtitles عربي',subnotr:'ما لقينا ترجمة حقيقية، لا بالمشغّل ولا من السيرفر',subunsup:n=>`${n} ترجمة بصيغة غير مدعومة (صورية مثل PGS/VobSub)`,subwebmkv:'المشغّل العادي ما بيقرا الترجمة اللي جوا ملف MKV، فعّل ExoPlayer',subblk:'موقع OpenSubtitles حاجب الوصول التلقائي. حط مفتاح API بالبناء (OS_KEY) أو جرّب لاحقاً',subshown:'الترجمة ظاهرة ع الفيديو ✓',subsel:'اخترنا الترجمة، ناطرين المشغّل يعرضها…',subloaded:'تحمّلت الترجمة، ناطرين أول سطر يظهر…',subnoshow:'الترجمة مختارة بس ما ظهر منها نص ع الفيديو',subrefused:'المشغّل ما قبل هالترجمة',subcur:'الترجمة: ',subnodelay:'تأخير التوقيت مش متاح للترجمة المدمجة بـ ExoPlayer',subcache:'من الكاش',subhint:'↓ ترجمة   ↑ ♥',sug:'اقتراحات إلك',lab_mv:'فيلم إلك',lab_sr:'مسلسل إلك',lab_lv:'ع الهوا هسا',play:'▶ شغّل',p_fav:'المفضلة',favadd:'انضاف للمفضلة ♥',favdel:'انشال من المفضلة',nofav:'ما في إشي بالمفضلة لسا. وانت عم تتفرج دوس ♥ أو الزر الأصفر بالريموت',out:'خروج',lang:'English',
 p_mv:'أفلام',p_sr:'مسلسلات',p_sp:'رياضة',p_nw:'أخبار',p_ch:'قنوات',back:'رجوع',search:'دوّر هون',cont:'كمّل من وين وقفت',more:'كمان',empty:'ما في إشي هون',
 city:'عمّان',w:['صحو','شوية غيم','غيم','ضباب','عم تشتي','تلج','زخّات مطر','رعد وبرق'],c:['الدنيا برد كتير، دفّي حالك','الجو بارد شوي','الجو تحفة','الدنيا حامية شوي','الدنيا نار، شغّل المكيّف'],
 wfail:'ما قدرنا نجيب الجو هسا',meas:'عم نقيس النت…',netna:'ما قدرنا نقيس النت',wait:'ثواني…',serfail:'ما قدرنا نفتح المسلسل هسا',sfail:'ما اشتغل البث',ch:'قناة',ungr:'غير مصنّف',am:'ص',pm:'م',
 gl:{mv:'أفلام',sr:'مسلسلات',sp:'رياضة',nw:'أخبار',ge:'عام'},
 dn:{mv:['وادي رم','البتراء','نشامى','عمّان ليل'],sr:['ليالي عمّان','بيت الشعر','درب الحجاز','حارة الدار'],sp:['الكرة مباشر','كأس الأردن','دوري المحترفين'],nw:['نشرة الأخبار','رؤيا','المملكة'],ge:['التلفزيون الأردني','قناة المنوّعات']}},
 en:{
-app:'Hala TV',on:'On',off:'Off',s_disp:'Display & device',s_sec:'Security',s_app:'App',s_w:'Widgets: choose what shows on Home',s_sub:'Subtitle server (Cloudflare Worker)',ph_srv:'https://yourname.workers.dev',s_loc:'Your location (prayer times)',s_rad:'Radio',s_cus:'Your own widget',kbm:'⌨ Keyboard',kba:'Auto',kbp:'App keyboard',kbs:'Device keyboard',upd:'⬆ Update app',upd_chk:'Checking…',upd_ok:'✓ You have the latest version',upd_dl:'Downloading update…',upd_fail:'Couldn\u2019t check for updates',upd_none:'No update file found',qrT:'Scan with your phone to fill in the details',prT:'Fill in Hala TV details from your phone',prgo:'Send to TV',prok:'Sent ✓ check your TV',prfail:'Couldn\u2019t send, check your connection',kbsp:'space',kbclr:'Clear',w_prayer:'🕌 Prayer times',w_fx:'💱 Exchange rates',w_radio:'🎵 Radio / music',w_custom:'📝 My own widget',adh:'🔔 Adhan alert',ph_city:'City (e.g. Amman)',ph_country:'Country (e.g. Jordan)',rn:'Station name',ru:'Stream URL',ct:'Widget title',cx:'Text',next:'Next prayer',adhm:n=>`🕌 It is time for ${n} adhan`,vm:'View',vml:'List',vmg:'Tiles',vmm:'Modern',dev:'Device',deva:'Auto',devt:'TV / Screen',devp:'Phone',setT:'Settings',setpw:'🔑 Set categories password',chpw:'🔑 Change password',oldpw:'Enter password',newpw:'Enter a new password',badpw:'Wrong password',kid:'👶 Child lock',kidoff:'Child lock off',okb:'OK',cnl:'Cancel',kidhint:'Remote unlock: ↑ ↑ ↓ ↓',seasons:'Seasons',season:'Season',episode:'Episode',episodes:'Episodes',pickse:'Pick a season',lockmgr:'🔒 Manage categories',lockdone:'Done ✓',lockon:'Category locked and hidden',lockoff:'Category restored',lastw:'Last watched',epfail:'Couldn\u2019t load episodes',subemb:'Subtitles from the video',sbai:'AI translation',sbfile:'File from USB/device',sburl:'From link',subai:'Translating with AI… may take a minute or two',subnosrv:'Set the subtitle server URL in Settings',subbadurl:'Enter a valid link',subpasteurl:'Paste the subtitle link in the box, then press From link again',subauto:'Automatic from opensubtitles.org',subnoemb:'No readable subtitles found (they may be inside the file and unsupported). Try auto search or AI translation',pm_play:'Play',pm_pause:'Pause',pm_fav:'Add to favorites ♥',pm_unfav:'Remove from favorites',pm_fit:'Picture size',fit0:'Fit',fit1:'Fill',fit2:'Stretch',pm_q:'Quality',auto:'Auto',pm_back:'Back to list',pm_next:'Next episode ▶',pm_prev:'◀ Previous episode',srv:'Search all channels, movies and series',p_s:'Search results',cast:'Cast',noinfo:'No synopsis found',accok:(d,n)=>`✓ Subscription active${d?' until '+d:''}${n>0?' · '+n+' days left':''}`,expd:d=>`Subscription expired${d?' on '+d:''}, renew it with your provider`,banned:'Account is banned or disabled, contact your provider',badlogin:'Wrong username or password, or account not found',srvdown:'Server did not respond: wrong link, server down, or no internet',http:c=>'Server error '+c,allg:'All',subnokey:'Auto subtitles off: missing key in build',lsub:'Welcome! Enter your name and your playlist, and let\u2019s go',nmph:'Your name',tabm3u:'M3U link',xsph:'Server  http://host:port',xuph:'Username',xpph:'Password',
+app:'Hala TV',on:'On',off:'Off',s_disp:'Display & device',s_sec:'Security',s_app:'App',s_w:'Widgets: choose what shows on Home',s_sub:'Subtitle server (Cloudflare Worker)',ph_srv:'https://yourname.workers.dev',s_loc:'Your location (prayer times)',s_rad:'Radio',s_cus:'Your own widget',kbm:'⌨ Keyboard',kba:'Auto',kbp:'App keyboard',kbs:'Device keyboard',upd:'⬆ Update app',upd_chk:'Checking…',upd_ok:'✓ You have the latest version',upd_dl:'Downloading update…',upd_fail:'Couldn\u2019t check for updates',upd_none:'No update file found',qrT:'Scan with your phone to fill in the details',prT:'Fill in Hala TV details from your phone',prgo:'Send to TV',prok:'Sent ✓ check your TV',prfail:'Couldn\u2019t send, check your connection',kbsp:'space',kbclr:'Clear',w_prayer:'🕌 Prayer times',w_fx:'💱 Exchange rates',w_radio:'🎵 Radio / music',w_custom:'📝 My own widget',adh:'🔔 Adhan alert',ph_city:'City (e.g. Amman)',ph_country:'Country (e.g. Jordan)',rn:'Station name',ru:'Stream URL',ct:'Widget title',cx:'Text',next:'Next prayer',adhm:n=>`🕌 It is time for ${n} adhan`,vm:'View',vml:'List',vmg:'Tiles',vmm:'Modern',dev:'Device',deva:'Auto',devt:'TV / Screen',devp:'Phone',setT:'Settings',setpw:'🔑 Set categories password',chpw:'🔑 Change password',oldpw:'Enter password',newpw:'Enter a new password',badpw:'Wrong password',kid:'👶 Child lock',kidoff:'Child lock off',okb:'OK',cnl:'Cancel',kidhint:'Remote unlock: ↑ ↑ ↓ ↓',seasons:'Seasons',season:'Season',episode:'Episode',episodes:'Episodes',pickse:'Pick a season',lockmgr:'🔒 Manage categories',lockdone:'Done ✓',lockon:'Category locked and hidden',lockoff:'Category restored',lastw:'Last watched',epfail:'Couldn\u2019t load episodes',subemb:'Subtitles from the video',sbai:'AI translation',sbfile:'File from USB/device',sburl:'From link',subai:'Translating with AI… may take a minute or two',subnosrv:'Set the subtitle server URL in Settings',subbadurl:'Enter a valid link',subpasteurl:'Paste the subtitle link in the box, then press From link again',subauto:'Automatic from opensubtitles.org',subnoemb:'No readable subtitles found (they may be inside the file and unsupported). Try auto search or AI translation',pm_play:'Play',pm_pause:'Pause',pm_fav:'Add to favorites ♥',pm_unfav:'Remove from favorites',pm_fit:'Picture size',fit0:'Original',fit1:'Fit',fit2:'Fill',fit3:'Zoom',fit4:'16:9',fit5:'4:3',pm_q:'Quality',auto:'Auto',pm_back:'Back to list',pm_next:'Next episode ▶',pm_prev:'◀ Previous episode',srv:'Search all channels, movies and series',p_s:'Search results',cast:'Cast',noinfo:'No synopsis found',accok:(d,n)=>`✓ Subscription active${d?' until '+d:''}${n>0?' · '+n+' days left':''}`,expd:d=>`Subscription expired${d?' on '+d:''}, renew it with your provider`,banned:'Account is banned or disabled, contact your provider',badlogin:'Wrong username or password, or account not found',srvdown:'Server did not respond: wrong link, server down, or no internet',http:c=>'Server error '+c,allg:'All',subnokey:'Auto subtitles off: missing key in build',lsub:'Welcome! Enter your name and your playlist, and let\u2019s go',nmph:'Your name',tabm3u:'M3U link',xsph:'Server  http://host:port',xuph:'Username',xpph:'Password',
 go:'Let\u2019s go',demo:'Preview without internet',needname:'Please enter your name first',loading:'Loading your channels…',fail:'Failed: ',
 netfail:'Couldn\u2019t reach the link. Open the file in a normal browser (Chrome or Safari), not an in-app preview, and check your connection',
 needurl:'Enter the link',fill:'Fill in all fields',deny:'The server rejected the login',badacc:'Invalid account',nochan:'No channels found',savedfail:'Saved login failed, please enter your details again',err:'Error ',
 hi:n=>`Welcome, ${n}`,g0:'Still up? Pick something to watch.',g1:'Good morning, what are you watching today?',g2:'Good afternoon, what are you in the mood for?',g3:'Good evening, what will it be tonight?',g4:'Enjoy your night, pick what you like.',sugg:' Here are a few picks.',
 sec_mv:'Movies for you',sec_sr:'Series for tonight',sec_lv:'Live now',nomv:'No movies found in this list',nosr:'No series found in this list',nolv:'No channels',
-all:'All channels',newsug:'Shuffle picks',subs:'Subtitles',subq:'Movie or series title',subgo:'Search',subsearching:'Searching…',subnone:'No subtitles found, try another name',subbadfmt:'Could not read this file as a subtitle (supported: SRT / VTT / ASS, not image subtitles)',subnopick:'This device has no file-picker app. Use the Link option instead',subdl:'Downloading subtitle…',subok:'Subtitle loaded ✓',subfail:'Failed: ',suboff:'Subtitles off',subsync:'Sync',subkey:'API Key',subusr:'Username',subpw:'Password',subsave:'Save',subneed:'Sign up at opensubtitles.com (free) and enter your API key, username and password once',subnet:'Couldn\u2019t reach OpenSubtitles',sublimit:'Daily download limit reached',subbad:'API key, username or password is invalid',subsrv:'Server Subtitles',subosa:'OpenSubtitles Arabic',subnotr:'No real subtitle tracks found in the player or from the server',subunsup:n=>`${n} track(s) in an unsupported format (image-based such as PGS/VobSub)`,subwebmkv:'The Web Player cannot read tracks inside MKV files. Enable ExoPlayer',subblk:'OpenSubtitles is blocking automated page access. Add an API key at build (OS_KEY) or try later',subshown:'Subtitles showing on video ✓',subsel:'Track selected, waiting for the player to render it…',subloaded:'Subtitle loaded, waiting for the first line…',subnoshow:'Subtitle is selected but no text has appeared on the video',subrefused:'The player did not accept this track',subcur:'Subtitle: ',subnodelay:'Timing offset is not available for ExoPlayer embedded tracks',subcache:'cached',subhint:'↓ Subtitles   ↑ ♥',sug:'Picks for you',lab_mv:'A movie for you',lab_sr:'A series for you',lab_lv:'Live now',play:'▶ Play',p_fav:'Favorites',favadd:'Added to favorites ♥',favdel:'Removed from favorites',nofav:'No favorites yet. While watching, tap ♥ or press the yellow remote button',out:'Sign out',lang:'\u0639\u0631\u0628\u064a',
+all:'All channels',newsug:'Shuffle picks',subs:'Subtitles',subq:'Movie or series title',subgo:'Search',subsearching:'Searching…',subnone:'No subtitles found, try another name',subtimeout:'Search timed out after 45 s with no result. Try another name or retry later',subbadfmt:'Could not read this file as a subtitle (supported: SRT / VTT / ASS, not image subtitles)',subnopick:'This device has no file-picker app. Use the Link option instead',subdl:'Downloading subtitle…',subok:'Subtitle loaded ✓',subfail:'Failed: ',suboff:'Subtitles off',subsync:'Sync',subkey:'API Key',subusr:'Username',subpw:'Password',subsave:'Save',subneed:'Sign up at opensubtitles.com (free) and enter your API key, username and password once',subnet:'Couldn\u2019t reach OpenSubtitles',sublimit:'Daily download limit reached',subbad:'API key, username or password is invalid',subsrv:'Server Subtitles',subosa:'OpenSubtitles Arabic',subnotr:'No real subtitle tracks found in the player or from the server',subunsup:n=>`${n} track(s) in an unsupported format (image-based such as PGS/VobSub)`,subwebmkv:'The Web Player cannot read tracks inside MKV files. Enable ExoPlayer',subblk:'OpenSubtitles is blocking automated page access. Add an API key at build (OS_KEY) or try later',subshown:'Subtitles showing on video ✓',subsel:'Track selected, waiting for the player to render it…',subloaded:'Subtitle loaded, waiting for the first line…',subnoshow:'Subtitle is selected but no text has appeared on the video',subrefused:'The player did not accept this track',subcur:'Subtitle: ',subnodelay:'Timing offset is not available for ExoPlayer embedded tracks',subcache:'cached',subhint:'↓ Subtitles   ↑ ♥',sug:'Picks for you',lab_mv:'A movie for you',lab_sr:'A series for you',lab_lv:'Live now',play:'▶ Play',p_fav:'Favorites',favadd:'Added to favorites ♥',favdel:'Removed from favorites',nofav:'No favorites yet. While watching, tap ♥ or press the yellow remote button',out:'Sign out',lang:'\u0639\u0631\u0628\u064a',
 p_mv:'Movies',p_sr:'Series',p_sp:'Sports',p_nw:'News',p_ch:'Channels',back:'Back',search:'Search here',cont:'Continue watching',more:'More',empty:'Nothing here',
 city:'Amman',w:['Clear','Partly cloudy','Cloudy','Fog','Rain','Snow','Showers','Thunderstorm'],c:['Freezing, bundle up','A bit chilly','Lovely weather','Getting warm','Scorching, turn on the AC'],
 wfail:'Couldn\u2019t get the weather',meas:'Measuring internet…',netna:'Couldn\u2019t measure internet',wait:'One moment…',serfail:'Couldn\u2019t open the series',sfail:'Stream unavailable',ch:'Channel',ungr:'Other',am:'AM',pm:'PM',
@@ -878,10 +917,15 @@ function renderSug(){
 $('#b-fav').onclick=()=>showPage('__fav');
 $('#b-new').onclick=renderSug;
 $('#b-out').onclick=()=>{store.del('conf');location.reload()};
-function tick(){const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0');
- $('#clk').innerHTML=`${h%12||12}:${m}<small>${h<12?t('am'):t('pm')}</small>`;
- $('#dt').textContent=d.toLocaleDateString(S.lang=='ar'?'ar-JO-u-nu-latn':'en-GB',{weekday:'long',day:'numeric',month:'long'})}
-setInterval(()=>{if(V()=='home')tick()},15000);
+const CK={a:null,b:null,hm:'',ap:'',day:-1,lg:''};
+function tick(){const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0'),hm=(h%12||12)+':'+m,ap=h<12?t('am'):t('pm');
+ if(!CK.a||!CK.a.isConnected){const c=$('#clk');c.textContent='';CK.a=document.createTextNode('');CK.b=document.createElement('small');c.append(CK.a,CK.b);CK.hm=CK.ap=''}
+ if(hm!==CK.hm){CK.a.nodeValue=hm;CK.hm=hm}if(ap!==CK.ap){CK.b.textContent=ap;CK.ap=ap}
+ if(d.getDate()!==CK.day||S.lang!==CK.lg){CK.day=d.getDate();CK.lg=S.lang;$('#dt').textContent=d.toLocaleDateString(S.lang=='ar'?'ar-JO-u-nu-latn':'en-GB',{weekday:'long',day:'numeric',month:'long'})}}
+/* one minute-aligned timer: clock + theme; no polling while the screen is not Home */
+function minuteTick(){try{if(V()=='home')tick();applyTheme()}catch(e){}CK.t=setTimeout(minuteTick,60000-(Date.now()%60000)+30)}
+CK.t=setTimeout(minuteTick,60000-(Date.now()%60000)+30);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&V()=='home')tick()});
 const WX=c=>c==0?['☀️',0]:c<=2?['⛅',1]:c==3?['☁️',2]:c<=48?['🌫️',3]:c<=67?['🌧️',4]:c<=77?['❄️',5]:c<=82?['🌦️',6]:['⛈️',7];
 async function weather(){
  const c=store.get('pc')||{city:'Amman',country:'Jordan'},key=(c.city||'Amman')+'|'+S.lang;
@@ -975,7 +1019,7 @@ function start(c){
  if(!EXO.run){try{v.pause();v.removeAttribute('src');v.load()}catch(e){}}
  const pr=S.track&&getProg()[S.track.id];
  if(pr&&pr.url==c.url&&pr.t>5)v.addEventListener('loadedmetadata',()=>{v.currentTime=pr.t},{once:true});
- v.controls=S.vod;
+ v.controls=S.vod&&!tchOn();
  if(!EXO.use(c.url)&&/\.m3u8(\?|$)/i.test(c.url)&&window.Hls&&Hls.isSupported()){
   hls=new Hls({maxBufferLength:20});hls.on(Hls.Events.MANIFEST_PARSED,()=>{if(hls&&hls.levels.length>1){let b=0;hls.levels.forEach((l,i)=>{const o=hls.levels[b];if((l.height||0)>(o.height||0)||((l.height||0)==(o.height||0)&&(l.bitrate||0)>(o.bitrate||0)))b=i});hqi=b;hls.currentLevel=b}});hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED,()=>window.spRefresh&&spRefresh());hls.loadSource(c.url);hls.attachMedia(v);
   hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){elog('HLS '+d.type+' '+d.details);hls.destroy();hls=null;v.src=c.url;v.play().catch(()=>{})}});
@@ -1081,10 +1125,10 @@ function saveProg(){
  if(v.currentTime/v.duration>.95)delete pr[x.id];else pr[x.id]={id:x.id,name:x.name,logo:x.logo,url:x.url,kind:x.kind,se:x.se,ep:x.ep,label:x.label,sid:x.sid,t:v.currentTime,d:v.duration,ts:Date.now()};
  hset('prog',pr);
 }
-$('#v').ontimeupdate=()=>{if(Date.now()-lastSave>5000){lastSave=Date.now();saveProg()}};
+$('#v').ontimeupdate=()=>{if(Date.now()-lastSave>10000){lastSave=Date.now();saveProg()}};
 $('#v').onended=()=>{markSeen(S.track);const q=S.epq;if(!S.vod||!S.track||!q||q.i+1>=q.list.length||!S.track.url||S.track.url.indexOf('/'+q.list[q.i].id+'.')<0)return;playEp(q.it,q.s,q.list,q.i+1)};
 $('#v').onerror=()=>showMsg(t('sfail'));$('#v').onplaying=()=>showMsg('');
-function exitPlayer(){ldHide(1);window.skReset&&skReset();SUB.sess++;clearTimeout(SUB.at);clearTimeout(SUB.pt);clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#pm').classList.remove('on');saveProg();const v=$('#v');v.pause();window.exoStop&&exoStop();if(hls){hls.destroy();hls=null}try{v.removeAttribute('src');v.load()}catch(e){}clearSub();S.track=null;if(S.epBack&&S.det&&S.det.it&&S.det.it.sid){S.epBack=false;showDet(S.det.it,S.det.fk);return}S.from=='page'?showPage(S.page,true):showHome()}
+function exitPlayer(){tcReset();ldHide(1);window.skReset&&skReset();SUB.sess++;SUB.sq++;clearTimeout(SUB.at);clearTimeout(SUB.pt);clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#pm').classList.remove('on');saveProg();const v=$('#v');v.pause();window.exoStop&&exoStop();if(hls){hls.destroy();hls=null}try{v.removeAttribute('src');v.load()}catch(e){}clearSub();S.track=null;if(S.epBack&&S.det&&S.det.it&&S.det.it.sid){S.epBack=false;showDet(S.det.it,S.det.fk);return}S.from=='page'?showPage(S.page,true):showHome()}
 function showMsg(x){const m=$('#msg');m.textContent=x;m.style.display=x?'flex':'none'}
 function osd(x){const o=$('#osd'),f=$('#fv');o.textContent=x;o.style.display='block';if(V()=='app'&&S.now){f.classList.toggle('on',isFav(S.now.it.id));if(S.vod)$('#cc').style.display='flex';f.style.display='flex'}clearTimeout(osdT);osdT=setTimeout(()=>{o.style.display='none';f.style.display='none';$('#cc').style.display='none'},2500)}
 function step(d){if(S.vod||!S.view.length||S.cur<0)return;S.cur=(S.cur+d+S.view.length)%S.view.length;direct(S.view[S.cur],null)}
@@ -1200,17 +1244,19 @@ function extractSub(b){
 const dec=u=>{let x;
  if(u[0]==0xFF&&u[1]==0xFE)x=new TextDecoder('utf-16le').decode(u.subarray(2));
  else if(u[0]==0xFE&&u[1]==0xFF)x=new TextDecoder('utf-16be').decode(u.subarray(2));
+ else if(u.length>8&&(()=>{let z=0,n=Math.min(u.length,400);for(let i=1;i<n;i+=2)if(u[i]===0)z++;return z>n/2*.6})())x=new TextDecoder('utf-16le').decode(u);
  else try{x=new TextDecoder('utf-8',{fatal:true}).decode(u)}catch(e){
   const l=new TextDecoder('utf-8').decode(u),bad=(l.match(/\uFFFD/g)||[]).length;
   if(bad<=Math.max(3,l.length*.002))x=l;else{
   const a=new TextDecoder('windows-1256').decode(u),ar=(a.match(/[\u0600-\u06FF]/g)||[]).length;
-  x=ar>a.length*.1||OS.lang=='ar'&&ar>20?a:new TextDecoder('windows-1252').decode(u)}}
+  let b6='';try{b6=new TextDecoder('iso-8859-6').decode(u)}catch(e){}const a6=(b6.match(/[\u0600-\u06FF]/g)||[]).length,al=(a.match(/\u0627\u0644/g)||[]).length,bl=(b6.match(/\u0627\u0644/g)||[]).length;
+  if(a6>20&&bl>al*1.5+1)x=b6;else x=ar>a.length*.1||OS.lang=='ar'&&ar>20?a:new TextDecoder('windows-1252').decode(u)}}
  return x.replace(/^\uFEFF/,'')};
 
 /* ---------- parsing SRT / VTT / ASS into cues ---------- */
 const AR_RE=/[\u0590-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
 function cueText(x){
- x=x.replace(/\{[^}]*\}/g,'').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/\\N/g,'\n').replace(/\\h/g,' ');
+ x=x.replace(/\{[^}]*\}/g,'').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'\"').replace(/&#(\d+);/g,(m,d)=>String.fromCharCode(+d)).replace(/&amp;/g,'&').replace(/\\N/g,'\n').replace(/\\h/g,' ');
  return x.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>AR_RE.test(l)&&l[0]!='\u200F'?'\u200F'+l:l).join('\n');
 }
 function parseSub(raw){
@@ -1225,29 +1271,30 @@ function parseSub(raw){
   });
  }else{
   const TR=/(?:(\d+):)?(\d+):(\d+)[,.](\d{1,3})\s*-->\s*(?:(\d+):)?(\d+):(\d+)[,.](\d{1,3})/;
-  x.split(/\n{2,}/).forEach(b=>{
-   const L=b.split('\n');let i=0;while(i<L.length&&!TR.test(L[i]))i++;if(i>=L.length)return;
-   const m=L[i].match(TR),f=(h,mi,s,ms)=>(+h||0)*3600+ +mi*60+ +s+ +ms.padEnd(3,'0')/1000,t=cueText(L.slice(i+1).join('\n'));
-   if(t)cues.push({s:f(m[1],m[2],m[3],m[4]),e:f(m[5],m[6],m[7],m[8]),t});
-  });
+  const f=(h,mi,s,ms)=>(+h||0)*3600+ +mi*60+ +s+ +ms.padEnd(3,'0')/1000,L=x.split('\n');let i=0;
+  /* line-based: a cue starts at a timing line and ends at a blank line, the next timing line, or the next "N + timing" pair, so a missing/odd blank line cannot swallow cues */
+  while(i<L.length){const m=L[i].match(TR);if(!m){i++;continue}
+   const tl=[];i++;
+   while(i<L.length){const ln=L[i];if(!ln.trim()||TR.test(ln))break;if(/^\s*\d+\s*$/.test(ln)&&i+1<L.length&&TR.test(L[i+1]))break;tl.push(ln);i++}
+   const t=cueText(tl.join('\n'));if(t)cues.push({s:f(m[1],m[2],m[3],m[4]),e:f(m[5],m[6],m[7],m[8]),t})}
  }
  cues.sort((a,b)=>a.s-b.s);return cues;
 }
 function cuesAt(cues,tm){
  let lo=0,hi=cues.length-1,k=-1;while(lo<=hi){const m=(lo+hi)>>1;if(cues[m].s<=tm){k=m;lo=m+1}else hi=m-1}
- const o=[];for(let i=k;i>=0&&i>k-6;i--)if(cues[i].e>tm)o.unshift(cues[i].t);return o.join('\n');
+ const o=[];for(let i=k;i>=0&&i>k-24;i--)if(cues[i].e>tm)o.unshift(cues[i].t);return o.join('\n');
 }
 
 /* ---------- local cache (localStorage, small LRU) ---------- */
 const SC={ix:()=>store.get('subc_ix')||[],
- get(k){const e=store.get('subc:'+k);if(!e||!e.x)return null;const ix=SC.ix().filter(a=>a!=k);ix.push(k);store.set('subc_ix',ix);return e},
+ get(k){const e=store.get('subc:'+k);if(!e||!e.x)return null;const ix0=SC.ix();if(ix0[ix0.length-1]!==k){const ix=ix0.filter(a=>a!=k);ix.push(k);store.set('subc_ix',ix)}return e},
  put(k,x,name){if(!x||x.length>400000)return;let ix=SC.ix().filter(a=>a!=k);ix.push(k);
   while(ix.length>12){store.del('subc:'+ix.shift())}
   store.set('subc:'+k,{x,name:name||'',ts:Date.now()});store.set('subc_ix',ix);
   if(!store.get('subc:'+k)){ix=ix.slice(-4);const keep=ix.slice();SC.ix().forEach(a=>{if(!keep.includes(a))store.del('subc:'+a)});store.set('subc_ix',keep);store.set('subc:'+k,{x,name:name||'',ts:Date.now()})}}};
 
 /* ---------- active subtitle state + on-video renderer ---------- */
-const SUB={mode:'',ext:null,extFor:null,tm:0,txt:null,sess:0,gs:0,pend:null,pt:0,at:0,dt:0,log:[],err:'',st:'none',apiMsg:''};
+const SUB={sq:0,mode:'',ext:null,extFor:null,tm:0,txt:null,sess:0,gs:0,pend:null,pt:0,at:0,dt:0,log:[],err:'',st:'none',apiMsg:''};
 const subNow=()=>(window.exoNow&&window.EXO&&EXO.run)?exoNow():($('#v').currentTime||0);
 function subStart(){clearInterval(SUB.tm);SUB.tm=setInterval(subTick,120);subTick()}
 function subTick(){
@@ -1293,7 +1340,7 @@ function openSubs(){
  $('#sp-q').value=S.spq||trackInfo().title;focusEl($('#sp-e'));
  if(SUB.mode=='srv')srvSubs();
 }
-function closeSubs(){clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#v').controls=S.vod}
+function closeSubs(){SUB.sq++;clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#v').controls=S.vod&&!tchOn()}
 window.spRefresh=()=>{if(spOpen()&&SUB.mode=='srv')srvSubs(true)};
 const curMark=d=>{$$('#sp-list .ri').forEach(x=>x.classList.toggle('cur',x===d))};
 function listRow(name,small,fn,cur){
@@ -1423,17 +1470,17 @@ function scoreRes(x,se,ep,raw){
 }
 async function webFind(q,se,ep,raw){
  if(Date.now()-WEBBLK<6e5)return{blocked:1,items:[]};
- const mid=se&&ep?`/season-${se}/episode-${ep}`:'',path=`/en/search/sublanguageid-ara${mid}/moviename-${enc(q)}`;
+ let neterr=0,err=0;const mid=se&&ep?`/season-${se}/episode-${ep}`:'',path=`/en/search/sublanguageid-ara${mid}/moviename-${enc(q)}`;
  for(const host of [DLB,WB]){
   const r=await xhttp('GET',host+path,UA);
-  if(r.status==0)continue;
+  if(r.status==0){neterr=1;continue}
   if(blockedRes(r)){WEBBLK=Date.now();return{blocked:1,items:[]}}
-  if(r.status!=200)continue;
+  if(r.status!=200){err=r.status;continue}
   let items=parseResults(r.body);
   if(!items.length){const mv=parseMovieLinks(r.body)[0];if(mv){const r2=await xhttp('GET',host+`/en/search/sublanguageid-ara${mid}/idmovie-${mv.id}`,UA);if(blockedRes(r2)){WEBBLK=Date.now();return{blocked:1,items:[]}}if(r2.status==200)items=parseResults(r2.body)}}
   if(items.length){items.sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw));return{items:items.slice(0,10).map(x=>({name:x.name,n:x.n,get:()=>webGet(x)}))}}
  }
- return{items:[]};
+ return{items:[],err,neterr};
 }
 async function webGet(x){
  spSt(t('subdl'));
@@ -1475,29 +1522,34 @@ async function srvGet(id,name){
  if(r.status!=200||!r.body){spSt(t('subfail')+r.status);return false}
  return finishGet(r.body,name);
 }
-async function subFind(title,se,ep,raw){
- let blocked=0,net=0,apiDead=0;SUB.apiMsg='';
- for(const q of queryLadder(title)){
-  if(!$('#sp').classList.contains('on'))return[];
-  spSt(t('subsearching')+' '+q);
-  if(srvOK())try{const a=await srvFind(q,se,ep);if(a.length)return a}catch(e){}
-  if(osOK()&&!apiDead){const b=await osFind(q,se,ep,raw);if(b&&b.length)return b;if(b===null)apiDead=1}
-  try{const w=await webFind(q,se,ep,raw);if(w.items.length)return w.items;if(w.blocked)blocked=1}catch(e){net=1}
+const subLive=tok=>tok===SUB.sq&&$('#sp').classList.contains('on');
+async function subFind(title,se,ep,raw,tok){
+ let blocked=0,net=0,apiDead=0,timeout=0,lastHttp=0;SUB.apiMsg='';const t0=Date.now(),DL=45000,L=queryLadder(title);
+ for(let i=0;i<L.length;i++){
+  const q=L[i];
+  if(!subLive(tok))return null;
+  if(Date.now()-t0>DL){timeout=1;break}
+  spSt(t('subsearching')+' '+q+(L.length>1?' ('+(i+1)+'/'+L.length+')':''));
+  if(srvOK())try{const a=await srvFind(q,se,ep);if(!subLive(tok))return null;if(a.length)return a}catch(e){}
+  if(osOK()&&!apiDead){const b=await osFind(q,se,ep,raw);if(!subLive(tok))return null;if(b&&b.length)return b;if(b===null)apiDead=1}
+  try{const w=await webFind(q,se,ep,raw);if(!subLive(tok))return null;if(w.items.length)return w.items;if(w.blocked)blocked=1;if(w.err)lastHttp=w.err;if(w.neterr)net=1}catch(e){net=1}
  }
- spSt(apiDead&&SUB.apiMsg?SUB.apiMsg:blocked&&!osOK()?t('subblk'):net?t('subnet'):t('subnone'));return[];
+ if(!subLive(tok))return null;
+ spSt(apiDead&&SUB.apiMsg?SUB.apiMsg:timeout?t('subtimeout'):blocked&&!osOK()?t('subblk'):net?t('subnet')+(lastHttp?' (HTTP '+lastHttp+')':''):lastHttp?t('subfail')+'HTTP '+lastHttp:t('subnone'));return[];
 }
 async function osSearch(auto){
- SUB.mode='os';SUB.gs=SUB.sess;$('#sp-sr').style.display='';const ti=trackInfo(),inp=$('#sp-q').value.trim()||ti.title;if(!inp)return;S.spq=inp;
+ const tok=++SUB.sq;SUB.mode='os';SUB.gs=SUB.sess;$('#sp-sr').style.display='';const ti=trackInfo(),inp=$('#sp-q').value.trim()||ti.title;if(!inp)return;S.spq=inp;
  const q=qParse(inp),manual=inp!==ti.title,se=manual?q.se:(ti.se||q.se),ep=manual?q.ep:(ti.ep||q.ep),title=q.title;
  $('#sp-list').innerHTML='';
  const k=ckey(title,se,ep),ca=SC.get(k);
  if(ca&&auto){setSub(ca.x,'ar',{name:ca.name,key:k,cached:1,rel:relKey(ca.name)})}
- const a=await subFind(title,se,ep,ti.raw);
+ const a=await subFind(title,se,ep,ti.raw,tok);
+ if(a===null||tok!==SUB.sq)return;
  if(!a.length){focusEl($('#sp-q'));return}
  spSt(ca&&auto&&S.sub?t('subok')+' \u00B7 '+S.sub.cues.length+' \u00B7 '+t('subcache'):'');
  a.forEach(x=>listRow(x.name,x.n?'\u2B07 '+x.n:'',()=>x.get()));
  focusEl($('#sp-list .ri'));
- if(auto&&!ca&&a[0]){$('#sp-list .ri').classList.add('cur');await a[0].get()}
+ if(auto&&!ca&&a[0]){$('#sp-list .ri').classList.add('cur');const ok=await a[0].get();if(tok===SUB.sq&&ok===false&&!S.sub&&spOpen()&&a.length>1)spSt(t('subfail')+(S.lang=='ar'?'اختار ملف تاني من القائمة':'pick another file from the list'))}
 }
 function subAuto(){
  if(!S.vod||!S.track)return;const ti=trackInfo(),k=ckey(ti.title,ti.se,ti.ep);
@@ -1549,7 +1601,7 @@ function skUpd(){const b=$('#xb');if(!b.classList.contains('on'))return;const i=
  $('#xb-t').textContent=fmtT(i.t);b.classList.toggle('nd',!i.ok);
  $('#xb-d').textContent=i.ok?fmtT(i.d):(S.vod?t('sk_nodur'):t('sk_live'));
  $('#xb-f').style.width=p+'%';$('#xb-k').style.left=p+'%'}
-function skShow(){if(V()!='app')return;const b=$('#xb');b.classList.add('on');xbCls(1);skUpd();window.engBadge&&engBadge();clearTimeout(SK.ht);SK.ht=setTimeout(skHideTry,4000)}
+function skShow(){if(V()!='app'||tcOn())return;const b=$('#xb');b.classList.add('on');xbCls(1);skUpd();window.engBadge&&engBadge();clearTimeout(SK.ht);SK.ht=setTimeout(skHideTry,4000)}
 function skHideTry(){const v=$('#v');if(SK.tgt!=null||(S.vod&&v.paused)){SK.ht=setTimeout(skHideTry,1500);return}$('#xb').classList.remove('on');xbCls(0)}
 function skReset(){clearTimeout(SK.rt);clearTimeout(SK.ht);clearTimeout(SK.jt);SK.tgt=null;SK.jump=0;SK.dir=0;const j=$('#xb-j');j.classList.remove('on');$('#xb').classList.remove('on');xbCls(0)}
 function skBadge(){const j=$('#xb-j'),n=Math.abs(SK.jump);j.textContent='\u202A'+(SK.jump>0?'+':'−')+n+' '+t('sk_s')+'  •  '+fmtT(SK.tgt!=null?SK.tgt:$('#v').currentTime)+'\u202C';j.classList.add('on')}
@@ -1793,7 +1845,15 @@ function renderSeasons(j,it){
   d.onclick=()=>playEp(it,sel,eps[sel],i);g.append(d)});
 }
 function detBack(){S.dFrom=='home'?showHome():showPage(S.page,true)}
-const FIT=['contain','cover','fill'];var fitI=0,hqi=-1;
+const NFIT=6;var fitI=1,hqi=-1;/* 0 Original,1 Fit,2 Fill(stretch),3 Zoom(crop),4 16:9,5 4:3 */
+function fitWeb(){const v=document.getElementById('v');if(!v)return;const m=fitI,W=v.clientWidth,H=v.clientHeight;let tr='',of=m==2?'fill':m==3?'cover':'contain';
+ if((m==0||m>3)&&W>0&&H>0){let tw=0,th=0;
+  if(m==0){const d=window.devicePixelRatio||1;if(v.videoWidth>0&&v.videoHeight>0){tw=v.videoWidth/d;th=v.videoHeight/d}}
+  else{const r=m==4?16/9:4/3;if(W/H>r){th=H;tw=H*r}else{tw=W;th=W/r}}
+  if(tw>0&&th>0){tr='scale('+(tw/W).toFixed(5)+','+(th/H).toFixed(5)+')';of='fill'}}
+ v.style.objectFit=of;v.style.transform=tr;v.style.transformOrigin='50% 50%'}
+function fitSet(i){fitI=((i%NFIT)+NFIT)%NFIT;fitWeb();try{window.exoFit&&exoFit(fitI)}catch(e){}}
+(function(){const v=document.getElementById('v');if(!v)return;['loadedmetadata','resize','playing'].forEach(e=>v.addEventListener(e,fitWeb));window.addEventListener('resize',fitWeb);window.addEventListener('orientationchange',()=>setTimeout(fitWeb,300))})();
 const pmOpen=()=>$('#pm').classList.contains('on'),pmHide=()=>$('#pm').classList.remove('on');
 const epOK=()=>{const q=S.epq;return !!(S.vod&&q&&q.list&&q.list[q.i]&&S.track&&S.track.url&&S.track.url.indexOf('/'+q.list[q.i].id+'.')>=0)};
 function pmShow(){
@@ -1802,7 +1862,7 @@ function pmShow(){
  if(epOK()){const q=S.epq;if(q.i+1<q.list.length)it.push([t('pm_next'),()=>{pmHide();playEp(q.it,q.s,q.list,q.i+1)}]);if(q.i>0)it.push([t('pm_prev'),()=>{pmHide();playEp(q.it,q.s,q.list,q.i-1)}])}
  it.push([t(v.paused?'pm_play':'pm_pause'),()=>{v.paused?v.play():v.pause()}]);
  if(S.vod)it.push([t('subs'),()=>{pmHide();openSubs()}]);
- it.push([t(isFav(S.now.it.id)?'pm_unfav':'pm_fav'),favNow],[t('pm_fit')+': '+t('fit'+fitI),()=>{fitI=(fitI+1)%3;v.style.objectFit=FIT[fitI];window.exoFit&&exoFit(fitI)}]);
+ it.push([t(isFav(S.now.it.id)?'pm_unfav':'pm_fav'),favNow],[t('pm_fit')+': '+t('fit'+fitI),()=>{fitSet(fitI+1)}]);
  window.exoMenu&&exoMenu(it);if(lv)it.push([t('pm_q')+': '+(hqi<0?t('auto')+(v.videoHeight?' ('+v.videoHeight+'p)':''):hls.levels[hqi].height+'p'),()=>{hqi=hqi+1>=hls.levels.length?-1:hqi+1;hls.currentLevel=hqi}]);
  it.push([t('pm_back'),()=>{pmHide();exitPlayer()}]);
  m.innerHTML='';it.forEach(([n,f])=>{const d=document.createElement('div');d.className='ri sx';d.tabIndex=0;d.textContent=n;d.onclick=()=>{f();if(pmOpen())pmShow()};m.append(d)});
@@ -1834,9 +1894,9 @@ function qtier(name,q){if(name.toLowerCase().includes(q))return 1;if(!qvoice(q))
  if(S.qalt.k.length){const k=cget(SKC2,name,n=>skel(anorm(n)));for(const x of S.qalt.k)if(k.includes(x))return 3}return 0}
 function voiceAlts(list){const a=[],k=[];list.forEach(h=>{const b=anorm(h),p=anorm(phon(h));[b,p].forEach(x=>{if(x.length>=2&&!a.includes(x))a.push(x)});
   if(/[\u0621-\u064A]/.test(p)){const z=skel(p);if(z.length>=4&&!k.includes(z))k.push(z)}});return {a,k}}
-const vTxt=k=>{const ar=S.lang=='ar';return({listen:ar?'عم بسمعك… احكي':'Listening… speak now',none:ar?'ما سمعت شي، جرّب كمان مرة':'Didn\u2019t catch that, try again',nosup:ar?'البحث الصوتي مش مدعوم على هالجهاز':'Voice search isn\u2019t supported on this device',denied:ar?'لازم تسمح للتطبيق باستخدام المايك: إعدادات الجهاز ← التطبيقات ← Hala TV ← الأذونات':'Allow the microphone for this app in device settings',net:ar?'البحث الصوتي بدو إنترنت':'Voice search needs internet',stt:ar?'خدمة الترجمة الصوتية رفضت المفتاح أو الطلب، شوف التفاصيل تحت':'Speech service rejected the key or request, see details below',hang:ar?'المايك علّق ولا إشي رجع. جرّب كمان مرة':'Microphone stalled with no result. Try again',silent:ar?'المايك ما التقط أي صوت. غالباً الجهاز ما بوصّل مايك الريموت للتطبيقات (مايك الريموت بيشتغل مع جوجل أسيستنت بس). وصّل مايك USB أو بلوتوث':'The microphone captured no sound. This device probably does not expose the remote\u2019s mic to apps. Connect a USB or Bluetooth mic',unclear:ar?'سمعت صوت بس ما قدرت أفهمه، قرّب من المايك واحكي أوضح':'I heard sound but could not understand it, speak closer and clearer',proc:ar?'عم بحلّل الصوت…':'Analysing your voice…',heard:ar?'سمعتك':'Heard',fb:ar?'عم بجرّب طريقة ثانية، احكي هسا…':'Trying another method, speak now…',audio:ar?'المايك مشغول أو مش شغال':'Microphone is busy or unavailable',retryEn:ar?'ما فهمت، جرّب احكي بالإنجليزي هسا…':'Trying English, speak again…',retryAr:ar?'ما فهمت، جرّب احكي بالعربي هسا…':'Trying Arabic, speak again…'})[k]};
+const vTxt=k=>{const ar=S.lang=='ar';return({listen:ar?'عم بسمعك… احكي':'Listening… speak now',none:ar?'ما سمعت شي، جرّب كمان مرة':'Didn\u2019t catch that, try again',nosup:ar?'البحث الصوتي مش مدعوم على هالجهاز':'Voice search isn\u2019t supported on this device',denied:ar?'لازم تسمح للتطبيق باستخدام المايك: إعدادات الجهاز ← التطبيقات ← Hala TV ← الأذونات':'Allow the microphone for this app in device settings',net:ar?'البحث الصوتي بدو إنترنت':'Voice search needs internet',stt:ar?'خدمة الترجمة الصوتية رفضت المفتاح أو الطلب، شوف التفاصيل تحت':'Speech service rejected the key or request, see details below',hang:ar?'المايك علّق ولا إشي رجع. جرّب كمان مرة':'Microphone stalled with no result. Try again',silent:ar?'المايك ما التقط أي صوت. غالباً الجهاز ما بوصّل مايك الريموت للتطبيقات (مايك الريموت بيشتغل مع جوجل أسيستنت بس). وصّل مايك USB أو بلوتوث':'The microphone captured no sound. This device probably does not expose the remote\u2019s mic to apps. Connect a USB or Bluetooth mic',langunsup:ar?'اللغة اللي اخترتها مش مدعومة بخدمة التعرّف ع الصوت بهالجهاز. نزّل لغتها من إعدادات الجهاز ← اللغة ← الإدخال الصوتي':'The selected speech language is not supported by this device\u2019s recognizer. Install it in device settings, Language, Voice input',unclear:ar?'سمعت صوت بس ما قدرت أفهمه، قرّب من المايك واحكي أوضح':'I heard sound but could not understand it, speak closer and clearer',proc:ar?'عم بحلّل الصوت…':'Analysing your voice…',heard:ar?'سمعتك':'Heard',fb:ar?'عم بجرّب طريقة ثانية، احكي هسا…':'Trying another method, speak now…',audio:ar?'المايك مشغول أو مش شغال':'Microphone is busy or unavailable',retryEn:ar?'ما فهمت، جرّب احكي بالإنجليزي هسا…':'Trying English, speak again…',retryAr:ar?'ما فهمت، جرّب احكي بالعربي هسا…':'Trying Arabic, speak again…'})[k]};
 function micBusy(on){VQ.on=on;clearTimeout(VQ.t);if(on){VQ.t=setTimeout(()=>{micBusy(0);VB.show(vTxt('hang'),'');VB.hideIn(6000)},40000);VB.show(vTxt('listen'),'')}$$('.mic').forEach(b=>b.classList.toggle('rec',!!on))}
-function voiceDone(list){micBusy(0);list=(list||[]).map(x=>String(x||'').trim()).filter(Boolean);{const ia=x=>/[\u0600-\u06FF]/.test(x),pf=VQ.lg?VQ.lg=='ar':S.lang=='ar';list=[...list.filter(x=>ia(x)===pf),...list.filter(x=>ia(x)!==pf)]}if(!list.length){VB.show(vTxt('none'),'');VB.hideIn(3500);return}
+function voiceDone(list){micBusy(0);list=(list||[]).map(x=>String(x||'').trim()).filter(Boolean);{const ia=x=>/[\u0600-\u06FF]/.test(x),pf=VQ.lg?VQ.lg=='ar':S.lang=='ar',same=list.filter(x=>ia(x)===pf);list=pf?[...same,...list.filter(x=>ia(x)!==pf)]:same}if(!list.length){VB.show(vTxt('none'),'');VB.hideIn(3500);return}
  const q=list[0];VB.show('« '+q+' »',vTxt('heard'));VB.hideIn(2200);S.vq=q;S.qalt=voiceAlts(list);const v=V();
  if(v=='page'){$('#p-q').value=q;S.grp='';S.let='';S.limit=72;renderPage();focusEl($('#page .li')||$('#p-q'))}
  else if(v=='home'){$('#hq').value=q;$('#hq').onkeydown({keyCode:13,preventDefault(){},stopPropagation(){}})}}
@@ -1856,7 +1916,7 @@ function voiceRun(lg){VQ.lg=lg;try{store.set('vlg',lg)}catch(e){}
   micBusy(1);osd(vTxt('listen'));r.start()}catch(e){micBusy(0);osd(vTxt('nosup'))}}
 window.__voice=j=>{let a=[];try{a=JSON.parse(j)}catch(e){}if(a===null){micBusy(0);osd(vTxt('nosup'));return}voiceDone(a)};
 window.__voiceErr=(c,d)=>{micBusy(0);if(c=='cancel'){VB.hide();return}try{elog('voice '+c+' '+(d||''))}catch(e){}
- const k={denied:'denied',network:'net',audio:'audio',unavailable:'nosup',silent:'silent',unclear:'unclear',stt:'stt'}[c]||'none';
+ const k={denied:'denied',network:'net',audio:'audio',unavailable:'nosup',silent:'silent',unclear:'unclear',stt:'stt',lang:'langunsup'}[c]||'none';
  VB.show(vTxt(k),d?String(d).split(';').slice(0,2).join('  '):'');VB.hideIn(12000)};
 window.__voiceLvl=n=>VB.lvl(n);
 window.__voiceState=s=>{if(s=='listening')VB.show(vTxt('listen'),'');else if(s=='processing')VB.show(vTxt('proc'),'',1);else if(s=='fallback')VB.show(vTxt('fb'),'');else if(s=='retry-en')VB.show(vTxt('retryEn'),'');else if(s=='retry-ar')VB.show(vTxt('retryAr'),'')};
@@ -1870,7 +1930,6 @@ function chime(){try{const C=new (window.AudioContext||window.webkitAudioContext
 chime();$('#fx').addEventListener('animationend',e=>{if(e.target.id=='fx')e.target.remove()});
 const thAuto=()=>store.get('thauto')!==0,autoTh=()=>{const h=new Date().getHours();return(h>=6&&h<18)?'light':'dark'};
 function applyTheme(){if(thAuto()){const a=autoTh();if(store.get('thlast')!==a){store.set('thlast',a);store.set('th',a)}}document.documentElement.dataset.th=store.get('th')||'dark'}
-setInterval(()=>{try{applyTheme()}catch(e){}},60000);
 function adlTxt(){const b=$('#st-adl');if(b)b.textContent=(S.lang=='ar'?'🔞 قفل محتوى الكبار تلقائياً: ':'🔞 Auto-lock adult content: ')+(adOn()?(S.lang=='ar'?'شغّال':'On'):(S.lang=='ar'?'متوقف':'Off'))}
 function thaTxt(){const b=$('#st-tha');if(b)b.textContent=(S.lang=='ar'?'🌗 الوضع التلقائي (نهاري/ليلي حسب الوقت): ':'🌗 Auto day/night theme: ')+(thAuto()?(S.lang=='ar'?'شغّال':'On'):(S.lang=='ar'?'متوقف':'Off'))}
 function toggleTheme(){store.set('th',(store.get('th')||'dark')=='dark'?'light':'dark');applyTheme()}
@@ -1930,8 +1989,10 @@ function renderWidgets(){
  if(w.custom){const c=store.get('cus')||{};b.append(wcard(c.t||t('w_custom'),c.x?[c.x]:[]))}
 }
 function adhBanner(x){const e=$('#adh');e.textContent=x;e.style.display='block';chime();clearTimeout(S.adT);S.adT=setTimeout(()=>e.style.display='none',20000)}
-setInterval(()=>{loadPrayer();if(!store.get('adh')||!S.pt)return;const n=new Date(),now=n.getHours()*60+n.getMinutes(),ar=S.lang=='ar'?0:1;
- Object.keys(PN).forEach(p=>{if(mn(S.pt.t[p])==now){const k=n.toDateString()+p;if(S.al==k)return;S.al=k;adhBanner(t('adhm',PN[p][ar]))}})},15000);
+function adhLoop(){if(store.get('adh')){loadPrayer();if(S.pt){const n=new Date(),now=n.getHours()*60+n.getMinutes(),ar=S.lang=='ar'?0:1;
+ Object.keys(PN).forEach(p=>{if(mn(S.pt.t[p])==now){const k=n.toDateString()+p;if(S.al==k)return;S.al=k;adhBanner(t('adhm',PN[p][ar]))}})}}
+ setTimeout(adhLoop,60000-(Date.now()%60000)+100)}
+setTimeout(adhLoop,60000-(Date.now()%60000)+100);
 function buildSetW(){
  const w=$('#st-w');w.innerHTML='';const hh=k=>{const h=document.createElement('h3');h.className='sh3';h.textContent=t(k);w.append(h)};hh('s_w');
  const tg=(l,get,set)=>{const e=document.createElement('button');e.className='btn';e.tabIndex=0;const u=()=>e.textContent=l+': '+t(get()?'on':'off');u();e.onclick=()=>{set(!get());u()};w.append(e)};
@@ -2107,7 +2168,7 @@ function engFail(why){const u=EXO.u,e=EXO.eng,k=u+'|'+e;elog(e+' '+why);EXO.er[k
    EXO.eng=en;EXO.info={};try{HN.engine&&HN.engine(en)}catch(e){}EXO.run=true;EXO.u=u;EXO.t=0;EXO.d=NaN;EXO.p=false;EXO.h=0;EXO.ready=false;EXO.aud=[];EXO.txt=[];EXO.sub=false;EXO.fr=0;EXO.sid=(EXO.sid||0)+1;EXO.tall=[];EXO.cn=0;EXO.cl=0;EXO.nu=0;EXO.td=0;
    dco.set.call(v,false);document.documentElement.classList.add('exo-on');
    const pr=S.vod&&S.track&&getProg()[S.track.id];
-   HN.exoPlay(u,pr&&pr.url==u&&pr.t>5?Math.round(pr.t*1000):0,EXO.sid);
+   HN.exoPlay(u,pr&&pr.url==u&&pr.t>5?Math.round(pr.t*1000):0,EXO.sid);try{HN.exoFit(fitI)}catch(e){}
    EXO.ft=-1;EXO.fw=performance.now();EXO.fz=0;EXO.bu=false;clearTimeout(EXO.wd);EXO.wd=setTimeout(()=>{if(EXO.run&&!EXO.ready&&EXO.u===u)engFail('startup timeout')},12000);
   }else{stopNative();dsrc.set.call(v,u)}}});
  Object.defineProperty(v,'currentTime',{configurable:true,get(){return EXO.run?EXO.t:dct.get.call(v)},set(x){
@@ -2151,6 +2212,113 @@ function engFail(why){const u=EXO.u,e=EXO.eng,k=u+'|'+e;elog(e+' '+why);EXO.er[k
   if(EXO.aud.length>1){const c=Math.max(0,EXO.aud.findIndex(x=>x.s)),n=(c+1)%EXO.aud.length;
    it.push([(ar?'الصوت: ':'Audio: ')+EXO.aud[c].l,()=>{HN.exoTrack(0,n);EXO.aud.forEach((x,i)=>x.s=i==n)}])}};
 })();
+
+
+/* ===== Touch player controls (phones/tablets): one tap on the video shows them. TV remote path is untouched. ===== */
+var tcT=0,tcDrag=false,tcF=0,tcJ=0,tcJT=0,tcEl=null;
+function tchOn(){return document.documentElement.classList.contains('tch')}
+function tcOn(){return !!(tcEl&&tcEl.classList.contains('on'))}
+function tcU(){let u=1;try{const sw=screen.width||0;u=sw>0?window.innerWidth/sw:1}catch(e){}if(!(u>=1))u=1;document.documentElement.style.setProperty('--u',Math.min(8,u).toFixed(3))}
+function tcLang(a,e){return S.lang=='ar'?a:e}
+function tcArm(){clearTimeout(tcT);tcT=setTimeout(()=>{if(tcDrag||$('#v').paused){tcArm();return}tcHide()},4200)}
+function tcHide(){clearTimeout(tcT);tcDrag=false;if(tcEl)tcEl.classList.remove('on');document.documentElement.classList.remove('tcon')}
+function tcReset(){tcHide();try{window.HalaNative&&HalaNative.fsReset&&HalaNative.fsReset()}catch(e){}}
+function tcShow(){
+ if(V()!='app'||!S.now||!tcEl)return;
+ try{$('#v').controls=false}catch(e){}
+ window.skHide&&skHide();tcU();tcLabels();tcEl.classList.add('on');document.documentElement.classList.add('tcon');tcUpd();tcArm()}
+function tcLabels(){
+ if(!tcEl)return;const q=s=>tcEl.querySelector(s),it=S.now&&S.now.it||{};
+ const ti=String(it.label||it.name||'');if(q('#tc-t').textContent!==ti)q('#tc-t').textContent=ti;
+ q('#tc-cc').style.display=S.vod?'':'none';
+ const eg=EXO.run?(EXO.eng=='vlc'?'VLC':'ExoPlayer'):'Web';q('#tc-pl span').textContent=eg;
+ q('#tc-as span').textContent=t('fit'+fitI);
+ q('#tc-cc span').textContent=tcLang('ترجمة','Subtitles');q('#tc-au span').textContent=tcLang('صوت','Audio');q('#tc-fs span').textContent=tcLang('ملء الشاشة','Fullscreen');
+ q('#tc-fv').classList.toggle('on',!!(S.now&&isFav(it.id)));
+ q('#tc-fv svg').style.fill=S.now&&isFav(it.id)?'#fff':'none'}
+function tcUpd(){
+ if(!tcOn())return;const v=$('#v'),q=s=>tcEl.querySelector(s),d=v.duration,ok=!!S.vod&&isFinite(d)&&d>0,cur=tcDrag&&ok?tcF*d:(v.currentTime||0),p=ok?Math.min(100,Math.max(0,cur/d*100)):0;
+ tcEl.classList.toggle('live',!S.vod);tcEl.classList.toggle('nd',!ok);
+ q('#tc-c').textContent=fmtT(cur);q('#tc-d').textContent=ok?fmtT(d):(S.vod?t('sk_nodur'):t('sk_live'));
+ q('.sk i').style.width=p+'%';q('.sk b').style.left=p+'%';q('.sk').classList.toggle('dr',tcDrag);
+ const pp=q('#tc-pp'),k=v.paused?'pl':'ps';if(pp.dataset.k!=k){pp.dataset.k=k;pp.innerHTML=XI[k]}
+ let pv=false,nx=false;if(!S.vod){pv=nx=!!(S.view&&S.view.length>1)}else if(epOK()){const e=S.epq;pv=e.i>0;nx=e.i+1<e.list.length}
+ q('#tc-pv').classList.toggle('h',!pv);q('#tc-nx').classList.toggle('h',!nx);tcLabels()}
+function tcSeek(d){
+ const v=$('#v'),du=v.duration;if(!(S.vod&&isFinite(du)&&du>0)){osd(t('sk_nodur'));return}
+ v.currentTime=Math.min(Math.max(0,(v.currentTime||0)+d),Math.max(0,du-1));
+ tcJ+=d;const j=tcEl.querySelector('.jp');j.textContent=(tcJ>0?'+':'−')+Math.abs(tcJ)+' '+t('sk_s');j.classList.add('on');clearTimeout(tcJT);tcJT=setTimeout(()=>{j.classList.remove('on');tcJ=0},900);tcUpd()}
+function tcStep(d){
+ if(!S.vod){step(d);return}
+ if(epOK()){const q=S.epq,j=q.i+d;if(j>=0&&j<q.list.length){tcHide();playEp(q.it,q.s,q.list,j)}}}
+function fitNext(){fitSet(fitI+1);osd(t('pm_fit')+': '+t('fit'+fitI))}
+function audioPick(){
+ const rows=[];
+ if(window.EXO&&EXO.run&&EXO.aud&&EXO.aud.length){EXO.aud.forEach((x,i)=>rows.push({t:String(x.l||('#'+(i+1))),cur:!!x.s,fn:()=>{try{HalaNative.exoTrack(0,i)}catch(e){}EXO.aud.forEach((y,j)=>y.s=j==i)}}))}
+ else if(typeof hls!='undefined'&&hls&&hls.audioTracks&&hls.audioTracks.length>1){hls.audioTracks.forEach((x,i)=>rows.push({t:String(x.name||x.lang||('#'+(i+1))),cur:hls.audioTrack==i,fn:()=>{hls.audioTrack=i}}))}
+ if(!rows.length){osd(tcLang('ما في مسارات صوت ثانية','No other audio tracks'));return}
+ dlgOpen(tcLang('الصوت','Audio'),'',rows)}
+function tcFs(){
+ try{const HN=window.HalaNative;if(HN&&HN.rotate){const l=HN.rotate();osd(l?tcLang('ملء الشاشة (أفقي)','Fullscreen (landscape)'):tcLang('وضع عمودي','Portrait'));return}}catch(e){}
+ try{const d=document,el=d.documentElement;if(d.fullscreenElement||d.webkitFullscreenElement)(d.exitFullscreen||d.webkitExitFullscreen).call(d);else(el.requestFullscreen||el.webkitRequestFullscreen).call(el)}catch(e){}}
+function tcAct(a){
+ const v=$('#v');
+ switch(a){
+  case'back':tcHide();exitPlayer();return;
+  case'pp':v.paused?v.play():v.pause();setTimeout(tcUpd,60);break;
+  case'rw':tcSeek(-10);break;case'ff':tcSeek(10);break;
+  case'pv':tcStep(-1);break;case'nx':tcStep(1);break;
+  case'cc':if(S.vod){tcHide();openSubs()}return;
+  case'au':tcHide();audioPick();return;
+  case'pl':tcHide();engPick();return;
+  case'as':fitNext();tcLabels();break;
+  case'fs':tcFs();break;
+  case'fv':favNow();break}
+ tcArm();tcUpd()}
+(function(){try{
+ const h=document.documentElement,A=$('#app'),dv=DV();
+ if(dv!='tv'){if(dv=='phone'||navigator.maxTouchPoints>0)h.classList.add('tch');document.addEventListener('touchstart',()=>h.classList.add('tch'),{capture:true,passive:true})}
+ const ic={
+  back:'<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+  fv:'<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>',
+  rw:'<svg class="fl" viewBox="0 0 24 24"><path d="M11 6v12l-8.5-6zM21 6v12l-8.5-6z"/></svg><i>10</i>',
+  ff:'<svg class="fl" viewBox="0 0 24 24"><path d="M3 6v12l8.5-6zM13 6v12l8.5-6z"/></svg><i>10</i>',
+  pv:'<svg class="fl" viewBox="0 0 24 24"><path d="M6 5h2.5v14H6zM20 5v14L10 12z"/></svg>',
+  nx:'<svg class="fl" viewBox="0 0 24 24"><path d="M15.5 5H18v14h-2.5zM4 5v14l10-7z"/></svg>',
+  cc:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 11h4M13 11h4M7 15h6"/></svg>',
+  au:'<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>',
+  pl:'<svg viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>',
+  as:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10l-2 2 2 2M16 10l2 2-2 2"/></svg>',
+  fs:'<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'};
+ const bt=(a,id,lab,cls)=>'<button class="bt'+(cls?' '+cls:'')+'" data-a="'+a+'" id="'+id+'" type="button">'+ic[a]+(lab?'<span>'+lab+'</span>':'')+'</button>';
+ const tc=document.createElement('div');tc.id='tc';tcEl=tc;
+ tc.innerHTML='<div class="tb">'+bt('back','tc-b','')+'<div class="tt" id="tc-t"></div>'+bt('fv','tc-fv','')+'</div>'+
+  '<div class="cc">'+bt('pv','tc-pv','','s h')+bt('rw','tc-rw','','k10')+'<button class="bt" data-a="pp" id="tc-pp" type="button"></button>'+bt('ff','tc-ff','','k10')+bt('nx','tc-nx','','s h')+'</div>'+
+  '<div class="jp"></div>'+
+  '<div class="bb"><div class="sr"><span class="tm" id="tc-c">0:00</span><div class="sk" id="tc-s"><i></i><b></b></div><span class="tm d" id="tc-d">0:00</span></div><div class="br">'+
+  bt('cc','tc-cc',' ')+bt('au','tc-au',' ')+bt('pl','tc-pl',' ')+bt('as','tc-as',' ')+bt('fs','tc-fs',' ')+'</div></div>';
+ A.appendChild(tc);
+ tc.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-a]');if(!b)return;e.stopPropagation();tcAct(b.dataset.a)});
+ tc.addEventListener('pointerdown',()=>{if(tcOn())tcArm()},true);
+ /* seek bar: drag or tap, commit on release */
+ const sk=tc.querySelector('.sk'),fr=e=>{const r=sk.getBoundingClientRect();return Math.min(1,Math.max(0,(e.clientX-r.left)/Math.max(1,r.width)))};
+ sk.addEventListener('pointerdown',e=>{const v=$('#v'),d=v.duration;if(!(S.vod&&isFinite(d)&&d>0))return;tcDrag=true;tcF=fr(e);try{sk.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault();e.stopPropagation();tcArm();tcUpd()});
+ sk.addEventListener('pointermove',e=>{if(!tcDrag)return;tcF=fr(e);e.preventDefault();tcUpd()});
+ const end=e=>{if(!tcDrag)return;tcDrag=false;if(e.type=='pointerup'){const v=$('#v'),d=v.duration;if(S.vod&&isFinite(d)&&d>0)v.currentTime=Math.min(tcF*d,Math.max(0,d-1))}tcArm();tcUpd()};
+ sk.addEventListener('pointerup',end);sk.addEventListener('pointercancel',end);
+ sk.addEventListener('contextmenu',e=>e.preventDefault());
+ /* single tap on the video toggles the controls (keyboard-synthesised clicks from a TV remote are ignored) */
+ A.addEventListener('click',e=>{
+  if(!(e.detail>0||e.pointerType))return;
+  if(V()!='app'||!S.now)return;
+  const g=e.target;if(g&&g.closest&&g.closest('#tc,#sp,#pm,#dlg,#fv,#cc,#xb-c'))return;
+  if(spOpen()||pmOpen()||$('#dlg').classList.contains('on'))return;
+  tcOn()?tcHide():tcShow()});
+ /* any remote/keyboard key hands control back to the TV bar */
+ document.addEventListener('keydown',()=>{if(tcOn())tcHide()},true);
+ setInterval(()=>{if(!tcOn())return;if(V()!='app'||!S.now){tcHide();return}tcUpd()},250);
+ window.addEventListener('resize',tcU);window.addEventListener('orientationchange',tcU);tcU();
+}catch(e){try{elog('tc init '+e)}catch(_){}}})();
 
 
 /*HS-START*/

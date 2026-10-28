@@ -187,6 +187,53 @@ public class MainActivity extends Activity {
   private LibVLC vlcLib;
   private MediaPlayer vlc;
   private MediaPlayer.ScaleType vlcScale = MediaPlayer.ScaleType.SURFACE_BEST_FIT;
+  // Aspect modes (same indexes as JS FIT): 0 Original, 1 Fit, 2 Fill(stretch), 3 Zoom(crop), 4 16:9, 5 4:3
+  private int fitMode = 1;
+  private int exoVw = 0, exoVh = 0;
+  private float exoPar = 1f;
+
+  private static MediaPlayer.ScaleType vlcScaleFor(int m) {
+    switch (m) {
+      case 0: return MediaPlayer.ScaleType.SURFACE_ORIGINAL;
+      case 2: return MediaPlayer.ScaleType.SURFACE_FILL;
+      case 3: return MediaPlayer.ScaleType.SURFACE_FIT_SCREEN;
+      case 4: return MediaPlayer.ScaleType.SURFACE_16_9;
+      case 5: return MediaPlayer.ScaleType.SURFACE_4_3;
+      default: return MediaPlayer.ScaleType.SURFACE_BEST_FIT;
+    }
+  }
+
+  private void exoApplyFit() {
+    try {
+      if (exoFrame == null) return;
+      int m = fitMode;
+      float vr = exoVh > 0 ? exoVw * exoPar / exoVh : 0f;
+      int resize = AspectRatioFrameLayout.RESIZE_MODE_FIT;
+      float ratio = vr;
+      FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER);
+      if (m == 0) {
+        if (exoVh > 0 && exoVw > 0) {
+          resize = AspectRatioFrameLayout.RESIZE_MODE_FILL;
+          lp = new FrameLayout.LayoutParams(Math.max(1, Math.round(exoVw * exoPar)), exoVh, Gravity.CENTER);
+        }
+      } else if (m == 2) resize = AspectRatioFrameLayout.RESIZE_MODE_FILL;
+      else if (m == 3) resize = AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
+      else if (m == 4) ratio = 16f / 9f;
+      else if (m == 5) ratio = 4f / 3f;
+      exoFrame.setResizeMode(resize);
+      if (ratio > 0f) exoFrame.setAspectRatio(ratio);
+      exoFrame.setLayoutParams(lp);
+      exoFrame.requestLayout();
+    } catch (Throwable e) {}
+  }
+
+  private void vlcApplyFit() {
+    try {
+      vlcScale = vlcScaleFor(fitMode);
+      if (vlc != null) vlc.setVideoScale(vlcScale);
+      if (vlcLayout != null) vlcLayout.requestLayout();
+    } catch (Throwable e) {}
+  }
   private String vlcUrl = "";
   private long vlcStartMs, vlcT0, vlcMoveAt, vlcLastT = -1, vlcPlayAt;
   private int vlcVout;
@@ -259,9 +306,9 @@ public class MainActivity extends Activity {
     @JavascriptInterface
     public void exoFit(final int m) {
       runOnUiThread(new Runnable() { public void run() {
-        vlcScale = m == 1 ? MediaPlayer.ScaleType.SURFACE_FIT_SCREEN : m == 2 ? MediaPlayer.ScaleType.SURFACE_FILL : MediaPlayer.ScaleType.SURFACE_BEST_FIT;
-        if (vlc != null) vlc.setVideoScale(vlcScale);
-        exoFrame.setResizeMode(m == 1 ? AspectRatioFrameLayout.RESIZE_MODE_ZOOM : m == 2 ? AspectRatioFrameLayout.RESIZE_MODE_FILL : AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        fitMode = (m < 0 || m > 5) ? 1 : m;
+        vlcApplyFit();
+        exoApplyFit();
       } });
     }
 
@@ -304,6 +351,26 @@ public class MainActivity extends Activity {
 
     @JavascriptInterface
     public void exitApp() { runOnUiThread(new Runnable() { public void run() { finish(); } }); }
+
+    /* touch player: fullscreen button = flip between landscape and portrait; returns true when landscape is now requested */
+    @JavascriptInterface
+    public boolean rotate() {
+      final boolean land = getResources().getConfiguration().orientation != android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+      runOnUiThread(new Runnable() { public void run() {
+        try {
+          setRequestedOrientation(land ? android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+          getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        } catch (Throwable e) {}
+      } });
+      return land;
+    }
+
+    @JavascriptInterface
+    public void fsReset() {
+      runOnUiThread(new Runnable() { public void run() {
+        try { setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED); } catch (Throwable e) {}
+      } });
+    }
 
     @JavascriptInterface
     public void engine(String e) { eng = "vlc".equals(e) ? "vlc" : "exo"; }
@@ -416,7 +483,8 @@ public class MainActivity extends Activity {
               c.setInstanceFollowRedirects(false);
               c.setRequestMethod(method);
               c.setConnectTimeout(15000);
-              c.setReadTimeout(url.contains("/ai") ? 240000 : 30000);
+              c.setReadTimeout(url.contains("/ai") ? 240000 : (raw ? 20000 : 30000));
+              c.setRequestProperty("Accept-Charset", "utf-8");
               Iterator<String> it = h.keys();
               while (it.hasNext()) { String k = it.next(); c.setRequestProperty(k, h.getString(k)); }
               if (body != null && body.length() > 0) {
@@ -442,11 +510,11 @@ public class MainActivity extends Activity {
             }
             JSONObject r = new JSONObject();
             r.put("status", code);
-            r.put("body", bo.toString("UTF-8"));
             if (raw || url.contains("/subtitleserve/")) r.put("b64", Base64.encodeToString(bo.toByteArray(), Base64.NO_WRAP));
+            else r.put("body", bo.toString("UTF-8"));
             out = r.toString();
           } catch (Exception e) {
-            out = "{\"status\":0,\"body\":\"\"}";
+            out = "{\"status\":0,\"body\":\"\",\"error\":" + JSONObject.quote(String.valueOf(e)) + "}";
           }
           final String res = out;
           runOnUiThread(new Runnable() {
@@ -608,17 +676,22 @@ public class MainActivity extends Activity {
   private String voiceTag(String l) { return l != null && l.startsWith("en") ? "en-US" : "ar-JO"; }
 
   private Intent voiceIntentFor(String tag) {
-    String other = tag.startsWith("ar") ? "en-US" : "ar-JO";
     Intent vi = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
     vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, tag);
     vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, tag);
+    vi.putExtra(android.speech.RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, true);
     vi.putExtra(android.speech.RecognizerIntent.EXTRA_MAX_RESULTS, 5);
     vi.putExtra(android.speech.RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
-    java.util.ArrayList<String> more = new java.util.ArrayList<String>();
-    more.add(other);
-    vi.putStringArrayListExtra("android.speech.extra.ADDITIONAL_LANGUAGES", more);
     return vi;
+  }
+
+  /* next Arabic variant to try when the recognizer reports the locale unsupported/unavailable; never switches language family */
+  private String voiceLangNext(String tag) {
+    if ("ar-JO".equals(tag)) return "ar-SA";
+    if ("ar-SA".equals(tag)) return "ar-EG";
+    if ("ar-EG".equals(tag)) return "ar";
+    return null;
   }
 
   private void voiceBegin(String lang) {
@@ -786,7 +859,6 @@ public class MainActivity extends Activity {
     cfg.put("encoding", "LINEAR16");
     cfg.put("sampleRateHertz", 16000);
     cfg.put("languageCode", tagA);
-    cfg.put("alternativeLanguageCodes", new org.json.JSONArray().put(tagB));
     cfg.put("maxAlternatives", 5);
     org.json.JSONObject au = new org.json.JSONObject();
     au.put("content", android.util.Base64.encodeToString(pcm, android.util.Base64.NO_WRAP));
@@ -865,31 +937,18 @@ public class MainActivity extends Activity {
       }
       return;
     }
-    final String[][] out = new String[2][];
-    final String[] err = new String[2];
-    final String[] tags = {tagA, tagB};
-    Thread[] th = new Thread[2];
-    for (int k = 0; k < 2; k++) {
-      final int kk = k;
-      th[k] = new Thread(new Runnable() { public void run() {
-        try { out[kk] = voiceStt(fp, tags[kk]); } catch (Throwable e) { err[kk] = String.valueOf(e); }
-      } });
-      th[k].start();
-    }
-    for (Thread x : th) { try { x.join(22000); } catch (InterruptedException e) {} }
+    String[] one = null;
+    String err0 = null;
+    try { one = voiceStt(fp, tagA); } catch (Throwable e) { err0 = String.valueOf(e); }
     org.json.JSONArray ja = new org.json.JSONArray();
     java.util.HashSet<String> seen = new java.util.HashSet<String>();
-    for (int k = 0; k < 2; k++) {
-      if (out[k] == null) continue;
-      for (String s2 : out[k]) { if (seen.add(s2)) ja.put(s2); }
-    }
+    if (one != null) for (String s2 : one) { if (seen.add(s2)) ja.put(s2); }
     if (ja.length() == 0) {
-      boolean http = (err[0] != null && err[0].contains("HTTPERR")) || (err[1] != null && err[1].contains("HTTPERR"));
-      if (err[0] != null && err[1] != null) {
-        if (http) {
+      if (err0 != null) {
+        if (err0.contains("HTTPERR")) {
           vjsU("__voiceState", "fallback");
           hnd.post(new Runnable() { public void run() { voiceViaIntent = false; voiceTry = 0; voiceListen(tagA); } });
-        } else vjsU2("__voiceErr", "network", "stt:" + err[0]);
+        } else vjsU2("__voiceErr", "network", "stt:" + err0);
       } else vjsU2("__voiceErr", "unclear", "peak=" + recPeak + ";src=" + used);
       return;
     }
@@ -950,20 +1009,19 @@ public class MainActivity extends Activity {
 
   private void voiceFail(int e) {
     String tag = voiceCur;
+    if (e == 12 || e == 13) {
+      String nx = voiceLangNext(tag);
+      voiceKill();
+      if (nx != null && !voiceViaIntent) { voiceListen(nx); return; }
+      vjs2("__voiceErr", "lang", tag + ";E" + e + ";" + voiceDiag());
+      return;
+    }
     if (nativeFirst && (e == 3 || e == 4 || e == 5 || e == 6 || e == 7 || e == 8)) {
       nativeFirst = false;
       getSharedPreferences("h", 0).edit().putString("vmode", "rec").apply();
       voiceKill();
       vjs("__voiceState", "fallback");
       voiceRecStart(pendingLang);
-      return;
-    }
-    if (e == 7 && voiceTry == 0) {
-      voiceTry = 1;
-      final String o = tag.startsWith("ar") ? "en-US" : "ar-JO";
-      vjs("__voiceState", o.startsWith("en") ? "retry-en" : "retry-ar");
-      voiceKill();
-      hnd.postDelayed(new Runnable() { public void run() { voiceListen(o); } }, 350);
       return;
     }
     voiceKill();
@@ -1027,7 +1085,11 @@ public class MainActivity extends Activity {
       @Override public void onIsPlayingChanged(boolean p) { if (p) js("play", "1"); }
       @Override public void onPlayWhenReadyChanged(boolean pw, int reason) { js("pw", pw ? "true" : "false"); }
       @Override public void onVideoSizeChanged(VideoSize vs) {
-        if (vs.height > 0) exoFrame.setAspectRatio(vs.width * vs.pixelWidthHeightRatio / vs.height);
+        if (vs.height > 0) {
+          exoVw = vs.width; exoVh = vs.height;
+          exoPar = vs.pixelWidthHeightRatio > 0f ? vs.pixelWidthHeightRatio : 1f;
+          exoApplyFit();
+        }
         js("size", "{\"h\":" + vs.height + "}");
       }
       @Override public void onCues(CueGroup g) { exoSubs.setCues(g.cues); cueTotal += g.cues.size(); js("cues", "{\"n\":" + g.cues.size() + ",\"c\":" + cueTotal + "}"); }
@@ -1055,7 +1117,7 @@ public class MainActivity extends Activity {
         case MediaPlayer.Event.Paused: js("pw", "false"); break;
         case MediaPlayer.Event.EndReached: js("end", "1"); break;
         case MediaPlayer.Event.EncounteredError: vlcFail("ERROR"); break;
-        case MediaPlayer.Event.Vout: vlcVout = e.getVoutCount(); if (vlcVout > 0 && !vlcFrameSent) { vlcFrameSent = true; js("frame", "1"); } break;
+        case MediaPlayer.Event.Vout: vlcVout = e.getVoutCount(); if (vlcVout > 0 && !vlcFrameSent) { vlcFrameSent = true; js("frame", "1"); } if (vlcVout > 0) hnd.post(new Runnable() { public void run() { vlcApplyFit(); } }); break;
         case MediaPlayer.Event.ESAdded:
         case MediaPlayer.Event.ESDeleted:
         case MediaPlayer.Event.ESSelected: hnd.removeCallbacks(vlcSoon); hnd.postDelayed(vlcSoon, 400); break;
@@ -1068,7 +1130,7 @@ public class MainActivity extends Activity {
     exoRelease();
     vlcRelease();
     sid = session;
-    vlcErr = false; vlcRetried = false; vlcHw = true; vlcUrl = url; vlcStartMs = startMs;
+    vlcErr = false; vlcRetried = false; vlcHw = true; vlcUrl = url; vlcStartMs = startMs; vlcArTried = false;
     try {
       if (vlcLib == null) {
         java.util.ArrayList<String> o = new java.util.ArrayList<String>();
@@ -1092,12 +1154,15 @@ public class MainActivity extends Activity {
     web.setBackgroundColor(Color.TRANSPARENT);
     vlc = new MediaPlayer(vlcLib);
     vlc.attachViews(vlcLayout, null, true, true);
+    vlcScale = vlcScaleFor(fitMode);
     vlc.setVideoScale(vlcScale);
     vlc.setEventListener(vlcEv);
     Media m = new Media(vlcLib, Uri.parse(vlcUrl));
     m.setHWDecoderEnabled(vlcHw, false);
     boolean vod = vlcUrl.matches("(?i).*\\.(mp4|mkv|avi|mov|wmv|webm|m4v)(\\?.*)?$") || vlcUrl.contains("/movie/") || vlcUrl.contains("/series/");
     m.addOption(":network-caching=" + (vod ? 3000 : 1500));
+    m.addOption(":sub-language=ara,ar,en");
+    m.addOption(":subsdec-encoding=UTF-8");
     m.addOption(":http-user-agent=" + web.getSettings().getUserAgentString());
     if (startMs > 0) m.addOption(":start-time=" + (startMs / 1000));
     vlc.setMedia(m);
@@ -1184,6 +1249,8 @@ public class MainActivity extends Activity {
     js("info", "{\"v\":" + JSONObject.quote(vc) + ",\"w\":" + w + ",\"h\":" + h + ",\"sw\":" + (vlcHw ? 0 : 1) + "}");
   }
 
+  private boolean vlcArTried = false;
+
   private void vlcTracks() {
     if (vlc == null) return;
     vA.clear();
@@ -1204,6 +1271,7 @@ public class MainActivity extends Activity {
       if (s != null) for (MediaPlayer.TrackDescription x : s) {
         if (x.id < 0) continue;
         vT.add(x.id);
+        if (!vlcArTried && cs < 0 && x.name != null && x.name.toLowerCase().matches(".*(arab|\\bara\\b|\\bar\\b|\u0639\u0631\u0628).*")) { vlcArTried = true; vlc.setSpuTrack(x.id); cs = x.id; }
         JSONObject o = new JSONObject();
         o.put("l", x.name == null ? "#" + vT.size() : x.name); o.put("s", x.id == cs); o.put("g", ""); o.put("c", "");
         jt.put(o);
@@ -1243,8 +1311,10 @@ public class MainActivity extends Activity {
     exoRelease();
     sid = session;
     exoEnsure();
+    exoVw = 0; exoVh = 0; exoPar = 1f;
+    exoApplyFit();
     exoResetWatch();
-    exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().clearOverrides().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).build());
+    exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().clearOverrides().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).setPreferredTextLanguage("ar").build());
     exoRoot.setVisibility(View.VISIBLE);
     web.setBackgroundColor(Color.TRANSPARENT);
     exo.setMediaItem(MediaItem.fromUri(url), startMs > 0 ? startMs : C.TIME_UNSET);
@@ -1457,6 +1527,9 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.widget.HorizontalScrollView;
+import android.graphics.drawable.StateListDrawable;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -1514,6 +1587,16 @@ public class PlayerActivity extends Activity {
       p.setColor(hit ? Color.BLACK : Color.WHITE);
       float s = h * 0.30f, a = s * 0.95f, cx = w / 2f, cy = h / 2f;
       path.reset();
+      if (kind == 4) {
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(h * 0.085f);
+        p.setStrokeCap(Paint.Cap.ROUND);
+        p.setStrokeJoin(Paint.Join.ROUND);
+        path.moveTo(cx + s * 0.45f, cy - a * 1.05f); path.lineTo(cx - s * 0.55f, cy); path.lineTo(cx + s * 0.45f, cy + a * 1.05f);
+        cv.drawPath(path, p);
+        p.setStyle(Paint.Style.FILL);
+        return;
+      }
       if (kind == 1) {
         path.moveTo(cx - s * 0.7f, cy - a); path.lineTo(cx + s, cy); path.lineTo(cx - s * 0.7f, cy + a); path.close();
       } else if (kind == 2) {
@@ -1546,11 +1629,28 @@ public class PlayerActivity extends Activity {
     }
   }
 
+  interface SeekCb { void on(float f, int phase); }
+
   static class Seek extends View {
     float pos = 0f;
+    SeekCb cb;
     final Paint q = new Paint(Paint.ANTI_ALIAS_FLAG);
     final RectF r = new RectF();
     Seek(Context c) { super(c); }
+    @Override public boolean onTouchEvent(MotionEvent e) {
+      if (cb == null || getVisibility() != View.VISIBLE) return false;
+      int w = Math.max(1, getWidth());
+      float f = Math.max(0f, Math.min(1f, e.getX() / w));
+      switch (e.getActionMasked()) {
+        case MotionEvent.ACTION_DOWN:
+          if (getParent() != null) getParent().requestDisallowInterceptTouchEvent(true);
+          cb.on(f, 0); return true;
+        case MotionEvent.ACTION_MOVE: cb.on(f, 1); return true;
+        case MotionEvent.ACTION_UP: cb.on(f, 2); return true;
+        case MotionEvent.ACTION_CANCEL: cb.on(f, 3); return true;
+      }
+      return true;
+    }
     @Override protected void onDraw(Canvas cv) {
       int w = getWidth(), h = getHeight();
       float th = h * 0.26f, cy = h / 2f, rad = th / 2f;
@@ -1580,7 +1680,10 @@ public class PlayerActivity extends Activity {
   private ProgressBar spin;
   private TextView tvMsg, tvTitle, tvBadge, tvT, tvD, tvHint;
   private LinearLayout bar;
-  private Ico icRw, icPp, icFf;
+  private Ico icRw, icPp, icFf, icBack;
+  private boolean touch, fsLand = true;
+  private FrameLayout topBar;
+  private TextView tbAs, tbPl;
   private Seek seek;
 
   private ExoPlayer exo;
@@ -1594,7 +1697,8 @@ public class PlayerActivity extends Activity {
   private int dlgs = 0;
   private boolean switchInternal = false;
   private String errCode = "";
-  private int zapDir = 0, fitMode = 0, vh = 0;
+  private int zapDir = 0, fitMode = 1, vh = 0, pVw = 0, pVh = 0;
+  private float pPar = 1f;
   private long lastT, lastD, seekTgt = -1, jumpAcc = 0, holdStart, lastSeekKey;
 
   private final Runnable tick = new Runnable() {
@@ -1610,8 +1714,7 @@ public class PlayerActivity extends Activity {
   private final Runnable hideBar = new Runnable() {
     public void run() {
       if (paused || seekTgt >= 0 || dlgs > 0) { hnd.postDelayed(this, 1500); return; }
-      bar.setVisibility(View.GONE);
-      subs.setBottomPaddingFraction(0.08f);
+      hideBarNow();
     }
   };
   private final Runnable commitSeek = new Runnable() {
@@ -1636,6 +1739,12 @@ public class PlayerActivity extends Activity {
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
     hideSystem();
+    try {
+      android.app.UiModeManager um = (android.app.UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+      boolean tvMode = um != null && um.getCurrentModeType() == android.content.res.Configuration.UI_MODE_TYPE_TELEVISION;
+      touch = !tvMode && getPackageManager().hasSystemFeature("android.hardware.touchscreen");
+    } catch (Throwable e) { touch = false; }
+    if (touch) { try { setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); } catch (Throwable e) {} }
     Intent in = getIntent();
     String u = in.getStringExtra("url");
     url = u == null ? "" : u;
@@ -1733,9 +1842,10 @@ public class PlayerActivity extends Activity {
     icRw = new Ico(this, 0);
     icPp = new Ico(this, 2);
     icFf = new Ico(this, 3);
-    LinearLayout.LayoutParams il = new LinearLayout.LayoutParams(dp(72), dp(38));
+    int ih = touch ? 48 : 38;
+    LinearLayout.LayoutParams il = new LinearLayout.LayoutParams(dp(72), dp(ih));
     il.setMargins(dp(10), dp(4), dp(10), dp(4));
-    LinearLayout.LayoutParams il2 = new LinearLayout.LayoutParams(dp(84), dp(38));
+    LinearLayout.LayoutParams il2 = new LinearLayout.LayoutParams(dp(84), dp(ih));
     il2.setMargins(dp(10), dp(4), dp(10), dp(4));
     if (!live) ic.addView(icRw, il);
     ic.addView(icPp, il2);
@@ -1753,22 +1863,89 @@ public class PlayerActivity extends Activity {
     tvD.setGravity(Gravity.CENTER);
     seek = new Seek(this);
     tr.addView(tvT, new LinearLayout.LayoutParams(-2, -2));
-    tr.addView(seek, new LinearLayout.LayoutParams(0, dp(20), 1f));
+    tr.addView(seek, new LinearLayout.LayoutParams(0, dp(touch ? 40 : 20), 1f));
     tr.addView(tvD, new LinearLayout.LayoutParams(-2, -2));
     if (live) seek.setVisibility(View.INVISIBLE);
     bar.addView(tr, new LinearLayout.LayoutParams(-1, -2));
+
+    if (touch) {
+      seek.cb = new SeekCb() {
+        public void on(float f, int ph) {
+          if (live || lastD <= 0) return;
+          hnd.removeCallbacks(hideBar);
+          hnd.removeCallbacks(commitSeek);
+          if (ph == 3) { seekTgt = -1; updateUi(); hnd.postDelayed(hideBar, 4000); return; }
+          seekTgt = (long) (f * lastD);
+          if (ph == 2) {
+            long tg = Math.min(seekTgt, Math.max(0, lastD - 1000));
+            seekTgt = -1;
+            lastT = tg;
+            doSeek(tg);
+            updateUi();
+            hnd.postDelayed(hideBar, 4000);
+          } else updateUi();
+        }
+      };
+      icPp.setClickable(true);
+      icPp.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { togglePause(); } });
+      icRw.setClickable(true);
+      icRw.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { seekBy(-1, false, 10); } });
+      icFf.setClickable(true);
+      icFf.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { seekBy(1, false, 10); } });
+
+      LinearLayout tl = new LinearLayout(this);
+      tl.setOrientation(LinearLayout.HORIZONTAL);
+      tl.setGravity(Gravity.CENTER);
+      tbSubs(tl, ar ? "ترجمة" : "Subtitles", new Runnable() { public void run() { if (dlgs == 0) subMenu(); } });
+      tbSubs(tl, ar ? "صوت" : "Audio", new Runnable() { public void run() { if (dlgs == 0) audioMenu(); } });
+      tbPl = tbSubs(tl, "", new Runnable() { public void run() { playerMenu(); } });
+      tbAs = tbSubs(tl, "", new Runnable() { public void run() { fitMode = (fitMode + 1) % 6; applyFit(); updateTools(); } });
+      tbSubs(tl, ar ? "ملء الشاشة" : "Fullscreen", new Runnable() { public void run() {
+        fsLand = !fsLand;
+        try { setRequestedOrientation(fsLand ? android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT); } catch (Throwable e) {}
+        hideSystem();
+      } });
+      tbSubs(tl, ar ? "المزيد" : "More", new Runnable() { public void run() { openMenu(); } });
+      HorizontalScrollView hs = new HorizontalScrollView(this);
+      hs.setHorizontalScrollBarEnabled(false);
+      hs.setFillViewport(true);
+      hs.addView(tl, new FrameLayout.LayoutParams(-1, -2));
+      LinearLayout.LayoutParams hl = new LinearLayout.LayoutParams(-1, -2);
+      hl.topMargin = dp(4);
+      bar.addView(hs, hl);
+      bar.setClickable(true);
+      updateTools();
+    }
 
     tvHint = tv(11, 0x80FFFFFF, false);
     tvHint.setGravity(Gravity.CENTER);
     tvHint.setPadding(0, dp(2), 0, 0);
     if (live) tvHint.setText(ar ? "↑ ↓  تغيير القناة    •    OK  إيقاف / تشغيل    •    رجوع  خروج" : "↑ ↓  Change channel    •    OK  Pause / Play    •    Back  Exit");
     else tvHint.setText(ar ? "← →  ترجيع / تقديم    •    OK  إيقاف / تشغيل    •    ↑  صوت وترجمة    •    رجوع  خروج" : "← →  Rewind / Forward    •    OK  Pause / Play    •    ↑  Audio & subtitles    •    Back  Exit");
+    if (touch) tvHint.setVisibility(View.GONE);
     bar.addView(tvHint, new LinearLayout.LayoutParams(-1, -2));
 
     FrameLayout.LayoutParams bl = new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM);
     int sw = getResources().getDisplayMetrics().widthPixels;
-    bl.setMargins(sw / 6, 0, sw / 6, dp(22));
+    if (touch) bl.setMargins(dp(12), 0, dp(12), dp(10)); else bl.setMargins(sw / 6, 0, sw / 6, dp(22));
     root.addView(bar, bl);
+
+    if (touch) {
+      topBar = new FrameLayout(this);
+      icBack = new Ico(this, 4);
+      icBack.setClickable(true);
+      icBack.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { finishOut(); } });
+      topBar.addView(icBack, new FrameLayout.LayoutParams(dp(46), dp(46)));
+      FrameLayout.LayoutParams tp = new FrameLayout.LayoutParams(-2, -2, Gravity.TOP | Gravity.LEFT);
+      tp.setMargins(dp(14), dp(12), 0, 0);
+      root.addView(topBar, tp);
+      root.setClickable(true);
+      root.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) {
+          if (bar.getVisibility() == View.VISIBLE) hideBarNow(); else showBar();
+        }
+      });
+    }
 
     setContentView(root);
   }
@@ -1826,7 +2003,11 @@ public class PlayerActivity extends Activity {
       }
       @Override public void onPlayWhenReadyChanged(boolean pw, int reason) { paused = !pw; updateUi(); }
       @Override public void onVideoSizeChanged(VideoSize vs) {
-        if (vs.height > 0) frame.setAspectRatio(vs.width * vs.pixelWidthHeightRatio / vs.height);
+        if (vs.height > 0) {
+          pVw = vs.width; pVh = vs.height;
+          pPar = vs.pixelWidthHeightRatio > 0f ? vs.pixelWidthHeightRatio : 1f;
+          applyFit();
+        }
         vh = vs.height;
         updateBadge();
       }
@@ -1865,7 +2046,7 @@ public class PlayerActivity extends Activity {
           setSpin(vlcBuf);
           break;
         case MediaPlayer.Event.Playing:
-          playing = true; paused = false; vlcBuf = false; setSpin(false); updateUi();
+          playing = true; paused = false; vlcBuf = false; setSpin(false); updateUi(); applyFit();
           break;
         case MediaPlayer.Event.Paused:
           paused = true; updateUi();
@@ -1886,7 +2067,14 @@ public class PlayerActivity extends Activity {
   };
 
   private MediaPlayer.ScaleType vlcScale() {
-    return fitMode == 1 ? MediaPlayer.ScaleType.SURFACE_FIT_SCREEN : fitMode == 2 ? MediaPlayer.ScaleType.SURFACE_FILL : MediaPlayer.ScaleType.SURFACE_BEST_FIT;
+    switch (fitMode) {
+      case 0: return MediaPlayer.ScaleType.SURFACE_ORIGINAL;
+      case 2: return MediaPlayer.ScaleType.SURFACE_FILL;
+      case 3: return MediaPlayer.ScaleType.SURFACE_FIT_SCREEN;
+      case 4: return MediaPlayer.ScaleType.SURFACE_16_9;
+      case 5: return MediaPlayer.ScaleType.SURFACE_4_3;
+      default: return MediaPlayer.ScaleType.SURFACE_BEST_FIT;
+    }
   }
 
   private void startVlc(long pos) {
@@ -2068,8 +2256,25 @@ public class PlayerActivity extends Activity {
 
   private void applyFit() {
     try {
-      frame.setResizeMode(fitMode == 1 ? AspectRatioFrameLayout.RESIZE_MODE_ZOOM : fitMode == 2 ? AspectRatioFrameLayout.RESIZE_MODE_FILL : AspectRatioFrameLayout.RESIZE_MODE_FIT);
-      if (vlc != null) vlc.setVideoScale(vlcScale());
+      int m = fitMode;
+      float vr = pVh > 0 ? pVw * pPar / pVh : 0f;
+      int resize = AspectRatioFrameLayout.RESIZE_MODE_FIT;
+      float ratio = vr;
+      FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER);
+      if (m == 0) {
+        if (pVh > 0 && pVw > 0) {
+          resize = AspectRatioFrameLayout.RESIZE_MODE_FILL;
+          flp = new FrameLayout.LayoutParams(Math.max(1, Math.round(pVw * pPar)), pVh, Gravity.CENTER);
+        }
+      } else if (m == 2) resize = AspectRatioFrameLayout.RESIZE_MODE_FILL;
+      else if (m == 3) resize = AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
+      else if (m == 4) ratio = 16f / 9f;
+      else if (m == 5) ratio = 4f / 3f;
+      frame.setResizeMode(resize);
+      if (ratio > 0f) frame.setAspectRatio(ratio);
+      frame.setLayoutParams(flp);
+      frame.requestLayout();
+      if (vlc != null) { vlc.setVideoScale(vlcScale()); vlcLayout.requestLayout(); }
     } catch (Throwable e) {}
   }
 
@@ -2113,9 +2318,82 @@ public class PlayerActivity extends Activity {
     if (icPp.kind != k) { icPp.kind = k; icPp.invalidate(); }
   }
 
+  private TextView tbSubs(LinearLayout row, String label, final Runnable act) {
+    TextView t = tv(13, Color.WHITE, true);
+    t.setText(label);
+    t.setGravity(Gravity.CENTER);
+    t.setSingleLine(true);
+    t.setMinHeight(dp(44));
+    t.setMinWidth(dp(44));
+    t.setPadding(dp(14), 0, dp(14), 0);
+    GradientDrawable n = new GradientDrawable();
+    n.setColor(0x33FFFFFF);
+    n.setCornerRadius(dp(22));
+    GradientDrawable pr = new GradientDrawable();
+    pr.setColor(0xAAFFFFFF);
+    pr.setCornerRadius(dp(22));
+    StateListDrawable sl = new StateListDrawable();
+    sl.addState(new int[]{android.R.attr.state_pressed}, pr);
+    sl.addState(new int[]{}, n);
+    t.setBackground(sl);
+    t.setClickable(true);
+    t.setFocusable(false);
+    t.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { act.run(); if (bar.getVisibility() == View.VISIBLE) { hnd.removeCallbacks(hideBar); hnd.postDelayed(hideBar, 4000); } }
+    });
+    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
+    lp.setMargins(dp(4), dp(2), dp(4), dp(2));
+    row.addView(t, lp);
+    return t;
+  }
+
+  private String fitName() {
+    switch (fitMode) {
+      case 0: return ar ? "الأصلي" : "Original";
+      case 2: return ar ? "ملء الشاشة" : "Fill";
+      case 3: return ar ? "تكبير" : "Zoom";
+      case 4: return "16:9";
+      case 5: return "4:3";
+      default: return ar ? "مناسب" : "Fit";
+    }
+  }
+
+  private void updateTools() {
+    if (tbAs != null) tbAs.setText((ar ? "الأبعاد: " : "Aspect: ") + fitName());
+    if (tbPl != null) tbPl.setText((ar ? "المشغّل: " : "Player: ") + ("vlc".equals(eng) ? "VLC" : "ExoPlayer"));
+  }
+
+  private void hideBarNow() {
+    bar.setVisibility(View.GONE);
+    if (topBar != null) topBar.setVisibility(View.GONE);
+    subs.setBottomPaddingFraction(0.08f);
+  }
+
+  private void playerMenu() {
+    if (dlgs > 0) return;
+    final ArrayList<String> names = new ArrayList<String>();
+    names.add("ExoPlayer");
+    names.add("VLC");
+    names.add(ar ? "المشغّل الداخلي (داخل التطبيق)" : "In-app player");
+    sheet(ar ? "اختر المشغّل" : "Choose player", names, "vlc".equals(eng) ? 1 : 0, new Pick() {
+      public void on(int i) {
+        if (i == 2) { switchInternal = true; finishOut(); return; }
+        String ne = i == 1 ? "vlc" : "exo";
+        if (ne.equals(eng)) return;
+        sample();
+        eng = ne;
+        vlcHw = true; vlcRetried = false; triedOther = false;
+        begin(lastT);
+        updateTools();
+      }
+    });
+  }
+
   private void showBar() {
     updateUi();
+    updateTools();
     bar.setVisibility(View.VISIBLE);
+    if (topBar != null) topBar.setVisibility(View.VISIBLE);
     subs.setBottomPaddingFraction(0.22f);
     hnd.removeCallbacks(hideBar);
     hnd.postDelayed(hideBar, 4000);
@@ -2160,6 +2438,7 @@ public class PlayerActivity extends Activity {
   /* dark glass option sheet, remote friendly */
   private void sheet(String ttl, ArrayList<String> names, int checked, final Pick p) {
     final Dialog d = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+    d.setCanceledOnTouchOutside(true);
     LinearLayout panel = new LinearLayout(this);
     panel.setOrientation(LinearLayout.VERTICAL);
     panel.setPadding(dp(22), dp(18), dp(22), dp(14));
@@ -2182,7 +2461,7 @@ public class PlayerActivity extends Activity {
       final LinearLayout row = new LinearLayout(this);
       row.setOrientation(LinearLayout.HORIZONTAL);
       row.setGravity(Gravity.CENTER_VERTICAL);
-      row.setPadding(dp(16), dp(11), dp(16), dp(11));
+      row.setPadding(dp(16), dp(13), dp(16), dp(13));
       row.setFocusable(true);
       row.setFocusableInTouchMode(true);
       row.setClickable(true);
@@ -2224,7 +2503,7 @@ public class PlayerActivity extends Activity {
     Window w = d.getWindow();
     if (w != null) {
       int sw = getResources().getDisplayMetrics().widthPixels;
-      w.setLayout(Math.min(dp(520), (int) (sw * 0.8f)), WindowManager.LayoutParams.WRAP_CONTENT);
+      w.setLayout(Math.min(dp(520), (int) (sw * 0.9f)), WindowManager.LayoutParams.WRAP_CONTENT);
       w.setGravity(Gravity.CENTER);
       w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
       w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -2305,8 +2584,8 @@ public class PlayerActivity extends Activity {
     acts.add(new Runnable() { public void run() { audioMenu(); } });
     names.add(ar ? "الترجمة" : "Subtitles");
     acts.add(new Runnable() { public void run() { subMenu(); } });
-    names.add((ar ? "ملاءمة الشاشة: " : "Aspect: ") + (fitMode == 0 ? (ar ? "ملاءمة" : "Fit") : fitMode == 1 ? (ar ? "تكبير" : "Zoom") : (ar ? "تمديد" : "Stretch")));
-    acts.add(new Runnable() { public void run() { fitMode = (fitMode + 1) % 3; applyFit(); toast(ar ? "تم تغيير الملاءمة" : "Aspect changed", 1200); } });
+    names.add((ar ? "ملاءمة الشاشة: " : "Aspect: ") + fitName());
+    acts.add(new Runnable() { public void run() { fitMode = (fitMode + 1) % 6; applyFit(); updateTools(); toast(ar ? "تم تغيير الملاءمة" : "Aspect changed", 1200); } });
     names.add((ar ? "تبديل المشغّل إلى " : "Switch player to ") + ("vlc".equals(eng) ? "ExoPlayer" : "VLC"));
     acts.add(new Runnable() { public void run() {
       sample();
