@@ -2163,7 +2163,20 @@ const RCL=[['AR','العربية','Arabic',/عربي|مصري|خليجي|سعو�
 const RCY=[['y1','rc_y1',y=>y>=2020],['y2','rc_y2',y=>y>=2010&&y<=2019],['y3','rc_y3',y=>y>=2000&&y<=2009],['y4','rc_y4',y=>y<2000]];
 const RCN=(a,k)=>{const x=a.find(r=>r[0]==k);return x?(S.lang=='ar'?x[1]:x[2]):k};
 let RCD=new WeakMap(),_RG=new Map(),_RM=null,_RLs=null,_RLr=null,_RI=null,rcRev=0,rcC=null,_rcT=0,_rcSig='';
-function rcSync(){if(_RLs!==S.mv||_RLr!==S.sr){_RLs=S.mv;_RLr=S.sr;RCD=new WeakMap();_RM=null;_RI=null;rcC=null}}
+/* حماية الأجهزة الضعيفة: الحساب على دفعات صغيرة + وضع خفيف تلقائي لو التطبيق انسكر وسط الحساب */
+let RCLITE=false,_RW=null,_RWt=0;try{RCLITE=localStorage.getItem('rclite')=='1'}catch(e){}
+const _RPC=new WeakMap();
+function rcPool(a){if(!RCLITE||a.length<=4000)return a;let r=_RPC.get(a);if(!r){r=[];const st=a.length/4000;for(let i=0;i<4000;i++)r.push(a[Math.floor(i*st)]);_RPC.set(a,r)}return r}
+function rcFlag(on){try{if(on)localStorage.setItem('rcb','1');else localStorage.removeItem('rcb')}catch(e){}}
+function rcWarm(cb){rcSync();const a=rcPool(src('__mv')),b=rcPool(src('__sr')),key=[a,b];
+ if(_RW&&_RW.a===a&&_RW.b===b&&_RW.done){cb();return}
+ if(_RW&&_RW.a===a&&_RW.b===b){_RW.cbs.push(cb);return}
+ try{if(localStorage.getItem('rcb')&&!RCLITE){RCLITE=true;localStorage.setItem('rclite','1');return rcWarm(cb)}}catch(e){}
+ const w=_RW={a,b,done:0,cbs:[cb]};rcFlag(1);let i=0;const all=a.concat(b);
+ (function step(){if(_RW!==w)return;const e=Math.min(all.length,i+1200);try{for(;i<e;i++)rcInfo(all[i])}catch(x){i=all.length}
+  if(i<all.length){setTimeout(step,16);return}
+  w.done=1;rcFlag(0);const f=w.cbs;w.cbs=[];f.forEach(c=>{try{c()}catch(x){}})})()}
+function rcSync(){if(_RLs!==S.mv||_RLr!==S.sr){_RLs=S.mv;_RLr=S.sr;_RW=null;RCD=new WeakMap();_RM=null;_RI=null;rcC=null}}
 function rcBump(){rcRev++;rcC=null}
 function rcGenres(str){const o=[];if(!str)return o;RCG.forEach(x=>{if(x[3].test(str))o.push(x[0])});return o}
 function rcLang(g){const m=langOf(g);if(m&&RCL.some(x=>x[0]==m))return m;if(m)return '';const h=RCL.filter(x=>x[3].test(g));return h.length==1?h[0][0]:''}
@@ -2231,8 +2244,8 @@ function rcList(kind,N){rcSync();N=N||20;const mvA=src('__mv'),srA=src('__sr');
  const fq=favs().length+'|'+Object.keys(getProg()).length;
  if(rcC&&rcC.k==kind&&rcC.N==N&&rcC.mv===mvA&&rcC.sr===srA&&rcC.rev==rcRev&&rcC.fq==fq)return rcC.out;
  const P=rcPrefs(),Pr=rcProfile(),ex=rcExclude(),shown=hget('rcs')||{};let out;
- if(kind=='mv')out=rcPick(mvA,N,P,Pr,ex,shown);else if(kind=='sr')out=rcPick(srA,N,P,Pr,ex,shown);
- else{const a=P.k=='sr'?[]:rcPick(mvA,N,P,Pr,ex,shown),b=P.k=='mv'?[]:rcPick(srA,N,P,Pr,ex,shown);out=[];
+ if(kind=='mv')out=rcPick(rcPool(mvA),N,P,Pr,ex,shown);else if(kind=='sr')out=rcPick(rcPool(srA),N,P,Pr,ex,shown);
+ else{const a=P.k=='sr'?[]:rcPick(rcPool(mvA),N,P,Pr,ex,shown),b=P.k=='mv'?[]:rcPick(rcPool(srA),N,P,Pr,ex,shown);out=[];
   for(let i=0;out.length<N&&(i<a.length||i<b.length);i++){if(i<a.length)out.push(a[i]);if(out.length<N&&i<b.length)out.push(b[i])}}
  rcC={k:kind,N,mv:mvA,sr:srA,rev:rcRev,fq,out};return out}
 /* ---------- واجهة الرئيسية ---------- */
@@ -2243,10 +2256,13 @@ function rcCard(it){const d=document.createElement('div');d.className='rcc';d.ta
  const c=document.createElement('div'),n=document.createElement('b'),w=rcWhy(it);c.className='rcn';n.dir='auto';n.textContent=cleanTitle(it.name)||it.name;c.append(n);
  if(w){const s=document.createElement('small');s.textContent=w;c.append(s)}d.append(c);if(isFav(it.id))d.append(favBadge());
  d.onclick=()=>showDet(it,d._fk);return d}
-function renderRC(){const box=$('#rc');if(!box||V()!='home')return;rcSync();
+function renderRC(){try{rcRender()}catch(e){try{elog('rc '+e)}catch(x){}}}
+function rcRender(){const box=$('#rc');if(!box||V()!='home')return;rcSync();
  if(!(S.mv&&S.mv.length)&&!(S.sr&&S.sr.length)){box.style.display='none';return}box.style.display='';
+ if(rcHasSignal()&&!(_RW&&_RW.done&&_RW.a===rcPool(src('__mv'))&&_RW.b===rcPool(src('__sr')))){rcWarm(()=>renderRC())}
  $('#rc-t').textContent=t('rc_t');$('#rc-cu').textContent='⚙ '+t('rc_cu');$('#rc-all').textContent=t('rc_all')+(S.lang=='ar'?' ‹':' ›');
- const r=$('#rc-r'),L=rcHasSignal()?rcList('all',20):[],sig=L.map(x=>x.id).join(',')+'|'+S.lang+'|'+rcRev;if(sig===_rcSig&&r.children.length)return;_rcSig=sig;
+ if(rcHasSignal()&&!(_RW&&_RW.done))return;
+ const r=$('#rc-r'),L=(rcHasSignal()&&_RW&&_RW.done)?rcList('all',20):[],sig=L.map(x=>x.id).join(',')+'|'+S.lang+'|'+rcRev;if(sig===_rcSig&&r.children.length)return;_rcSig=sig;
  const had=r.contains(document.activeElement);r.innerHTML='';
  if(!L.length){const e=document.createElement('div');e.className='rce';e.textContent=t('rc_none');r.append(e);return}
  const fr=document.createDocumentFragment();L.forEach(it=>fr.append(rcCard(it)));r.append(fr);r.scrollLeft=0;if(had)focusEl(r.firstChild);
@@ -2255,7 +2271,7 @@ function rcRefresh(){clearTimeout(_rcT);_rcT=setTimeout(()=>{if(RV.on)rcvBuild()
 /* ---------- خصّص اقتراحاتك ---------- */
 function rcBack(){return RV.on?$('#rcv-cu'):V()=='home'?$('#rc-cu'):($('#p-g .gi.on')||$('#p-back'))}
 function rcOpen(title,sub,rows,fi){dlgOpen(title,sub,rows);S.dlgBack=rcBack();if(fi!=null){const b=$$('#dlg-l .dk')[fi];if(b)focusEl(b)}}
-function rcAvail(){rcSync();const g={},l={};[src('__mv'),src('__sr')].forEach(a=>{for(let i=0;i<a.length;i++){const d=rcInfo(a[i]);d.g.forEach(k=>g[k]=(g[k]||0)+1);if(d.l)l[d.l]=(l[d.l]||0)+1}});return{g,l}}
+function rcAvail(){rcSync();const g={},l={};[rcPool(src('__mv')),rcPool(src('__sr'))].forEach(a=>{for(let i=0;i<a.length;i++){const d=rcInfo(a[i]);d.g.forEach(k=>g[k]=(g[k]||0)+1);if(d.l)l[d.l]=(l[d.l]||0)+1}});return{g,l}}
 function rcSum(a,tb,key){return a.length?a.slice(0,3).map(k=>key=='y'?t(RCY.find(r=>r[0]==k)[1]):RCN(tb,k)).join('، ')+(a.length>3?' +'+(a.length-3):''):t('rc_any')}
 function rcMenu(fi){const P=rcPrefs();
  rcOpen(t('rc_cu'),t('rc_cus'),[
@@ -2285,7 +2301,7 @@ function rcReason(it){const d=rcInfo(it),w=rcLog(),ix=rcIdx();let best=null;
  if(best&&best.n)return t('rc_bw',best.n);const P=rcPrefs(),g=d.g.find(x=>P.g.indexOf(x)>=0);
  if(g)return t('rc_mt',RCN(RCG,g));if(d.l&&P.l.indexOf(d.l)>=0)return t('rc_mt',RCN(RCL,d.l));return ''}
 /* بناء الصفوف: كل صف من المكتبة الحالية فقط، بدون تكرار بين الصفوف */
-function rcvRows(kind){rcSync();const P=rcPrefs(),Pr=rcProfile(),ex=rcExclude(),mvA=src('__mv'),srA=src('__sr'),rows=[],w=rcLog(),ix=rcIdx(),N=18;
+function rcvRows(kind){rcSync();const P=rcPrefs(),Pr=rcProfile(),ex=rcExclude(),mvA=rcPool(src('__mv')),srA=rcPool(src('__sr')),rows=[],w=rcLog(),ix=rcIdx(),N=18;
  const pools=kind=='mv'?[mvA]:kind=='sr'?[srA]:P.k=='mv'?[mvA]:P.k=='sr'?[srA]:[mvA,srA];
  const add=(id,title,list)=>{if(list.length<3)return;list.forEach(x=>ex[x.id]=1);rows.push({id,title,list})};
  const pk=P2=>{const a=pools.map(pl=>rcPick(pl,N,P2,Pr,ex,{})),o=[];for(let i=0;o.length<N&&a.some(x=>i<x.length);i++)a.forEach(x=>{if(i<x.length&&o.length<N)o.push(x[i])});return o};
@@ -2322,7 +2338,7 @@ function rcvBuild(){if(!RV.on)return;const b=$('#rcv-b');b.innerHTML='';b.scroll
  if(!rcHasSignal()){const n=document.createElement('div');n.className='rcv-nt';n.textContent=t('rc_none');b.prepend(n)}
  const act=$('#rcv .rcv-act');act.style.display=first?'':'none';
  if(first){rcvHero(first._it);focusEl(first)}else{RV.cur=null;$('#rcv-tag').textContent='';$('#rcv-ti').textContent=t('rc_t');$('#rcv-mt').textContent='';$('#rcv-why').textContent=t('rc_none');$('#rcv-art').style.display='none';$('#rcv-bg').style.display='none';focusEl($('#rcv-cu'))}}
-function rcvOpen(kind){if(RV.on)return;RV.kind=kind||'all';RV.from=document.activeElement;RV.on=1;killPv();$('#rcv').classList.add('on');rcvBuild()}
+function rcvOpen(kind){if(RV.on)return;RV.kind=kind||'all';RV.from=document.activeElement;RV.on=1;killPv();$('#rcv').classList.add('on');rcWarm(()=>{try{rcvBuild()}catch(e){elog('rcv '+e)}})}
 function rcvClose(quiet){if(!RV.on)return;RV.on=0;clearTimeout(RV.ft);$('#rcv').classList.remove('on');const f=RV.from;RV.from=null;
  const a=$('#rcv-art'),bg=$('#rcv-bg');a.removeAttribute('src');bg.removeAttribute('src');$('#rcv-b').innerHTML='';
  if(!quiet&&f&&f.isConnected)focusEl(f)}
