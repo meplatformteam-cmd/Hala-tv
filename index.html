@@ -446,9 +446,27 @@ body.bgv #det .dx,body.bgv #det h2,body.bgv #det .dm,body.bgv #det .dc{text-shad
 .ep .eye{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:rgba(0,0,0,.42);color:#fff;pointer-events:none}
 .ep .eye svg{width:clamp(44px,3.6vw,70px);height:auto;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
 .ep .eye b{font-size:clamp(20px,1.7vw,30px);font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.8);direction:ltr}
-body.bgv{background:#050506!important}
-html body.bgv #cin{inset:-8px}
-html body.bgv #cin .sh{background:linear-gradient(to top,rgba(0,0,0,.9) 0,rgba(0,0,0,.62) 40%,rgba(0,0,0,.62) 100%)}
+html{--sh:0,0,0}html[data-th=light]{--sh:255,255,255}
+html body.bgv{background:#050506!important}html[data-th=light] body.bgv{background:#f3f3f5!important}
+html body.bgv #cin{inset:-8px;background:#050506}html[data-th=light] body.bgv #cin{background:#f3f3f5}
+html body.bgv #cin .sh{background:linear-gradient(to top,rgba(var(--sh),.75) 0,rgba(var(--sh),.3) 45%,rgba(var(--sh),.3) 100%)}
+html body.bgv #cin video.on{opacity:.55}html body.bgv #cin img.on{opacity:.5}html body.bgv #cin img.bd.on{opacity:.6}
+html body.bgv .pg>div{background:rgba(var(--sh),.76)}
+html body.bgv #page.cinp .pg>#p-l,html body.bgv #page.cinp .pg>#cin-info{background:none}
+html body.bgv .ph .pill,html body.bgv .ph input{background:rgba(var(--sh),.68);border-color:rgba(128,128,128,.3)}
+html body.bgv .ph .pill:focus{background:var(--hi);color:var(--ov)}
+html body.bgv .tile{background:rgba(var(--sh),.62)!important}
+html[data-th=light] #cin-info,html[data-th=light] #ci-t{color:#111;text-shadow:0 1px 10px rgba(255,255,255,.9)}
+html[data-th=light] #ci-m{color:#333}html[data-th=light] #ci-p{color:#222}
+html body.bgv #det .dx,html body.bgv #det h2,html body.bgv #det .dm,html body.bgv #det .dc{text-shadow:0 2px 12px rgba(var(--sh),.9)}
+html #det.srs::after{background:linear-gradient(180deg,rgba(var(--sh),.55),rgb(var(--sh)) 85%)}
+html body.bgv #det.srs::before{display:none}
+html body.bgv #det.srs::after{background:linear-gradient(180deg,rgba(var(--sh),.45),rgba(var(--sh),.8))}
+html[data-th=light] #act{background:rgba(255,255,255,.95);color:#111}
+html[data-th=light] #act .a-x{color:#111;border-color:rgba(0,0,0,.35)}html[data-th=light] #act .a-x:focus{background:#111;color:#fff}
+html[data-th=light] #act .a-bio{color:#222}html[data-th=light] #act .a-m,html[data-th=light] #act .a-oth{color:#555}
+html[data-th=light] #act .a-card{background:#e8e8ec}html[data-th=light] #act .a-card:focus{border-color:#111}
+html[data-th=light] #det .ac:focus{border-color:#111;background:rgba(0,0,0,.12)}
 
 /* ===== سينما: صف 4 أفلام + فيديو بكامل الشاشة خلفها ===== */
 #cin,#cin-info,#p-cin{display:none}
@@ -538,7 +556,7 @@ body.bgv .tile{background:rgba(0,0,0,.62)!important}
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><button class="pill sx" tabindex="0" id="sp-m1">− 0.1</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-p1">+ 0.1</button><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button></div>
 </div></div>
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
-<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt"></pre><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
+<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt"></pre><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -583,9 +601,16 @@ function saveCache(){try{idb.set('lists',{sig:JSON.stringify(store.get('conf')),
 const t=(k,...a)=>{const v=T[S.lang][k];return typeof v=='function'?v(...a):v};
 const V=()=>document.body.dataset.v, setView=v=>{document.body.dataset.v=v;window.kbShut&&kbShut();killPv();if(v!="app")window.exoStop&&exoStop()};
 const MV=/movie|film|vod|cinema|أفلام|فيلم|افلام|سينما/i,SR=/series|مسلسل|حلقات|season|show/i,JO=/رؤيا|roya|المملكة|mamlaka|الأردن|الاردن|jordan|jrtv|petra|بترا|عمان|amman/i,SP=/sport|رياض|كرة|كورة|football|soccer|bein|بي ?ان|espn|dazn|\bssc\b|eurosport|arryadia|\bnba\b|\bnfl\b|\bufc\b|\bwwe\b|\bf1\b|formula ?1|laliga|bundesliga|serie a|premier league|champions league|tennis|motogp|boxing|cricket|مباري|دوري/i,NW=/news|أخبار|اخبار|نشرة|cnn|bbc|jazeera|الجزيرة|العربية/i;
-const hidK=()=>store.get('hid')||{},isHid=(kd,g)=>!!hidK()[kd+'|'+g],vis=(a,kd)=>{if(S.manage)return a;const h=hidK();for(const _ in h)return a.filter(c=>!h[kd+'|'+c.group]);return a.slice()};
+/* قفل المحتوى للكبار تلقائياً */
+const ADG=/(^|[^a-z])(xxx|porn\w*|adults?(?!\s*swim)|18\s*\+|\+\s*18|erotic\w*|sexy?|hentai|nsfw|playboy|brazzers|hustler|penthouse|milf)([^a-z]|$)|للكبار|اباحي|إباحي|اباحية|إباحية|\+18|18\+|جنس|إغراء|اغراء|ممنوع على الأطفال/i,
+ ADN=/(^|[^a-z])(xxx|porn\w*|hentai|nsfw|playboy|brazzers|hustler|penthouse|erotic\w*|18\s*\+|\+\s*18)([^a-z]|$)|اباحي|إباحي|\+18|18\+/i,
+ _gAd=new Map(),adOn=()=>store.get('adlock')!==0,
+ adG=g=>{let r=_gAd.get(g);if(r===undefined){r=ADG.test(g||'');_gAd.set(g,r)}return r},
+ adC=c=>c._ad===undefined?(c._ad=adG(c.group)||ADN.test(c.name||'')):c._ad,
+ adBlk=c=>adOn()&&!S.manage&&(adC(c)||ADN.test(c.name||''));
+const hidK=()=>store.get('hid')||{},isHid=(kd,g)=>!!hidK()[kd+'|'+g]||(adOn()&&adG(g)),vis=(a,kd)=>{if(S.manage)return a;const h=hidK(),ad=adOn();let any=false;for(const _ in h){any=true;break}if(!any&&!ad)return a.slice();return a.filter(c=>!(any&&h[kd+'|'+c.group])&&!(ad&&adC(c)))};
 const KD=k=>k=='__mv'?'mv':k=='__sr'?'sr':(k=='__all'||k=='__sp'||k=='__nw')?'lv':'';
-function src(k){const lv=vis(S.live,'lv');return k=='__s'?[...lv,...vis(S.mv,'mv'),...vis(S.sr,'sr')]:k=='__fav'?favs():k=='__mv'?vis(S.mv,'mv'):k=='__sr'?vis(S.sr,'sr'):k=='__sp'?lv.filter(c=>SP.test(c.group+' '+c.name)):k=='__nw'?lv.filter(c=>NW.test(c.group+' '+c.name)):lv}
+function src(k){const lv=vis(S.live,'lv');return k=='__s'?[...lv,...vis(S.mv,'mv'),...vis(S.sr,'sr')]:k=='__fav'?favs().filter(c=>!adBlk(c)):k=='__mv'?vis(S.mv,'mv'):k=='__sr'?vis(S.sr,'sr'):k=='__sp'?lv.filter(c=>SP.test(c.group+' '+c.name)):k=='__nw'?lv.filter(c=>NW.test(c.group+' '+c.name)):lv}
 const PM={__fav:'p_fav',__mv:'p_mv',__sr:'p_sr',__sp:'p_sp',__nw:'p_nw',__all:'p_ch',__s:'p_s'};
 const getProg=()=>S.demo?S.demoProg:(hget('prog')||{});
 
@@ -798,7 +823,7 @@ function showPage(k,keep){
  const e=keep&&S.lastId&&$$('#page .li').find(x=>x.dataset.id==S.lastId);
  focusEl(e||$('#page .li')||$('#p-q'));
 }
-function contList(kind){return Object.values(getProg()).filter(p=>p.kind==kind&&p.d>0).sort((a,b)=>b.ts-a.ts).slice(0,8)}
+function contList(kind){return Object.values(getProg()).filter(p=>p.kind==kind&&p.d>0&&!adBlk(p)).sort((a,b)=>b.ts-a.ts).slice(0,8)}
 function setPv(it,fk){
  if($('#page').classList.contains('cinp')){killPv();if(!it)window.CIN&&CIN.hide();return}
  const b=$('#p-pv');killPv();b.innerHTML='';if(!it)return;
@@ -1703,9 +1728,17 @@ function chime(){try{const C=new (window.AudioContext||window.webkitAudioContext
  [[392,0],[493.88,.32],[587.33,.64],[783.99,1],[987.77,1.45]].forEach(([f,t])=>{[[f,1],[f*2,.12]].forEach(([q,a])=>{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.value=q;g.gain.setValueAtTime(.0001,n+t);g.gain.linearRampToValueAtTime(.16*a,n+t+.14);g.gain.exponentialRampToValueAtTime(.0001,n+t+3.2);o.connect(g);g.connect(lp);o.start(n+t);o.stop(n+t+3.3)})});
  setTimeout(()=>{if(C.state=='running')cm=1;else{C.close();const h=()=>{if(!cm){cm=1;chime()}};document.addEventListener('keydown',h,{once:true});document.addEventListener('click',h,{once:true})}},150)}catch(e){}}
 chime();$('#fx').addEventListener('animationend',e=>{if(e.target.id=='fx')e.target.remove()});
-function applyTheme(){document.documentElement.dataset.th=store.get('th')||'dark'}
+const thAuto=()=>store.get('thauto')!==0,autoTh=()=>{const h=new Date().getHours();return(h>=6&&h<18)?'light':'dark'};
+function applyTheme(){if(thAuto()){const a=autoTh();if(store.get('thlast')!==a){store.set('thlast',a);store.set('th',a)}}document.documentElement.dataset.th=store.get('th')||'dark'}
+setInterval(()=>{try{applyTheme()}catch(e){}},60000);
+function adlTxt(){const b=$('#st-adl');if(b)b.textContent=(S.lang=='ar'?'🔞 قفل محتوى الكبار تلقائياً: ':'🔞 Auto-lock adult content: ')+(adOn()?(S.lang=='ar'?'شغّال':'On'):(S.lang=='ar'?'متوقف':'Off'))}
+function thaTxt(){const b=$('#st-tha');if(b)b.textContent=(S.lang=='ar'?'🌗 الوضع التلقائي (نهاري/ليلي حسب الوقت): ':'🌗 Auto day/night theme: ')+(thAuto()?(S.lang=='ar'?'شغّال':'On'):(S.lang=='ar'?'متوقف':'Off'))}
 function toggleTheme(){store.set('th',(store.get('th')||'dark')=='dark'?'light':'dark');applyTheme()}
 $('#b-th').onclick=()=>{toggleTheme();focusEl($('#b-th'))};$('#th-l').onclick=toggleTheme;applyTheme();
+{const b=$('#st-adl');if(b)b.onclick=()=>{const done=()=>{store.set('adlock',adOn()?0:1);_gAd.clear();adlTxt();focusEl($('#st-adl'));osd(S.lang=='ar'?(adOn()?'قفل محتوى الكبار شغّال':'قفل محتوى الكبار متوقف'):(adOn()?'Adult lock on':'Adult lock off'))};
+ if(!adOn()){done();return}
+ store.get('pw')?askPw(t('oldpw'),done,true):askPw(t('newpw'),v=>{store.set('pw',hsh(v));done()})}}
+{const b=$('#st-tha');if(b)b.onclick=()=>{store.set('thauto',thAuto()?0:1);if(thAuto())store.set('thlast','');applyTheme();thaTxt();osd(S.lang=='ar'?(thAuto()?'الوضع التلقائي شغّال':'الوضع التلقائي متوقف'):(thAuto()?'Auto theme on':'Auto theme off'))}}
 const LN={AR:'العربية',EN:'English',TR:'Türkçe',FR:'Français',DE:'Deutsch',ES:'Español',IT:'Italiano',RU:'Русский',FA:'فارسی',KU:'Kurdî',PT:'Português',NL:'Nederlands',UR:'اردو',HI:'हिन्दी',ZH:'中文'},LR=/^\s*[\[(]?\s*([A-Za-z]{2,3})\s*[\]):|\-–]+\s*/,LR2=/\s*[\[(|\-–]\s*([A-Za-z]{2,3})\s*[\])]?\s*$/;
 const langOf=g=>{const m=(g||'').match(LR)||(g||'').match(LR2),c=m&&m[1].toUpperCase();return c&&LN[c]?c:''},strip=g=>langOf(g)?((g.match(LR)?g.replace(LR,''):g.replace(LR2,''))||g):g;
 const gm=c=>!S.grp||(S.grp=='__nw'?NW.test(c.group+' '+c.name):S.grp=='__sp'?SP.test(c.group+' '+c.name):S.grp[0]=='@'?langOf(c.group)==S.grp.slice(1):c.group==S.grp);
@@ -1722,7 +1755,7 @@ function pwdKey(e){if(!$('#pwd').classList.contains('on'))return false;const k=e
  if(k>=37&&k<=40){if(ty&&(k==37||k==39))return true;e.preventDefault();spatial(k,'#pwd input,#pwd .btn')}return true}
 function kidKey(e){if(!(store.get('kid')&&V()=='app'))return false;e.preventDefault();S.kq=(S.kq||[]).concat(e.keyCode).slice(-4);if(S.kq.join()=='38,38,40,40'){store.set('kid',false);S.kq=[];osd(t('kidoff'))}return true}
 const DV=()=>store.get('dev')||'auto',vmTxt=()=>t('vm')+': '+t({list:'vml',grid:'vmg',modern:'vmm'}[VM()]),dvTxt=()=>t('dev')+': '+t({auto:'deva',tv:'devt',phone:'devp'}[DV()]);
-function showSet(){setView('set');buildSetW();$('#st-vm').textContent=vmTxt();$('#st-eng').textContent=engTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'');setLogUI();setHistUI();focusEl($('#st-pw'))}
+function showSet(){setView('set');thaTxt();adlTxt();buildSetW();$('#st-vm').textContent=vmTxt();$('#st-eng').textContent=engTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'');setLogUI();setHistUI();focusEl($('#st-pw'))}
 $('#b-set').onclick=showSet;
 function setLogUI(){const ar=S.lang=='ar';$('#st-logh').textContent=ar?'سجل الأخطاء':'Error log';$('#st-log').textContent=ar?'📋 عرض آخر الأخطاء':'📋 Show recent errors';$('#st-logc').textContent=ar?'🗑 مسح السجل':'🗑 Clear log';$('#st-logt').classList.remove('on')}
 $('#st-log').onclick=()=>{const p=$('#st-logt'),a=store.get('elog')||[];p.textContent=a.length?a.slice(0,15).join('\n'):(S.lang=='ar'?'ما في أخطاء مسجلة':'No errors logged');p.classList.toggle('on')};
