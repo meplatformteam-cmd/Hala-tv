@@ -60,6 +60,12 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
   <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+  <uses-feature android:name="android.hardware.microphone" android:required="false"/>
+  <queries>
+    <intent><action android:name="android.speech.RecognitionService"/></intent>
+    <intent><action android:name="android.speech.action.RECOGNIZE_SPEECH"/></intent>
+  </queries>
   <uses-feature android:name="android.software.leanback" android:required="false"/>
   <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
   <application
@@ -202,17 +208,7 @@ public class MainActivity extends Activity {
   public class Bridge {
     @JavascriptInterface
     public void voiceStart(final String lang) {
-      runOnUiThread(new Runnable() { public void run() {
-        try {
-          Intent vi = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-          vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-          vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, lang);
-          vi.putExtra(android.speech.RecognizerIntent.EXTRA_MAX_RESULTS, 5);
-          startActivityForResult(vi, 9);
-        } catch (Exception ex) {
-          if (web != null) web.evaluateJavascript("window.__voice&&window.__voice('null')", null);
-        }
-      } });
+      runOnUiThread(new Runnable() { public void run() { voiceBegin(lang); } });
     }
 
     @JavascriptInterface
@@ -489,6 +485,126 @@ public class MainActivity extends Activity {
     web.requestFocus();
   }
 
+
+  // ===== Voice search: in-app SpeechRecognizer (RECORD_AUDIO), Arabic + English, intent fallback =====
+  private android.speech.SpeechRecognizer sr;
+  private String pendingLang = "ar";
+  private String voiceCur = "ar-JO";
+  private int voiceTry = 0;
+
+  private void vjs(String fn, String arg) {
+    if (web != null) web.evaluateJavascript("window." + fn + "&&window." + fn + "(" + JSONObject.quote(arg) + ")", null);
+  }
+
+  private String voiceTag(String l) { return l != null && l.startsWith("en") ? "en-US" : "ar-JO"; }
+
+  private Intent voiceIntentFor(String tag) {
+    String other = tag.startsWith("ar") ? "en-US" : "ar-JO";
+    Intent vi = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, tag);
+    vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, tag);
+    vi.putExtra(android.speech.RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+    vi.putExtra(android.speech.RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+    java.util.ArrayList<String> more = new java.util.ArrayList<String>();
+    more.add(other);
+    vi.putStringArrayListExtra("android.speech.extra.ADDITIONAL_LANGUAGES", more);
+    return vi;
+  }
+
+  private void voiceBegin(String lang) {
+    voiceTry = 0;
+    if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+      pendingLang = lang;
+      requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 2);
+      return;
+    }
+    voiceListen(voiceTag(lang));
+  }
+
+  private void voiceKill() {
+    android.speech.SpeechRecognizer x = sr;
+    sr = null;
+    if (x != null) {
+      try { x.cancel(); } catch (Throwable e) {}
+      try { x.destroy(); } catch (Throwable e) {}
+    }
+  }
+
+  private void voiceListen(String tag) {
+    voiceKill();
+    voiceCur = tag;
+    boolean ok = false;
+    try { ok = android.speech.SpeechRecognizer.isRecognitionAvailable(this); } catch (Throwable e) {}
+    if (!ok) { voiceIntent(tag); return; }
+    try {
+      final android.speech.SpeechRecognizer me = android.speech.SpeechRecognizer.createSpeechRecognizer(this);
+      sr = me;
+      me.setRecognitionListener(new android.speech.RecognitionListener() {
+        public void onReadyForSpeech(Bundle p) { if (sr == me) vjs("__voiceState", "listening"); }
+        public void onBeginningOfSpeech() {}
+        public void onRmsChanged(float v) {}
+        public void onBufferReceived(byte[] bf) {}
+        public void onEndOfSpeech() {}
+        public void onPartialResults(Bundle p) {}
+        public void onEvent(int t, Bundle p) {}
+        public void onError(int e) { if (sr == me) voiceFail(e); }
+        public void onResults(Bundle r) {
+          if (sr != me) return;
+          voiceGot(r == null ? null : r.getStringArrayList(android.speech.SpeechRecognizer.RESULTS_RECOGNITION));
+        }
+      });
+      me.startListening(voiceIntentFor(tag));
+    } catch (Throwable e) {
+      voiceKill();
+      voiceIntent(tag);
+    }
+  }
+
+  private void voiceGot(java.util.ArrayList<String> l) {
+    if (l == null || l.isEmpty()) { voiceFail(7); return; }
+    voiceKill();
+    org.json.JSONArray ja = new org.json.JSONArray();
+    for (String s : l) ja.put(s);
+    vjs("__voice", ja.toString());
+  }
+
+  private void voiceFail(int e) {
+    String tag = voiceCur;
+    if ((e == 7 || e == 6) && voiceTry == 0) {
+      voiceTry = 1;
+      final String o = tag.startsWith("ar") ? "en-US" : "ar-JO";
+      vjs("__voiceState", o.startsWith("en") ? "retry-en" : "retry-ar");
+      voiceKill();
+      hnd.postDelayed(new Runnable() { public void run() { voiceListen(o); } }, 350);
+      return;
+    }
+    voiceKill();
+    if (e == 9) {
+      if (Build.VERSION.SDK_INT >= 23) { pendingLang = tag; requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 2); }
+      else vjs("__voiceErr", "denied");
+      return;
+    }
+    if (e == 5 || e == 8 || e == 10 || e == 11 || e == 12 || e == 13) { voiceIntent(tag); return; }
+    vjs("__voiceErr", (e == 1 || e == 2 || e == 4) ? "network" : e == 3 ? "audio" : "none");
+  }
+
+  private void voiceIntent(String tag) {
+    try {
+      startActivityForResult(voiceIntentFor(tag), 9);
+    } catch (Throwable ex) {
+      vjs("__voiceErr", "unavailable");
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int rq, String[] p, int[] g) {
+    super.onRequestPermissionsResult(rq, p, g);
+    if (rq == 2) {
+      if (g != null && g.length > 0 && g[0] == PackageManager.PERMISSION_GRANTED) { voiceTry = 0; voiceListen(voiceTag(pendingLang)); }
+      else vjs("__voiceErr", "denied");
+    }
+  }
 
   private void js(String k, String json) {
     if (web == null) return;
@@ -849,6 +965,7 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onPause() {
+    if (sr != null) { voiceKill(); vjs("__voiceErr", "cancel"); }
     if (exo != null) exo.pause();
     if (vlc != null) vlc.pause();
     super.onPause();
@@ -908,6 +1025,7 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onDestroy() {
+    voiceKill();
     exoRelease();
     vlcRelease();
     if (vlcLib != null) { try { vlcLib.release(); } catch (Throwable e) {} }
