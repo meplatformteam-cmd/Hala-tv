@@ -847,6 +847,7 @@ public class MainActivity extends Activity {
         + ",\"d\":" + (d == null ? 0 : d.getLongExtra("d", 0))
         + ",\"end\":" + (d != null && d.getBooleanExtra("end", false))
         + ",\"zap\":" + (d == null ? 0 : d.getIntExtra("zap", 0))
+        + ",\"sw\":" + JSONObject.quote(d == null || d.getStringExtra("sw") == null ? "" : d.getStringExtra("sw"))
         + ",\"err\":" + JSONObject.quote(er == null ? "" : er) + "}";
       if (web != null) web.evaluateJavascript("window.__extDone&&window.__extDone(" + j + ")", null);
       return;
@@ -1023,6 +1024,7 @@ public class PlayerActivity extends Activity {
 
   private boolean playing, paused, ended, failing, triedOther, done;
   private int dlgs = 0;
+  private boolean switchInternal = false;
   private String errCode = "";
   private int zapDir = 0, fitMode = 0, vh = 0;
   private long lastT, lastD, seekTgt = -1, jumpAcc = 0, holdStart, lastSeekKey;
@@ -1139,18 +1141,18 @@ public class PlayerActivity extends Activity {
 
     bar = new LinearLayout(this);
     bar.setOrientation(LinearLayout.VERTICAL);
-    bar.setPadding(dp(30), dp(14), dp(30), dp(14));
+    bar.setPadding(dp(22), dp(8), dp(22), dp(10));
     GradientDrawable bg = new GradientDrawable();
     bg.setColor(0xDD181820);
-    bg.setCornerRadius(dp(26));
+    bg.setCornerRadius(dp(18));
     bar.setBackground(bg);
 
     LinearLayout top = new LinearLayout(this);
     top.setOrientation(LinearLayout.HORIZONTAL);
-    tvTitle = tv(18, Color.WHITE, true);
+    tvTitle = tv(14, Color.WHITE, true);
     tvTitle.setSingleLine(true);
     tvTitle.setText(title);
-    tvBadge = tv(14, 0xAAFFFFFF, false);
+    tvBadge = tv(12, 0xAAFFFFFF, false);
     top.addView(tvTitle, new LinearLayout.LayoutParams(0, -2, 1f));
     top.addView(tvBadge, new LinearLayout.LayoutParams(-2, -2));
     bar.addView(top, new LinearLayout.LayoutParams(-1, -2));
@@ -1161,10 +1163,10 @@ public class PlayerActivity extends Activity {
     icRw = new Ico(this, 0);
     icPp = new Ico(this, 2);
     icFf = new Ico(this, 3);
-    LinearLayout.LayoutParams il = new LinearLayout.LayoutParams(dp(100), dp(54));
-    il.setMargins(dp(14), dp(8), dp(14), dp(8));
-    LinearLayout.LayoutParams il2 = new LinearLayout.LayoutParams(dp(120), dp(54));
-    il2.setMargins(dp(14), dp(8), dp(14), dp(8));
+    LinearLayout.LayoutParams il = new LinearLayout.LayoutParams(dp(72), dp(38));
+    il.setMargins(dp(10), dp(4), dp(10), dp(4));
+    LinearLayout.LayoutParams il2 = new LinearLayout.LayoutParams(dp(84), dp(38));
+    il2.setMargins(dp(10), dp(4), dp(10), dp(4));
     if (!live) ic.addView(icRw, il);
     ic.addView(icPp, il2);
     if (!live) ic.addView(icFf, il);
@@ -1173,28 +1175,29 @@ public class PlayerActivity extends Activity {
     LinearLayout tr = new LinearLayout(this);
     tr.setOrientation(LinearLayout.HORIZONTAL);
     tr.setGravity(Gravity.CENTER_VERTICAL);
-    tvT = tv(20, Color.WHITE, true);
-    tvT.setMinWidth(dp(90));
+    tvT = tv(16, Color.WHITE, true);
+    tvT.setMinWidth(dp(70));
     tvT.setGravity(Gravity.CENTER);
-    tvD = tv(20, 0xFFCFCFD4, true);
-    tvD.setMinWidth(dp(90));
+    tvD = tv(16, 0xFFCFCFD4, true);
+    tvD.setMinWidth(dp(70));
     tvD.setGravity(Gravity.CENTER);
     seek = new Seek(this);
     tr.addView(tvT, new LinearLayout.LayoutParams(-2, -2));
-    tr.addView(seek, new LinearLayout.LayoutParams(0, dp(26), 1f));
+    tr.addView(seek, new LinearLayout.LayoutParams(0, dp(20), 1f));
     tr.addView(tvD, new LinearLayout.LayoutParams(-2, -2));
     if (live) seek.setVisibility(View.INVISIBLE);
     bar.addView(tr, new LinearLayout.LayoutParams(-1, -2));
 
-    tvHint = tv(14, 0x99FFFFFF, false);
+    tvHint = tv(11, 0x80FFFFFF, false);
     tvHint.setGravity(Gravity.CENTER);
-    tvHint.setPadding(0, dp(6), 0, 0);
+    tvHint.setPadding(0, dp(2), 0, 0);
     if (live) tvHint.setText(ar ? "↑ ↓  تغيير القناة    •    OK  إيقاف / تشغيل    •    رجوع  خروج" : "↑ ↓  Change channel    •    OK  Pause / Play    •    Back  Exit");
     else tvHint.setText(ar ? "← →  ترجيع / تقديم    •    OK  إيقاف / تشغيل    •    ↑  صوت وترجمة    •    رجوع  خروج" : "← →  Rewind / Forward    •    OK  Pause / Play    •    ↑  Audio & subtitles    •    Back  Exit");
     bar.addView(tvHint, new LinearLayout.LayoutParams(-1, -2));
 
     FrameLayout.LayoutParams bl = new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM);
-    bl.setMargins(dp(56), 0, dp(56), dp(30));
+    int sw = getResources().getDisplayMetrics().widthPixels;
+    bl.setMargins(sw / 6, 0, sw / 6, dp(22));
     root.addView(bar, bl);
 
     setContentView(root);
@@ -1421,6 +1424,7 @@ public class PlayerActivity extends Activity {
     r.putExtra("end", ended);
     r.putExtra("zap", zapDir);
     r.putExtra("err", errCode);
+    r.putExtra("sw", switchInternal ? "internal" : "");
     setResult(RESULT_OK, r);
     finish();
   }
@@ -1542,7 +1546,7 @@ public class PlayerActivity extends Activity {
   private void showBar() {
     updateUi();
     bar.setVisibility(View.VISIBLE);
-    subs.setBottomPaddingFraction(0.30f);
+    subs.setBottomPaddingFraction(0.22f);
     hnd.removeCallbacks(hideBar);
     hnd.postDelayed(hideBar, 4000);
   }
@@ -1660,6 +1664,8 @@ public class PlayerActivity extends Activity {
       vlcHw = true; vlcRetried = false; triedOther = false;
       begin(lastT);
     } });
+    names.add(ar ? "الرجوع للمشغّل الداخلي (داخل التطبيق)" : "Back to the in-app player");
+    acts.add(new Runnable() { public void run() { switchInternal = true; finishOut(); } });
     names.add(ar ? "إغلاق" : "Close");
     acts.add(new Runnable() { public void run() {} });
     AlertDialog.Builder b = new AlertDialog.Builder(this);
