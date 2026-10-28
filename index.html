@@ -456,6 +456,19 @@ body.bgv #cin .sh{background:linear-gradient(to top,rgba(0,0,0,.9) 0,rgba(0,0,0,
 #page.cinp .gv .li:focus{transform:scale(1.09);border-color:#fff;box-shadow:0 0 0 .45vh #fff,0 1.6vh 3.2vh rgba(0,0,0,.65)}
 /* أداء: ممنوع blur فوق فيديو شغّال (بيعيد رسم كل فريم) */
 body[data-v=page] #page.cinp *,body[data-v=home] #home *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#page.cinp #cin-info{flex-direction:row;align-items:flex-end;gap:2vw}
+#ci-pos{display:none;flex:none;height:min(30vh,330px);aspect-ratio:2/3;object-fit:cover;border-radius:1.6vh;box-shadow:0 1.4vh 3vh rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.2)}
+#ci-pos.on{display:block}#ci-tx{min-width:0}
+#page.cinp .pill,#page.cinp .ph input{background:rgba(8,12,26,.9)!important;border-color:rgba(255,255,255,.18)}
+#page.cinp #p-g .gi{background:rgba(8,12,26,.9)}
+#page.cinp #p-g .gi.on:not(:focus){background:rgba(72,84,128,.95)}
+#page.cinp .ai{background:rgba(8,12,26,.85)}
+#page.cinp .ai.on:not(:focus){background:rgba(72,84,128,.95)}
+#page.cinp .pill:focus,#page.cinp #p-g .gi:focus,#page.cinp .ai:focus{background:var(--hi)!important}
+body.bgv .pg>div{background:rgba(8,12,26,.88)!important}
+body.bgv #page.cinp .pg>div{background:none!important}
+body.bgv .tile{background:rgba(8,12,26,.8)!important}
+#kb{background:rgba(8,12,26,.97)!important}
 #vbox{position:fixed;left:50%;bottom:7vh;transform:translateX(-50%);z-index:99999;display:none;width:min(640px,86vw);padding:20px 28px 22px;border-radius:26px;background:linear-gradient(135deg,rgba(8,20,48,.97),rgba(100,20,44,.95));border:1px solid rgba(255,255,255,.28);box-shadow:0 20px 60px rgba(0,0,0,.65);color:#fff;text-align:center;font:800 clamp(20px,1.8vw,32px)/1.5 Cairo,Tahoma,Arial,sans-serif;pointer-events:none}
 #vbox.on{display:block}
 #vbars{display:flex;gap:5px;justify-content:center;align-items:center;height:56px;margin-top:10px}
@@ -497,7 +510,7 @@ body[data-v=page] #page.cinp *,body[data-v=home] #home *{backdrop-filter:none!im
 
 <div id="page"><div id="pbg"></div>
  <div class="ph"><button class="pill" tabindex="0" id="p-back" data-i="back"></button><h2 class="ruq"><span id="p-t"></span><small id="p-n"></small></h2><button class="pill" tabindex="0" id="p-vm"></button><button class="pill" tabindex="0" id="p-cin"></button><button class="pill" tabindex="0" id="p-sort" style="display:none"></button><button class="pill" tabindex="0" id="p-lock"></button><input id="p-q" dir="auto" tabindex="0" data-ip="search"><button class="pill mic" id="mic2" tabindex="0" aria-label="mic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></button></div>
- <div id="cin-info"><div id="ci-t"></div><div id="ci-m"></div><div id="ci-p"></div></div>
+ <div id="cin-info"><img id="ci-pos" alt=""><div id="ci-tx"><div id="ci-t"></div><div id="ci-m"></div><div id="ci-p"></div></div></div>
  <div class="pg" id="pg"><div id="p-g"></div><div id="p-a"></div><div id="p-l"></div><div id="p-pv"></div></div>
 </div>
 
@@ -1331,6 +1344,11 @@ function centerLi(r){const L=$('#p-l');if(!L)return;
 function focusEl(e){if(e){try{e.focus({preventScroll:true})}catch(x){e.focus()}if(e.classList&&e.classList.contains('li')&&e.parentNode&&e.parentNode.classList.contains('gv'))centerLi(e);else e.scrollIntoView({block:'nearest',inline:'nearest'})}}
 function spatial(k,sel){
  const a=document.activeElement;
+ {const L=$('#p-l');if(a&&a.parentNode===L&&a.classList&&a.classList.contains('li')&&$('#page').classList.contains('cinp')&&V()=='page'){
+  const ls=()=>[...L.children].filter(x=>x.classList&&x.classList.contains('li'));let kids=ls(),i=kids.indexOf(a);const rtl=getComputedStyle(L).direction=='rtl';
+  if(k==40){if(i+4>=kids.length){lazyMore();kids=ls()}if(Math.floor(i/4)<Math.floor((kids.length-1)/4))focusEl(kids[Math.min(i+4,kids.length-1)]);return}
+  if(k==38){if(i>=4){focusEl(kids[i-4]);return}}
+  else if(k==37||k==39){const d=((k==39)!==rtl)?1:-1,j=i+d;if(Math.floor(j/4)==Math.floor(i/4)&&kids[j])focusEl(kids[j]);return}}}
  if((k==38||k==40)&&a&&a.parentNode&&a.classList){const pid=a.parentNode.id,c=a.classList,cn=$('#page').classList.contains('cinp'),cl=pid=='p-l'&&!a.parentNode.classList.contains('gv')&&c.contains('li')?'li':pid=='p-g'&&c.contains('gi')&&!cn?'gi':pid=='p-a'&&c.contains('ai')&&!cn?'ai':'';
   if(cl){const n=k==40?a.nextElementSibling:a.previousElementSibling;if(n&&n.classList.contains(cl)){focusEl(n);return}}}
  const els=$$(sel).filter(e=>e.getClientRects().length);if(!els.includes(a)){focusEl(els[0]);return}
@@ -1581,15 +1599,16 @@ function qtier(name,q){if(name.toLowerCase().includes(q))return 1;if(!qvoice(q))
  if(S.qalt.k.length){const k=cget(SKC2,name,n=>skel(anorm(n)));for(const x of S.qalt.k)if(k.includes(x))return 3}return 0}
 function voiceAlts(list){const a=[],k=[];list.forEach(h=>{const b=anorm(h),p=anorm(phon(h));[b,p].forEach(x=>{if(x.length>=2&&!a.includes(x))a.push(x)});
   if(/[\u0621-\u064A]/.test(p)){const z=skel(p);if(z.length>=4&&!k.includes(z))k.push(z)}});return {a,k}}
-const vTxt=k=>{const ar=S.lang=='ar';return({listen:ar?'عم بسمعك… احكي':'Listening… speak now',none:ar?'ما سمعت شي، جرّب كمان مرة':'Didn\u2019t catch that, try again',nosup:ar?'البحث الصوتي مش مدعوم على هالجهاز':'Voice search isn\u2019t supported on this device',denied:ar?'لازم تسمح للتطبيق باستخدام المايك: إعدادات الجهاز ← التطبيقات ← Hala TV ← الأذونات':'Allow the microphone for this app in device settings',net:ar?'البحث الصوتي بدو إنترنت':'Voice search needs internet',silent:ar?'المايك ما التقط أي صوت. غالباً الجهاز ما بوصّل مايك الريموت للتطبيقات (مايك الريموت بيشتغل مع جوجل أسيستنت بس). وصّل مايك USB أو بلوتوث':'The microphone captured no sound. This device probably does not expose the remote\u2019s mic to apps. Connect a USB or Bluetooth mic',unclear:ar?'سمعت صوت بس ما قدرت أفهمه، قرّب من المايك واحكي أوضح':'I heard sound but could not understand it, speak closer and clearer',proc:ar?'عم بحلّل الصوت…':'Analysing your voice…',heard:ar?'سمعتك':'Heard',fb:ar?'عم بجرّب طريقة ثانية، احكي هسا…':'Trying another method, speak now…',audio:ar?'المايك مشغول أو مش شغال':'Microphone is busy or unavailable',retryEn:ar?'ما فهمت، جرّب احكي بالإنجليزي هسا…':'Trying English, speak again…',retryAr:ar?'ما فهمت، جرّب احكي بالعربي هسا…':'Trying Arabic, speak again…'})[k]};
-function micBusy(on){VQ.on=on;clearTimeout(VQ.t);if(on){VQ.t=setTimeout(()=>{micBusy(0);VB.hide()},45000);VB.show(vTxt('listen'),'')}$$('.mic').forEach(b=>b.classList.toggle('rec',!!on))}
+const vTxt=k=>{const ar=S.lang=='ar';return({listen:ar?'عم بسمعك… احكي':'Listening… speak now',none:ar?'ما سمعت شي، جرّب كمان مرة':'Didn\u2019t catch that, try again',nosup:ar?'البحث الصوتي مش مدعوم على هالجهاز':'Voice search isn\u2019t supported on this device',denied:ar?'لازم تسمح للتطبيق باستخدام المايك: إعدادات الجهاز ← التطبيقات ← Hala TV ← الأذونات':'Allow the microphone for this app in device settings',net:ar?'البحث الصوتي بدو إنترنت':'Voice search needs internet',stt:ar?'خدمة الترجمة الصوتية رفضت المفتاح أو الطلب، شوف التفاصيل تحت':'Speech service rejected the key or request, see details below',hang:ar?'المايك علّق ولا إشي رجع. جرّب كمان مرة':'Microphone stalled with no result. Try again',silent:ar?'المايك ما التقط أي صوت. غالباً الجهاز ما بوصّل مايك الريموت للتطبيقات (مايك الريموت بيشتغل مع جوجل أسيستنت بس). وصّل مايك USB أو بلوتوث':'The microphone captured no sound. This device probably does not expose the remote\u2019s mic to apps. Connect a USB or Bluetooth mic',unclear:ar?'سمعت صوت بس ما قدرت أفهمه، قرّب من المايك واحكي أوضح':'I heard sound but could not understand it, speak closer and clearer',proc:ar?'عم بحلّل الصوت…':'Analysing your voice…',heard:ar?'سمعتك':'Heard',fb:ar?'عم بجرّب طريقة ثانية، احكي هسا…':'Trying another method, speak now…',audio:ar?'المايك مشغول أو مش شغال':'Microphone is busy or unavailable',retryEn:ar?'ما فهمت، جرّب احكي بالإنجليزي هسا…':'Trying English, speak again…',retryAr:ar?'ما فهمت، جرّب احكي بالعربي هسا…':'Trying Arabic, speak again…'})[k]};
+function micBusy(on){VQ.on=on;clearTimeout(VQ.t);if(on){VQ.t=setTimeout(()=>{micBusy(0);VB.show(vTxt('hang'),'');VB.hideIn(6000)},40000);VB.show(vTxt('listen'),'')}$$('.mic').forEach(b=>b.classList.toggle('rec',!!on))}
 function voiceDone(list){micBusy(0);list=(list||[]).map(x=>String(x||'').trim()).filter(Boolean);if(!list.length){VB.show(vTxt('none'),'');VB.hideIn(3500);return}
  const q=list[0];VB.show('« '+q+' »',vTxt('heard'));VB.hideIn(2200);S.vq=q;S.qalt=voiceAlts(list);const v=V();
  if(v=='page'){$('#p-q').value=q;S.grp='';S.let='';S.limit=72;renderPage();focusEl($('#page .li')||$('#p-q'))}
  else if(v=='home'){$('#hq').value=q;$('#hq').onkeydown({keyCode:13,preventDefault(){},stopPropagation(){}})}}
+const STTK='__STT_KEY__';
 function voiceStart(){
- if(VQ.on)return;const lg=S.lang=='ar'?'ar':'en-US';
- if(window.HalaNative&&HalaNative.voiceStart){micBusy(1);try{HalaNative.voiceStart(lg)}catch(e){micBusy(0);osd(vTxt('nosup'))}return}
+ if(VQ.on){try{window.HalaNative&&HalaNative.voiceStop&&HalaNative.voiceStop()}catch(e){}return}const lg=S.lang=='ar'?'ar':'en-US';
+ if(window.HalaNative&&HalaNative.voiceStart){try{const k=store.get('sttkey')||(/^__/.test(STTK)?'':STTK);if(k&&HalaNative.setSttKey)HalaNative.setSttKey(k)}catch(e){}micBusy(1);try{HalaNative.voiceStart(lg)}catch(e){micBusy(0);osd(vTxt('nosup'))}return}
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){osd(vTxt('nosup'));return}
  try{const r=new SR();r.lang=S.lang=='ar'?'ar-JO':'en-US';r.maxAlternatives=5;r.interimResults=false;
   r.onresult=e=>{const a=[];for(let i=0;i<e.results[0].length;i++)a.push(e.results[0][i].transcript);voiceDone(a)};
@@ -1597,8 +1616,8 @@ function voiceStart(){
   micBusy(1);osd(vTxt('listen'));r.start()}catch(e){micBusy(0);osd(vTxt('nosup'))}}
 window.__voice=j=>{let a=[];try{a=JSON.parse(j)}catch(e){}if(a===null){micBusy(0);osd(vTxt('nosup'));return}voiceDone(a)};
 window.__voiceErr=(c,d)=>{micBusy(0);if(c=='cancel'){VB.hide();return}try{elog('voice '+c+' '+(d||''))}catch(e){}
- const k={denied:'denied',network:'net',audio:'audio',unavailable:'nosup',silent:'silent',unclear:'unclear'}[c]||'none';
- VB.show(vTxt(k),d?String(d).split(';').slice(0,2).join('  '):'');VB.hideIn(9000)};
+ const k={denied:'denied',network:'net',audio:'audio',unavailable:'nosup',silent:'silent',unclear:'unclear',stt:'stt'}[c]||'none';
+ VB.show(vTxt(k),d?String(d).split(';').slice(0,2).join('  '):'');VB.hideIn(12000)};
 window.__voiceLvl=n=>VB.lvl(n);
 window.__voiceState=s=>{if(s=='listening')VB.show(vTxt('listen'),'');else if(s=='processing')VB.show(vTxt('proc'),'',1);else if(s=='fallback')VB.show(vTxt('fb'),'');else if(s=='retry-en')VB.show(vTxt('retryEn'),'');else if(s=='retry-ar')VB.show(vTxt('retryAr'),'')};
 window.voiceKey=()=>{const v=V();if(v=='home'||v=='page')voiceStart()};
@@ -1944,6 +1963,7 @@ window.CIN=(function(){
   n.onload=()=>{n.onload=null;if(shown!==u)return;n.classList.toggle('bd',!!bd);n.classList.add('on');o.classList.remove('on');ii^=1};
   n.onerror=()=>{n.onerror=null;if(shown===u)shown=''};n.src=u}
  function info(it,m){
+  const po=$('#ci-pos');if(po){if(it&&it.logo){const u=thumb(it.logo,'w342');if(po.getAttribute('src')!==u){po.onerror=()=>po.classList.remove('on');po.src=u}po.classList.add('on')}else{po.classList.remove('on');po.removeAttribute('src')}}
   if(!it){tt.textContent=mm.textContent=pp.textContent='';return}
   tt.textContent=cleanTitle(it.name)||it.name||'';
   const a=[];if(m&&m.year)a.push(m.year);if(m&&m.genre)a.push(m.genre);if(m&&m.rate>0)a.push('★ '+m.rate);if(!a.length&&it.group)a.push(it.group);

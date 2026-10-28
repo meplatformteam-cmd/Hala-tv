@@ -3,7 +3,7 @@ set -e
 mkdir -p android/app/src/main/res/xml android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
 BUILD_TS=$(date -u '+%Y-%m-%d %H:%M')
-sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g;s|__BUILD__|${BUILD_TS}|g;s|__SUB_SRV__|${SUB_SRV:-}|g" android/app/src/main/assets/index.html
+sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g;s|__BUILD__|${BUILD_TS}|g;s|__SUB_SRV__|${SUB_SRV:-}|g;s|__STT_KEY__|${STT_KEY:-}|g" android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
 pluginManagement {
   repositories { google(); mavenCentral(); gradlePluginPortal() }
@@ -206,6 +206,14 @@ public class MainActivity extends Activity {
   };
 
   public class Bridge {
+    @JavascriptInterface
+    public void setSttKey(String k) { sttKey = k == null ? "" : k.trim(); }
+
+    @JavascriptInterface
+    public void voiceStop() {
+      runOnUiThread(new Runnable() { public void run() { if (recRun) recRun = false; else { voiceKill(); vjs2("__voiceErr", "cancel", ""); } } });
+    }
+
     @JavascriptInterface
     public void voiceStart(final String lang) {
       runOnUiThread(new Runnable() { public void run() { voiceBegin(lang); } });
@@ -553,14 +561,28 @@ public class MainActivity extends Activity {
       requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 2);
       return;
     }
+    pendingLang = lang;
     voiceKill();
-    voiceRecStart(lang);
+    nativeFirst = voicePreferNative();
+    if (nativeFirst) voiceListen(voiceTag(lang)); else voiceRecStart(lang);
+  }
+
+  private volatile boolean nativeFirst = false;
+
+  private boolean voicePreferNative() {
+    try {
+      if ("Amazon".equalsIgnoreCase(Build.MANUFACTURER)) return false;
+      android.app.UiModeManager um = (android.app.UiModeManager) getSystemService(android.content.Context.UI_MODE_SERVICE);
+      boolean tv = um != null && um.getCurrentModeType() == android.content.res.Configuration.UI_MODE_TYPE_TELEVISION;
+      return tv && android.speech.SpeechRecognizer.isRecognitionAvailable(this);
+    } catch (Throwable e) { return false; }
   }
 
   // ===== Voice v2: own recorder (live level meter) + cloud STT in Arabic AND English =====
   private static final String STT_KEY = "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw";
   private volatile boolean recRun = false, recSpeech = false, recAny = false;
   private volatile int recPeak = 0;
+  private volatile String sttKey = "";
 
   private void vjsU(final String fn, final String arg) { hnd.post(new Runnable() { public void run() { vjs(fn, arg); } }); }
   private void vjsU2(final String fn, final String a, final String b2) { hnd.post(new Runnable() { public void run() { vjs2(fn, a, b2); } }); }
@@ -598,12 +620,20 @@ public class MainActivity extends Activity {
     double floor = -1;
     int peak = 0;
     boolean speech = false, probed = false, skip = false;
+    long total = 0;
     vjsU("__voiceState", "listening");
     try {
       while (recRun) {
-        int n = ar.read(sb, 0, CH);
+        int n = Build.VERSION.SDK_INT >= 23 ? ar.read(sb, 0, CH, android.media.AudioRecord.READ_NON_BLOCKING) : ar.read(sb, 0, CH);
         if (n < 0) break;
-        if (n == 0) continue;
+        long el0 = System.currentTimeMillis() - t0;
+        if (n == 0) {
+          if (el0 > 3000 && total == 0) { skip = !last; break; }
+          if (el0 > 10000) break;
+          try { Thread.sleep(20); } catch (InterruptedException ie) { break; }
+          continue;
+        }
+        total += n;
         long sum = 0;
         int pk = 0;
         byte[] bb = new byte[n * 2];
@@ -682,6 +712,55 @@ public class MainActivity extends Activity {
     }
   }
 
+  private String[] voiceSttGoogle(byte[] pcm, String tagA, String tagB, String key) throws Exception {
+    org.json.JSONObject cfg = new org.json.JSONObject();
+    cfg.put("encoding", "LINEAR16");
+    cfg.put("sampleRateHertz", 16000);
+    cfg.put("languageCode", tagA);
+    cfg.put("alternativeLanguageCodes", new org.json.JSONArray().put(tagB));
+    cfg.put("maxAlternatives", 5);
+    org.json.JSONObject au = new org.json.JSONObject();
+    au.put("content", android.util.Base64.encodeToString(pcm, android.util.Base64.NO_WRAP));
+    org.json.JSONObject body = new org.json.JSONObject();
+    body.put("config", cfg);
+    body.put("audio", au);
+    byte[] bd = body.toString().getBytes("UTF-8");
+    java.net.URL u = new java.net.URL("https://speech.googleapis.com/v1/speech:recognize?key=" + java.net.URLEncoder.encode(key, "UTF-8"));
+    java.net.HttpURLConnection c = (java.net.HttpURLConnection) u.openConnection();
+    try {
+      c.setConnectTimeout(8000);
+      c.setReadTimeout(20000);
+      c.setRequestMethod("POST");
+      c.setDoOutput(true);
+      c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+      c.setFixedLengthStreamingMode(bd.length);
+      java.io.OutputStream o = c.getOutputStream();
+      o.write(bd);
+      o.close();
+      int code = c.getResponseCode();
+      java.io.InputStream is = code == 200 ? c.getInputStream() : c.getErrorStream();
+      java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream();
+      if (is != null) { byte[] b2 = new byte[4096]; int r; while ((r = is.read(b2)) > 0) bo.write(b2, 0, r); }
+      String txt = bo.toString("UTF-8");
+      if (code != 200) {
+        String m = txt;
+        try { m = new org.json.JSONObject(txt).getJSONObject("error").optString("message", txt); } catch (Throwable e) {}
+        if (m.length() > 160) m = m.substring(0, 160);
+        throw new java.io.IOException("HTTPERR" + code + ": " + m);
+      }
+      java.util.ArrayList<String> r2 = new java.util.ArrayList<String>();
+      org.json.JSONArray res = new org.json.JSONObject(txt).optJSONArray("results");
+      if (res != null) for (int i = 0; i < res.length(); i++) {
+        org.json.JSONArray alt = res.getJSONObject(i).optJSONArray("alternatives");
+        if (alt == null) continue;
+        for (int k = 0; k < alt.length(); k++) { String tr = alt.getJSONObject(k).optString("transcript", ""); if (tr.length() > 0) r2.add(tr); }
+      }
+      return r2.toArray(new String[0]);
+    } finally {
+      c.disconnect();
+    }
+  }
+
   private void voiceRecRun(final String tagA, final String tagB) {
     int[] srcs = {6, 1, 7, 5, 9, 0};
     byte[] pcm = null;
@@ -701,6 +780,20 @@ public class MainActivity extends Activity {
     if (!recSpeech) { vjsU2("__voiceErr", "silent", "peak=" + recPeak + ";src=" + used + ";" + voiceDiag()); return; }
     vjsU("__voiceState", "processing");
     final byte[] fp = pcm;
+    if (sttKey != null && sttKey.length() > 10) {
+      try {
+        String[] g = voiceSttGoogle(fp, tagA, tagB, sttKey);
+        if (g.length == 0) { vjsU2("__voiceErr", "unclear", "peak=" + recPeak + ";src=" + used); return; }
+        org.json.JSONArray gj = new org.json.JSONArray();
+        for (String s3 : g) gj.put(s3);
+        vjsU("__voice", gj.toString());
+      } catch (Throwable e) {
+        String m = String.valueOf(e);
+        if (m.contains("HTTPERR")) vjsU2("__voiceErr", "stt", m.substring(m.indexOf("HTTPERR")));
+        else vjsU2("__voiceErr", "network", "stt:" + m);
+      }
+      return;
+    }
     final String[][] out = new String[2][];
     final String[] err = new String[2];
     final String[] tags = {tagA, tagB};
@@ -756,7 +849,7 @@ public class MainActivity extends Activity {
       me.setRecognitionListener(new android.speech.RecognitionListener() {
         public void onReadyForSpeech(Bundle p) { if (sr == me) { voiceReady = true; hnd.removeCallbacks(voiceWd); vjs("__voiceState", "listening"); } }
         public void onBeginningOfSpeech() { if (sr == me) { voiceReady = true; hnd.removeCallbacks(voiceWd); } }
-        public void onRmsChanged(float v) {}
+        public void onRmsChanged(float v) { if (sr == me) vjs("__voiceLvl", String.valueOf((int) Math.max(0, Math.min(100, (v + 2) * 8)))); }
         public void onBufferReceived(byte[] bf) {}
         public void onEndOfSpeech() {}
         public void onPartialResults(Bundle p) {}
@@ -785,6 +878,13 @@ public class MainActivity extends Activity {
 
   private void voiceFail(int e) {
     String tag = voiceCur;
+    if (nativeFirst && (e == 3 || e == 4 || e == 5 || e == 6 || e == 7 || e == 8)) {
+      nativeFirst = false;
+      voiceKill();
+      vjs("__voiceState", "fallback");
+      voiceRecStart(pendingLang);
+      return;
+    }
     if (e == 7 && voiceTry == 0) {
       voiceTry = 1;
       final String o = tag.startsWith("ar") ? "en-US" : "ar-JO";
