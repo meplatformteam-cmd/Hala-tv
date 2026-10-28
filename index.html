@@ -247,9 +247,9 @@ html.ph .card0 .ruq{font-size:56px}html.ph #pm .ri{font-size:18px}html.ph #osd{f
 #set .btn{width:min(620px,100%);background:var(--sf);color:var(--tx);border:2px solid var(--ln);text-align:start;font-size:22px;padding:12px 22px;border-radius:16px;font-weight:700}
 #set .btn:focus{border-color:var(--hi);box-shadow:0 0 0 3px rgba(255,255,255,.35)}.sh3{color:var(--gold);font-size:24px;margin:12px 0 0}
 .pg.gvw{grid-template-columns:var(--cg,17%) 7% 1fr}.pg.gvw #p-pv{display:none}
-.pg.gvw #p-l.gv{grid-template-columns:repeat(4,1fr);grid-template-columns:repeat(4,min(21vh,calc((100% - 120px)/4)));grid-auto-rows:auto;gap:28px;justify-content:space-evenly;align-content:start;padding:26px 18px}.pg.gvw .gv .li{height:auto;width:100%;margin:0;border-radius:20px;border:2px solid transparent;background:linear-gradient(160deg,#2a2a2d,#0a0a0a)}.gv .li::before{content:"";display:block;width:100%;padding-top:150%}.gv .li:focus{transform:scale(1.1);z-index:3;border-color:var(--hi);box-shadow:0 18px 40px rgba(0,0,0,.65)}.gv .li.lv img{object-fit:contain;padding:22%;inset:0 0 25% 0;height:75%}
+.pg.gvw #p-l.gv{grid-template-columns:repeat(4,1fr);grid-template-columns:repeat(4,21vh);grid-auto-rows:auto;grid-auto-rows:31.5vh;gap:3vh;justify-content:space-evenly;align-content:start;padding:3.5vh 1.5vw}.pg.gvw .gv .li{display:block;height:auto;width:100%;margin:0;border-radius:20px;border:2px solid transparent;background:linear-gradient(160deg,#2a2a2d,#0a0a0a)}.gv .li::before{content:"";display:block;width:100%;padding-top:150%}.gv .li:focus{transform:scale(1.1);z-index:3;border-color:var(--hi);box-shadow:0 18px 40px rgba(0,0,0,.65)}.gv .li.lv img{object-fit:contain;padding:22%;inset:0 0 25% 0;height:75%}
 .gv .li span:not(.fvb){position:absolute;left:0;right:0;bottom:0;width:auto;padding:10px 14px;max-height:34%;overflow:hidden;white-space:normal;text-align:start;background:rgba(0,0,0,.66);color:#fff;font-weight:700;font-size:19px;line-height:1.3}
-html.ph .pg.gvw #p-l.gv{grid-template-columns:repeat(3,1fr);grid-auto-rows:auto;gap:10px}html.ph .gv .li span:not(.fvb){font-size:13px}
+html.ph .pg.gvw #p-l.gv{grid-template-columns:repeat(3,1fr);grid-auto-rows:auto;gap:10px;padding:10px}html.ph .gv .li span:not(.fvb){font-size:13px}
 
 /* ===== تلفزيون فقط: ثيم tvOS ===== */
 #st-dev{display:none!important}
@@ -1199,7 +1199,8 @@ $('#sp-e').onclick=()=>srvSubs();$('#sp-a').onclick=()=>osSearch(true);
 window.__nopicker=()=>{};
 
 /* ===== الريموت ===== */
-function focusEl(e){if(e){try{e.focus({preventScroll:true})}catch(x){e.focus()}e.scrollIntoView({block:'nearest',inline:'nearest'})}}
+function centerLi(r){const L=$('#p-l');if(!L)return;const a=L.getBoundingClientRect(),b=r.getBoundingClientRect(),d=b.top-a.top-(L.clientHeight-b.height)/2;if(Math.abs(d)<4)return;const y=Math.max(0,L.scrollTop+d);try{L.scrollTo({top:y,behavior:'smooth'})}catch(x){L.scrollTop=y}}
+function focusEl(e){if(e){try{e.focus({preventScroll:true})}catch(x){e.focus()}if(e.classList&&e.classList.contains('li')&&e.parentNode&&e.parentNode.classList.contains('gv'))centerLi(e);else e.scrollIntoView({block:'nearest',inline:'nearest'})}}
 function spatial(k,sel){
  const a=document.activeElement;
  if((k==38||k==40)&&a&&a.parentNode&&a.classList){const pid=a.parentNode.id,c=a.classList,cl=pid=='p-l'&&!a.parentNode.classList.contains('gv')&&c.contains('li')?'li':pid=='p-g'&&c.contains('gi')?'gi':pid=='p-a'&&c.contains('ai')?'ai':'';
