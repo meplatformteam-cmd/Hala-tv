@@ -201,6 +201,21 @@ public class MainActivity extends Activity {
 
   public class Bridge {
     @JavascriptInterface
+    public void voiceStart(final String lang) {
+      runOnUiThread(new Runnable() { public void run() {
+        try {
+          Intent vi = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+          vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+          vi.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, lang);
+          vi.putExtra(android.speech.RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+          startActivityForResult(vi, 9);
+        } catch (Exception ex) {
+          if (web != null) web.evaluateJavascript("window.__voice&&window.__voice('null')", null);
+        }
+      } });
+    }
+
+    @JavascriptInterface
     public void exoPlay(final String url, final long startMs, final int session) { runOnUiThread(new Runnable() { public void run() { exoStart(url, startMs, session); } }); }
 
     @JavascriptInterface
@@ -859,7 +874,26 @@ public class MainActivity extends Activity {
       fcb = null;
       return;
     }
+    if (rq == 9) {
+      org.json.JSONArray ja = new org.json.JSONArray();
+      if (rs == RESULT_OK && d != null) {
+        java.util.ArrayList<String> rl = d.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS);
+        if (rl != null) { for (String sv : rl) ja.put(sv); }
+      }
+      if (web != null) web.evaluateJavascript("window.__voice&&window.__voice(" + JSONObject.quote(ja.toString()) + ")", null);
+      return;
+    }
     super.onActivityResult(rq, rs, d);
+  }
+
+  @Override
+  public boolean dispatchKeyEvent(android.view.KeyEvent ke) {
+    int kc = ke.getKeyCode();
+    if (ke.getAction() == android.view.KeyEvent.ACTION_DOWN && ke.getRepeatCount() == 0 && (kc == 84 || kc == 219 || kc == 231)) {
+      if (web != null) web.evaluateJavascript("window.voiceKey&&window.voiceKey()", null);
+      return true;
+    }
+    return super.dispatchKeyEvent(ke);
   }
 
   @Override
