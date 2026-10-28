@@ -82,6 +82,12 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
         <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
       </intent-filter>
     </activity>
+    <activity
+      android:name=".PlayerActivity"
+      android:exported="false"
+      android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+      android:windowSoftInputMode="stateHidden"
+      android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout|uiMode|density"/>
   </application>
 </manifest>
 EOF
@@ -122,6 +128,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.widget.FrameLayout;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
@@ -157,7 +164,7 @@ public class MainActivity extends Activity {
   private ValueCallback<Uri[]> fcb;
   private FrameLayout exoRoot;
   private AspectRatioFrameLayout exoFrame;
-  private SurfaceView exoSurface;
+  private TextureView exoSurface;
   private SubtitleView exoSubs;
   private ExoPlayer exo;
   private final Handler hnd = new Handler(Looper.getMainLooper());
@@ -225,6 +232,26 @@ public class MainActivity extends Activity {
 
     @JavascriptInterface
     public void exoTrack(final int type, final int idx) { runOnUiThread(new Runnable() { public void run() { if (vlcOn()) vlcPick(type, idx); else exoPick(type, idx); } }); }
+
+    @JavascriptInterface
+    public void extPlay(final String url, final long startMs, final String engine, final String title, final boolean live, final boolean ar) {
+      runOnUiThread(new Runnable() { public void run() {
+        try {
+          exoHalt();
+          Intent i = new Intent(MainActivity.this, PlayerActivity.class);
+          i.putExtra("url", url);
+          i.putExtra("start", startMs);
+          i.putExtra("eng", engine);
+          i.putExtra("title", title);
+          i.putExtra("live", live);
+          i.putExtra("ar", ar);
+          i.putExtra("ua", web.getSettings().getUserAgentString());
+          startActivityForResult(i, 8);
+        } catch (Throwable e) {
+          web.evaluateJavascript("window.__extDone&&window.__extDone({\"err\":\"LAUNCH\"})", null);
+        }
+      } });
+    }
 
     @JavascriptInterface
     public void exitApp() { runOnUiThread(new Runnable() { public void run() { finish(); } }); }
@@ -361,6 +388,7 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle b) {
     super.onCreate(b);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getWindow().setFormat(android.graphics.PixelFormat.TRANSLUCENT);
     getWindow().getDecorView().setSystemUiVisibility(
       View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     if (Build.VERSION.SDK_INT >= 23
@@ -379,7 +407,7 @@ public class MainActivity extends Activity {
     exoRoot = new FrameLayout(this);
     exoRoot.setVisibility(View.GONE);
     exoFrame = new AspectRatioFrameLayout(this);
-    exoSurface = new SurfaceView(this);
+    exoSurface = new TextureView(this);
     exoFrame.addView(exoSurface, new FrameLayout.LayoutParams(-1, -1));
     exoRoot.addView(exoFrame, new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER));
     vlcLayout = new VLCVideoLayout(this);
@@ -465,7 +493,7 @@ public class MainActivity extends Activity {
       .setLoadControl(lc)
       .build();
     exo.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true);
-    exo.setVideoSurfaceView(exoSurface);
+    exo.setVideoTextureView(exoSurface);
     exoListener = new Player.Listener() {
       @Override public void onPlaybackStateChanged(int st) {
         if (st == Player.STATE_BUFFERING) js("buf", "1");
@@ -541,7 +569,7 @@ public class MainActivity extends Activity {
     exoRoot.setVisibility(View.VISIBLE);
     web.setBackgroundColor(Color.TRANSPARENT);
     vlc = new MediaPlayer(vlcLib);
-    vlc.attachViews(vlcLayout, null, true, false);
+    vlc.attachViews(vlcLayout, null, true, true);
     vlc.setVideoScale(vlcScale);
     vlc.setEventListener(vlcEv);
     Media m = new Media(vlcLib, Uri.parse(vlcUrl));
@@ -813,6 +841,16 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onActivityResult(int rq, int rs, Intent d) {
+    if (rq == 8) {
+      String er = d == null ? null : d.getStringExtra("err");
+      String j = "{\"t\":" + (d == null ? 0 : d.getLongExtra("t", 0))
+        + ",\"d\":" + (d == null ? 0 : d.getLongExtra("d", 0))
+        + ",\"end\":" + (d != null && d.getBooleanExtra("end", false))
+        + ",\"zap\":" + (d == null ? 0 : d.getIntExtra("zap", 0))
+        + ",\"err\":" + JSONObject.quote(er == null ? "" : er) + "}";
+      if (web != null) web.evaluateJavascript("window.__extDone&&window.__extDone(" + j + ")", null);
+      return;
+    }
     if (rq == 7 && fcb != null) {
       Uri[] r = null;
       if (rs == RESULT_OK && d != null) r = WebChromeClient.FileChooserParams.parseResult(rs, d);
@@ -839,6 +877,871 @@ public class MainActivity extends Activity {
     vlcRelease();
     if (vlcLib != null) { try { vlcLib.release(); } catch (Throwable e) {} }
     if (web != null) web.destroy();
+    super.onDestroy();
+  }
+}
+EOF
+cat > android/app/src/main/java/com/hala/tv/PlayerActivity.java <<'EOF'
+package com.hala.tv;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.RectF;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import androidx.media3.common.AudioAttributes;
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.common.TrackGroup;
+import androidx.media3.common.TrackSelectionOverride;
+import androidx.media3.common.TrackSelectionParameters;
+import androidx.media3.common.Tracks;
+import androidx.media3.common.VideoSize;
+import androidx.media3.common.text.CueGroup;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.media3.ui.CaptionStyleCompat;
+import androidx.media3.ui.SubtitleView;
+import org.videolan.libvlc.LibVLC;
+import org.videolan.libvlc.Media;
+import org.videolan.libvlc.MediaPlayer;
+import org.videolan.libvlc.util.VLCVideoLayout;
+import java.util.ArrayList;
+
+/* Standalone native player screen (no WebView on top of the video).
+   Launched by MainActivity for the "external ExoPlayer / external VLC" options. */
+public class PlayerActivity extends Activity {
+
+  interface Pick { void on(int i); }
+
+  /* transport icon: kind 0 = rewind, 1 = play, 2 = pause, 3 = fast-forward */
+  static class Ico extends View {
+    int kind;
+    boolean hit;
+    final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+    final Path path = new Path();
+    final RectF rc = new RectF();
+    Ico(Context c, int k) { super(c); kind = k; }
+    @Override protected void onDraw(Canvas cv) {
+      int w = getWidth(), h = getHeight();
+      p.setStyle(Paint.Style.FILL);
+      p.setColor(hit ? Color.WHITE : 0x33FFFFFF);
+      rc.set(0, 0, w, h);
+      cv.drawRoundRect(rc, h / 2f, h / 2f, p);
+      p.setColor(hit ? Color.BLACK : Color.WHITE);
+      float s = h * 0.30f, a = s * 0.95f, cx = w / 2f, cy = h / 2f;
+      path.reset();
+      if (kind == 1) {
+        path.moveTo(cx - s * 0.7f, cy - a); path.lineTo(cx + s, cy); path.lineTo(cx - s * 0.7f, cy + a); path.close();
+      } else if (kind == 2) {
+        cv.drawRect(cx - s * 0.85f, cy - a, cx - s * 0.2f, cy + a, p);
+        cv.drawRect(cx + s * 0.2f, cy - a, cx + s * 0.85f, cy + a, p);
+        return;
+      } else if (kind == 0) {
+        path.moveTo(cx - s, cy); path.lineTo(cx, cy - a); path.lineTo(cx, cy + a); path.close();
+        path.moveTo(cx, cy); path.lineTo(cx + s, cy - a); path.lineTo(cx + s, cy + a); path.close();
+      } else {
+        path.moveTo(cx - s, cy - a); path.lineTo(cx - s, cy + a); path.lineTo(cx, cy); path.close();
+        path.moveTo(cx, cy - a); path.lineTo(cx, cy + a); path.lineTo(cx + s, cy); path.close();
+      }
+      cv.drawPath(path, p);
+    }
+  }
+
+  static class Seek extends View {
+    float pos = 0f;
+    final Paint q = new Paint(Paint.ANTI_ALIAS_FLAG);
+    final RectF r = new RectF();
+    Seek(Context c) { super(c); }
+    @Override protected void onDraw(Canvas cv) {
+      int w = getWidth(), h = getHeight();
+      float th = h * 0.26f, cy = h / 2f, rad = th / 2f;
+      q.setStyle(Paint.Style.FILL);
+      q.setColor(0x40FFFFFF);
+      r.set(0, cy - rad, w, cy + rad);
+      cv.drawRoundRect(r, rad, rad, q);
+      q.setColor(Color.WHITE);
+      r.set(0, cy - rad, Math.max(th, w * pos), cy + rad);
+      cv.drawRoundRect(r, rad, rad, q);
+      float kx = Math.max(h / 2f, Math.min(w - h / 2f, w * pos));
+      cv.drawCircle(kx, cy, h * 0.34f, q);
+    }
+  }
+
+  private final Handler hnd = new Handler(Looper.getMainLooper());
+  private String url = "", title = "", eng = "exo", ua = null;
+  private boolean live, ar = true;
+  private long startMs;
+
+  private FrameLayout root;
+  private AspectRatioFrameLayout frame;
+  private SurfaceView surface;
+  private SubtitleView subs;
+  private VLCVideoLayout vlcLayout;
+  private ProgressBar spin;
+  private TextView tvMsg, tvTitle, tvBadge, tvT, tvD, tvHint;
+  private LinearLayout bar;
+  private Ico icRw, icPp, icFf;
+  private Seek seek;
+
+  private ExoPlayer exo;
+  private Player.Listener exoL;
+  private LibVLC vlcLib;
+  private MediaPlayer vlc;
+  private boolean vlcHw = true, vlcRetried, vlcPlayed, vlcBuf;
+  private long vlcMoveAt, vlcLastT = -1;
+
+  private boolean playing, paused, ended, failing, triedOther, done;
+  private int dlgs = 0;
+  private String errCode = "";
+  private int zapDir = 0, fitMode = 0, vh = 0;
+  private long lastT, lastD, seekTgt = -1, jumpAcc = 0, holdStart, lastSeekKey;
+
+  private final Runnable tick = new Runnable() {
+    public void run() {
+      sample();
+      if (vlc != null) vlcWatch();
+      if (bar != null && bar.getVisibility() == View.VISIBLE) updateUi();
+      hnd.postDelayed(this, 500);
+    }
+  };
+  private final Runnable wd = new Runnable() { public void run() { if (!playing) postFail("STARTUP"); } };
+  private final Runnable hideMsg = new Runnable() { public void run() { if (tvMsg != null) tvMsg.setVisibility(View.GONE); } };
+  private final Runnable hideBar = new Runnable() {
+    public void run() {
+      if (paused || seekTgt >= 0 || dlgs > 0) { hnd.postDelayed(this, 1500); return; }
+      bar.setVisibility(View.GONE);
+      subs.setBottomPaddingFraction(0.08f);
+    }
+  };
+  private final Runnable commitSeek = new Runnable() {
+    public void run() {
+      if (seekTgt < 0) return;
+      long t = seekTgt;
+      seekTgt = -1;
+      lastT = t;
+      doSeek(t);
+      updateUi();
+      hnd.removeCallbacks(clearJump);
+      hnd.postDelayed(clearJump, 1400);
+    }
+  };
+  private final Runnable clearJump = new Runnable() { public void run() { jumpAcc = 0; } };
+
+  /* ---------------------------------------------------------------- setup */
+
+  @Override
+  protected void onCreate(Bundle b) {
+    super.onCreate(b);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+    hideSystem();
+    Intent in = getIntent();
+    String u = in.getStringExtra("url");
+    url = u == null ? "" : u;
+    String tt = in.getStringExtra("title");
+    title = tt == null ? "" : tt;
+    eng = "vlc".equals(in.getStringExtra("eng")) ? "vlc" : "exo";
+    ua = in.getStringExtra("ua");
+    live = in.getBooleanExtra("live", false);
+    ar = in.getBooleanExtra("ar", true);
+    startMs = in.getLongExtra("start", 0);
+    build();
+    begin(startMs);
+  }
+
+  private void hideSystem() {
+    getWindow().getDecorView().setSystemUiVisibility(
+      View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+  }
+
+  @Override
+  public void onWindowFocusChanged(boolean f) {
+    super.onWindowFocusChanged(f);
+    if (f) hideSystem();
+  }
+
+  private int dp(int v) { return (int) (v * getResources().getDisplayMetrics().density + 0.5f); }
+
+  private TextView tv(float sp, int color, boolean bold) {
+    TextView t = new TextView(this);
+    t.setTextSize(sp);
+    t.setTextColor(color);
+    if (bold) t.setTypeface(Typeface.DEFAULT_BOLD);
+    return t;
+  }
+
+  private void build() {
+    root = new FrameLayout(this);
+    root.setBackgroundColor(Color.BLACK);
+
+    frame = new AspectRatioFrameLayout(this);
+    surface = new SurfaceView(this);
+    frame.addView(surface, new FrameLayout.LayoutParams(-1, -1));
+    root.addView(frame, new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER));
+
+    vlcLayout = new VLCVideoLayout(this);
+    vlcLayout.setVisibility(View.GONE);
+    root.addView(vlcLayout, new FrameLayout.LayoutParams(-1, -1));
+
+    subs = new SubtitleView(this);
+    subs.setApplyEmbeddedStyles(false);
+    subs.setApplyEmbeddedFontSizes(false);
+    subs.setStyle(new CaptionStyleCompat(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_OUTLINE, Color.BLACK, null));
+    subs.setFractionalTextSize(0.06f);
+    subs.setBottomPaddingFraction(0.08f);
+    root.addView(subs, new FrameLayout.LayoutParams(-1, -1));
+
+    spin = new ProgressBar(this);
+    spin.setVisibility(View.GONE);
+    root.addView(spin, new FrameLayout.LayoutParams(dp(64), dp(64), Gravity.CENTER));
+
+    tvMsg = tv(22, Color.WHITE, true);
+    tvMsg.setPadding(dp(26), dp(12), dp(26), dp(12));
+    GradientDrawable mg = new GradientDrawable();
+    mg.setColor(0xE6000000);
+    mg.setCornerRadius(dp(18));
+    tvMsg.setBackground(mg);
+    tvMsg.setVisibility(View.GONE);
+    FrameLayout.LayoutParams ml = new FrameLayout.LayoutParams(-2, -2, Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+    ml.topMargin = dp(36);
+    root.addView(tvMsg, ml);
+
+    bar = new LinearLayout(this);
+    bar.setOrientation(LinearLayout.VERTICAL);
+    bar.setPadding(dp(30), dp(14), dp(30), dp(14));
+    GradientDrawable bg = new GradientDrawable();
+    bg.setColor(0xDD181820);
+    bg.setCornerRadius(dp(26));
+    bar.setBackground(bg);
+
+    LinearLayout top = new LinearLayout(this);
+    top.setOrientation(LinearLayout.HORIZONTAL);
+    tvTitle = tv(18, Color.WHITE, true);
+    tvTitle.setSingleLine(true);
+    tvTitle.setText(title);
+    tvBadge = tv(14, 0xAAFFFFFF, false);
+    top.addView(tvTitle, new LinearLayout.LayoutParams(0, -2, 1f));
+    top.addView(tvBadge, new LinearLayout.LayoutParams(-2, -2));
+    bar.addView(top, new LinearLayout.LayoutParams(-1, -2));
+
+    LinearLayout ic = new LinearLayout(this);
+    ic.setOrientation(LinearLayout.HORIZONTAL);
+    ic.setGravity(Gravity.CENTER);
+    icRw = new Ico(this, 0);
+    icPp = new Ico(this, 2);
+    icFf = new Ico(this, 3);
+    LinearLayout.LayoutParams il = new LinearLayout.LayoutParams(dp(100), dp(54));
+    il.setMargins(dp(14), dp(8), dp(14), dp(8));
+    LinearLayout.LayoutParams il2 = new LinearLayout.LayoutParams(dp(120), dp(54));
+    il2.setMargins(dp(14), dp(8), dp(14), dp(8));
+    if (!live) ic.addView(icRw, il);
+    ic.addView(icPp, il2);
+    if (!live) ic.addView(icFf, il);
+    bar.addView(ic, new LinearLayout.LayoutParams(-1, -2));
+
+    LinearLayout tr = new LinearLayout(this);
+    tr.setOrientation(LinearLayout.HORIZONTAL);
+    tr.setGravity(Gravity.CENTER_VERTICAL);
+    tvT = tv(20, Color.WHITE, true);
+    tvT.setMinWidth(dp(90));
+    tvT.setGravity(Gravity.CENTER);
+    tvD = tv(20, 0xFFCFCFD4, true);
+    tvD.setMinWidth(dp(90));
+    tvD.setGravity(Gravity.CENTER);
+    seek = new Seek(this);
+    tr.addView(tvT, new LinearLayout.LayoutParams(-2, -2));
+    tr.addView(seek, new LinearLayout.LayoutParams(0, dp(26), 1f));
+    tr.addView(tvD, new LinearLayout.LayoutParams(-2, -2));
+    if (live) seek.setVisibility(View.INVISIBLE);
+    bar.addView(tr, new LinearLayout.LayoutParams(-1, -2));
+
+    tvHint = tv(14, 0x99FFFFFF, false);
+    tvHint.setGravity(Gravity.CENTER);
+    tvHint.setPadding(0, dp(6), 0, 0);
+    if (live) tvHint.setText(ar ? "↑ ↓  تغيير القناة    •    OK  إيقاف / تشغيل    •    رجوع  خروج" : "↑ ↓  Change channel    •    OK  Pause / Play    •    Back  Exit");
+    else tvHint.setText(ar ? "← →  ترجيع / تقديم    •    OK  إيقاف / تشغيل    •    ↑  صوت وترجمة    •    رجوع  خروج" : "← →  Rewind / Forward    •    OK  Pause / Play    •    ↑  Audio & subtitles    •    Back  Exit");
+    bar.addView(tvHint, new LinearLayout.LayoutParams(-1, -2));
+
+    FrameLayout.LayoutParams bl = new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM);
+    bl.setMargins(dp(56), 0, dp(56), dp(30));
+    root.addView(bar, bl);
+
+    setContentView(root);
+  }
+
+  /* --------------------------------------------------------------- engines */
+
+  private void begin(long pos) {
+    releaseAll();
+    errCode = "";
+    failing = false;
+    try {
+      if ("vlc".equals(eng)) startVlc(pos); else startExo(pos);
+    } catch (Throwable e) {
+      postFail("INIT");
+      return;
+    }
+    hnd.removeCallbacks(tick);
+    hnd.post(tick);
+    hnd.removeCallbacks(wd);
+    hnd.postDelayed(wd, 25000);
+    setSpin(true);
+    updateBadge();
+    showBar();
+  }
+
+  private void startExo(long pos) {
+    frame.setVisibility(View.VISIBLE);
+    subs.setVisibility(View.VISIBLE);
+    vlcLayout.setVisibility(View.GONE);
+    DefaultLoadControl lc = new DefaultLoadControl.Builder().setBufferDurationsMs(15000, 60000, 2500, 5000).build();
+    DefaultHttpDataSource.Factory hf = new DefaultHttpDataSource.Factory()
+      .setAllowCrossProtocolRedirects(true)
+      .setConnectTimeoutMs(15000)
+      .setReadTimeoutMs(30000);
+    if (ua != null && ua.length() > 0) hf.setUserAgent(ua);
+    exo = new ExoPlayer.Builder(this, new DefaultRenderersFactory(this).setEnableDecoderFallback(true))
+      .setMediaSourceFactory(new DefaultMediaSourceFactory(new DefaultDataSource.Factory(this, hf)))
+      .setLoadControl(lc)
+      .build();
+    exo.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true);
+    exo.setVideoSurfaceView(surface);
+    exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().setPreferredTextLanguage("ar").build());
+    applyFit();
+    exoL = new Player.Listener() {
+      @Override public void onPlaybackStateChanged(int st) {
+        if (exo == null) return;
+        if (st == Player.STATE_BUFFERING) setSpin(true);
+        else if (st == Player.STATE_READY) { setSpin(false); playing = true; }
+        else if (st == Player.STATE_ENDED) {
+          if (live) { postFail("ENDED"); return; }
+          sample();
+          ended = true;
+          finishOut();
+        }
+      }
+      @Override public void onPlayWhenReadyChanged(boolean pw, int reason) { paused = !pw; updateUi(); }
+      @Override public void onVideoSizeChanged(VideoSize vs) {
+        if (vs.height > 0) frame.setAspectRatio(vs.width * vs.pixelWidthHeightRatio / vs.height);
+        vh = vs.height;
+        updateBadge();
+      }
+      @Override public void onCues(CueGroup g) { subs.setCues(g.cues); }
+      @Override public void onTracksChanged(Tracks t) {
+        if (exo == null) return;
+        int na = 0, aok = 0, nv = 0, vok = 0;
+        for (Tracks.Group g : t.getGroups()) {
+          int ty = g.getType();
+          for (int i = 0; i < g.length; i++) {
+            if (ty == C.TRACK_TYPE_AUDIO) { na++; if (g.isTrackSupported(i)) aok++; }
+            else if (ty == C.TRACK_TYPE_VIDEO) { nv++; if (g.isTrackSupported(i)) vok++; }
+          }
+        }
+        if (na > 0 && aok == 0) postFail("NOAUDIO");
+        else if (nv > 0 && vok == 0) postFail("NOVIDEO");
+      }
+      @Override public void onPlayerError(PlaybackException e) {
+        if (exo == null) return;
+        if (e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) { exo.seekToDefaultPosition(); exo.prepare(); return; }
+        postFail(e.getErrorCodeName());
+      }
+    };
+    exo.addListener(exoL);
+    exo.setMediaItem(MediaItem.fromUri(url), pos > 0 ? pos : C.TIME_UNSET);
+    exo.prepare();
+    exo.setPlayWhenReady(true);
+  }
+
+  private final MediaPlayer.EventListener vlcEv = new MediaPlayer.EventListener() {
+    public void onEvent(MediaPlayer.Event e) {
+      if (vlc == null) return;
+      switch (e.type) {
+        case MediaPlayer.Event.Buffering:
+          vlcBuf = e.getBuffering() < 100f;
+          setSpin(vlcBuf);
+          break;
+        case MediaPlayer.Event.Playing:
+          playing = true; paused = false; vlcBuf = false; setSpin(false); updateUi();
+          break;
+        case MediaPlayer.Event.Paused:
+          paused = true; updateUi();
+          break;
+        case MediaPlayer.Event.EndReached:
+          if (live) { postFail("ENDED"); break; }
+          sample();
+          ended = true;
+          finishOut();
+          break;
+        case MediaPlayer.Event.EncounteredError:
+          postFail("ERROR");
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  private MediaPlayer.ScaleType vlcScale() {
+    return fitMode == 1 ? MediaPlayer.ScaleType.SURFACE_FIT_SCREEN : fitMode == 2 ? MediaPlayer.ScaleType.SURFACE_FILL : MediaPlayer.ScaleType.SURFACE_BEST_FIT;
+  }
+
+  private void startVlc(long pos) {
+    frame.setVisibility(View.GONE);
+    subs.setVisibility(View.GONE);
+    vlcLayout.setVisibility(View.VISIBLE);
+    if (vlcLib == null) {
+      ArrayList<String> o = new ArrayList<String>();
+      o.add("--http-reconnect");
+      o.add("--audio-time-stretch");
+      vlcLib = new LibVLC(this, o);
+    }
+    vlc = new MediaPlayer(vlcLib);
+    vlc.attachViews(vlcLayout, null, true, false);
+    vlc.setVideoScale(vlcScale());
+    vlc.setEventListener(vlcEv);
+    Media m = new Media(vlcLib, Uri.parse(url));
+    m.setHWDecoderEnabled(vlcHw, false);
+    m.addOption(":network-caching=" + (live ? 1500 : 3000));
+    if (ua != null && ua.length() > 0) m.addOption(":http-user-agent=" + ua);
+    if (pos > 0) m.addOption(":start-time=" + (pos / 1000));
+    vlc.setMedia(m);
+    m.release();
+    vlcMoveAt = SystemClock.uptimeMillis();
+    vlcLastT = -1;
+    vlcPlayed = false;
+    vlcBuf = false;
+    vlc.play();
+  }
+
+  private void vlcWatch() {
+    if (vlc == null) return;
+    long now = SystemClock.uptimeMillis();
+    long t = vlc.getTime();
+    if (t > 0 && t != vlcLastT) { vlcLastT = t; vlcMoveAt = now; vlcPlayed = true; }
+    else if (vlcBuf || !vlc.isPlaying()) vlcMoveAt = now;
+    else if (vlcPlayed && now - vlcMoveAt > 9000) postFail("FROZEN");
+  }
+
+  private void releaseAll() {
+    hnd.removeCallbacks(wd);
+    if (exo != null) {
+      try { if (exoL != null) exo.removeListener(exoL); } catch (Throwable e) {}
+      try { exo.clearVideoSurface(); } catch (Throwable e) {}
+      try { exo.stop(); exo.clearMediaItems(); } catch (Throwable e) {}
+      try { exo.release(); } catch (Throwable e) {}
+      exo = null;
+    }
+    exoL = null;
+    if (subs != null) subs.setCues(java.util.Collections.<androidx.media3.common.text.Cue>emptyList());
+    final MediaPlayer p = vlc;
+    vlc = null;
+    if (p != null) {
+      try { p.setEventListener(null); } catch (Throwable e) {}
+      try { p.detachViews(); } catch (Throwable e) {}
+      new Thread(new Runnable() { public void run() {
+        try { p.stop(); } catch (Throwable e) {}
+        try { p.release(); } catch (Throwable e) {}
+      } }).start();
+    }
+    playing = false;
+    paused = false;
+    vlcPlayed = false;
+    vlcBuf = false;
+    vlcLastT = -1;
+  }
+
+  private void postFail(final String code) {
+    if (failing || done) return;
+    failing = true;
+    hnd.post(new Runnable() { public void run() { fail(code); } });
+  }
+
+  /* HW decode -> software retry (VLC), then the other engine, then report to the app */
+  private void fail(String code) {
+    sample();
+    long pos = lastT > 0 ? lastT : startMs;
+    if ("vlc".equals(eng) && vlcHw && !vlcRetried) {
+      vlcRetried = true;
+      vlcHw = false;
+      toast(ar ? "إعادة المحاولة بالمعالجة البرمجية…" : "Retrying with software decoding…", 2500);
+      begin(pos);
+      return;
+    }
+    if (!triedOther) {
+      triedOther = true;
+      eng = "vlc".equals(eng) ? "exo" : "vlc";
+      vlcHw = true;
+      vlcRetried = false;
+      toast((ar ? "تبديل المشغّل إلى " : "Switching player to ") + ("vlc".equals(eng) ? "VLC" : "ExoPlayer"), 2500);
+      begin(pos);
+      return;
+    }
+    errCode = code == null ? "ERR" : code;
+    finishOut();
+  }
+
+  private void finishOut() {
+    if (done) return;
+    done = true;
+    sample();
+    Intent r = new Intent();
+    r.putExtra("t", lastT);
+    r.putExtra("d", lastD);
+    r.putExtra("end", ended);
+    r.putExtra("zap", zapDir);
+    r.putExtra("err", errCode);
+    setResult(RESULT_OK, r);
+    finish();
+  }
+
+  /* ------------------------------------------------------------- playback */
+
+  private void sample() {
+    try {
+      if (exo != null) {
+        lastT = Math.max(0, exo.getCurrentPosition());
+        long d = exo.getDuration();
+        lastD = (live || d == C.TIME_UNSET || exo.isCurrentMediaItemLive()) ? 0 : d;
+      } else if (vlc != null) {
+        long t = vlc.getTime();
+        if (t >= 0) lastT = t;
+        long d = vlc.getLength();
+        lastD = (!live && d > 0 && vlc.isSeekable()) ? d : 0;
+      }
+    } catch (Throwable e) {}
+  }
+
+  private void doSeek(long ms) {
+    try {
+      if (exo != null) exo.seekTo(Math.max(0, ms));
+      else if (vlc != null) vlc.setTime(Math.max(0, ms));
+    } catch (Throwable e) {}
+  }
+
+  private void togglePause() {
+    try {
+      if (exo != null) {
+        if (exo.getPlayWhenReady()) exo.pause(); else exo.play();
+        paused = !exo.getPlayWhenReady();
+      } else if (vlc != null) {
+        if (vlc.isPlaying()) { vlc.pause(); paused = true; } else { vlc.play(); paused = false; }
+      }
+    } catch (Throwable e) {}
+    flash(icPp);
+    showBar();
+  }
+
+  private void seekBy(int dir, boolean rep, int base) {
+    showBar();
+    flash(dir > 0 ? icFf : icRw);
+    if (live || lastD <= 0) {
+      toast(live ? (ar ? "بث مباشر — التقديم غير متاح" : "Live — seeking not available") : (ar ? "المدة غير معروفة بعد" : "Duration not known yet"), 1800);
+      return;
+    }
+    long now = SystemClock.uptimeMillis();
+    if (!rep) holdStart = now;
+    else if (now - lastSeekKey < 300) return;
+    lastSeekKey = now;
+    long hold = now - holdStart;
+    int step = rep ? Math.min(60, hold > 4000 ? base * 3 : hold > 2000 ? base * 2 : base) : base;
+    long cur = seekTgt >= 0 ? seekTgt : lastT;
+    long tg = Math.max(0, Math.min(cur + dir * step * 1000L, Math.max(0, lastD - 1000)));
+    jumpAcc += tg - cur;
+    seekTgt = tg;
+    hnd.removeCallbacks(clearJump);
+    long secs = Math.abs(jumpAcc) / 1000;
+    toast((jumpAcc >= 0 ? "+" : "−") + secs + (ar ? " ث" : "s") + "   •   " + fmt(tg), 1500);
+    updateUi();
+    hnd.removeCallbacks(commitSeek);
+    hnd.postDelayed(commitSeek, rep ? 450 : 250);
+  }
+
+  private void zap(int d) {
+    zapDir = d;
+    finishOut();
+  }
+
+  private void applyFit() {
+    try {
+      frame.setResizeMode(fitMode == 1 ? AspectRatioFrameLayout.RESIZE_MODE_ZOOM : fitMode == 2 ? AspectRatioFrameLayout.RESIZE_MODE_FILL : AspectRatioFrameLayout.RESIZE_MODE_FIT);
+      if (vlc != null) vlc.setVideoScale(vlcScale());
+    } catch (Throwable e) {}
+  }
+
+  /* ------------------------------------------------------------------- UI */
+
+  private static String two(long n) { return n < 10 ? "0" + n : String.valueOf(n); }
+
+  private static String fmt(long ms) {
+    long s = Math.max(0, ms / 1000), h = s / 3600, m = (s % 3600) / 60, x = s % 60;
+    return (h > 0 ? h + ":" + two(m) : String.valueOf(m)) + ":" + two(x);
+  }
+
+  private void flash(final Ico ic) {
+    ic.hit = true;
+    ic.invalidate();
+    hnd.postDelayed(new Runnable() { public void run() { ic.hit = false; ic.invalidate(); } }, 260);
+  }
+
+  private void toast(String s, int ms) {
+    tvMsg.setText(s);
+    tvMsg.setVisibility(View.VISIBLE);
+    hnd.removeCallbacks(hideMsg);
+    hnd.postDelayed(hideMsg, ms);
+  }
+
+  private void setSpin(boolean on) { if (spin != null) spin.setVisibility(on ? View.VISIBLE : View.GONE); }
+
+  private void updateBadge() {
+    String b = "vlc".equals(eng) ? "VLC" + (vlcHw ? " · HW" : " · SW") : "ExoPlayer" + (vh > 0 ? " · " + vh + "p" : "");
+    tvBadge.setText(b);
+  }
+
+  private void updateUi() {
+    long t = seekTgt >= 0 ? seekTgt : lastT;
+    tvT.setText(fmt(t));
+    if (live) tvD.setText(ar ? "مباشر" : "LIVE");
+    else tvD.setText(lastD > 0 ? fmt(lastD) : "--:--");
+    seek.pos = lastD > 0 ? Math.min(1f, Math.max(0f, (float) t / (float) lastD)) : 0f;
+    seek.invalidate();
+    int k = paused ? 1 : 2;
+    if (icPp.kind != k) { icPp.kind = k; icPp.invalidate(); }
+  }
+
+  private void showBar() {
+    updateUi();
+    bar.setVisibility(View.VISIBLE);
+    subs.setBottomPaddingFraction(0.30f);
+    hnd.removeCallbacks(hideBar);
+    hnd.postDelayed(hideBar, 4000);
+  }
+
+  /* ----------------------------------------------------- audio / subtitles */
+
+  private ArrayList<Object[]> exoTracks(int ty) {
+    ArrayList<Object[]> l = new ArrayList<Object[]>();
+    if (exo == null) return l;
+    try {
+      for (Tracks.Group g : exo.getCurrentTracks().getGroups()) {
+        if (g.getType() != ty) continue;
+        for (int i = 0; i < g.length; i++) {
+          if (!g.isTrackSupported(i)) continue;
+          Format f = g.getTrackFormat(i);
+          String n = f.label;
+          if (n == null && f.language != null && !"und".equals(f.language)) n = new java.util.Locale(f.language).getDisplayLanguage();
+          if (n == null) n = "#" + (l.size() + 1);
+          if (ty == C.TRACK_TYPE_AUDIO && f.channelCount > 2) n += " " + f.channelCount + "ch";
+          l.add(new Object[]{g.getMediaTrackGroup(), Integer.valueOf(i), n, Boolean.valueOf(g.isTrackSelected(i))});
+        }
+      }
+    } catch (Throwable e) {}
+    return l;
+  }
+
+  private void exoPickTrack(int ty, ArrayList<Object[]> l, int idx) {
+    if (exo == null) return;
+    TrackSelectionParameters.Builder b = exo.getTrackSelectionParameters().buildUpon();
+    if (idx < 0 || idx >= l.size()) {
+      b.setTrackTypeDisabled(ty, true);
+    } else {
+      Object[] e = l.get(idx);
+      b.setTrackTypeDisabled(ty, false).setOverrideForType(new TrackSelectionOverride((TrackGroup) e[0], ((Integer) e[1]).intValue()));
+    }
+    exo.setTrackSelectionParameters(b.build());
+  }
+
+  private void pickList(String ttl, ArrayList<String> names, int checked, final Pick p) {
+    AlertDialog.Builder b = new AlertDialog.Builder(this);
+    b.setTitle(ttl);
+    b.setSingleChoiceItems(names.toArray(new String[0]), checked, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface d, int w) { d.dismiss(); p.on(w); }
+    });
+    AlertDialog d = b.create();
+    d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      public void onDismiss(DialogInterface x) { dlgs--; hideSystem(); }
+    });
+    dlgs++;
+    d.show();
+  }
+
+  private void audioMenu() {
+    final ArrayList<String> names = new ArrayList<String>();
+    int cur = -1;
+    if (exo != null) {
+      final ArrayList<Object[]> l = exoTracks(C.TRACK_TYPE_AUDIO);
+      for (int i = 0; i < l.size(); i++) { names.add((String) l.get(i)[2]); if (((Boolean) l.get(i)[3]).booleanValue()) cur = i; }
+      if (names.isEmpty()) { toast(ar ? "لا توجد مسارات صوت" : "No audio tracks", 1800); return; }
+      pickList(ar ? "الصوت" : "Audio", names, cur, new Pick() { public void on(int i) { exoPickTrack(C.TRACK_TYPE_AUDIO, l, i); } });
+    } else if (vlc != null) {
+      final ArrayList<Integer> ids = new ArrayList<Integer>();
+      MediaPlayer.TrackDescription[] a = vlc.getAudioTracks();
+      int ca = vlc.getAudioTrack();
+      if (a != null) for (MediaPlayer.TrackDescription x : a) {
+        if (x.id < 0) continue;
+        if (x.id == ca) cur = ids.size();
+        ids.add(Integer.valueOf(x.id));
+        names.add(x.name == null ? "#" + ids.size() : x.name);
+      }
+      if (names.isEmpty()) { toast(ar ? "لا توجد مسارات صوت" : "No audio tracks", 1800); return; }
+      pickList(ar ? "الصوت" : "Audio", names, cur, new Pick() { public void on(int i) { if (vlc != null && i >= 0 && i < ids.size()) vlc.setAudioTrack(ids.get(i).intValue()); } });
+    }
+  }
+
+  private void subMenu() {
+    final ArrayList<String> names = new ArrayList<String>();
+    names.add(ar ? "بدون ترجمة" : "Off");
+    int cur = 0;
+    if (exo != null) {
+      final ArrayList<Object[]> l = exoTracks(C.TRACK_TYPE_TEXT);
+      boolean off = exo.getTrackSelectionParameters().disabledTrackTypes.contains(C.TRACK_TYPE_TEXT);
+      for (int i = 0; i < l.size(); i++) { names.add((String) l.get(i)[2]); if (!off && ((Boolean) l.get(i)[3]).booleanValue()) cur = i + 1; }
+      if (names.size() == 1) { toast(ar ? "لا توجد ترجمة مدمجة بالملف" : "No embedded subtitles", 2000); return; }
+      pickList(ar ? "الترجمة" : "Subtitles", names, cur, new Pick() { public void on(int i) { exoPickTrack(C.TRACK_TYPE_TEXT, l, i - 1); } });
+    } else if (vlc != null) {
+      final ArrayList<Integer> ids = new ArrayList<Integer>();
+      MediaPlayer.TrackDescription[] s = vlc.getSpuTracks();
+      int cs = vlc.getSpuTrack();
+      if (s != null) for (MediaPlayer.TrackDescription x : s) {
+        if (x.id < 0) continue;
+        if (x.id == cs) cur = ids.size() + 1;
+        ids.add(Integer.valueOf(x.id));
+        names.add(x.name == null ? "#" + ids.size() : x.name);
+      }
+      if (names.size() == 1) { toast(ar ? "لا توجد ترجمة مدمجة بالملف" : "No embedded subtitles", 2000); return; }
+      pickList(ar ? "الترجمة" : "Subtitles", names, cur, new Pick() { public void on(int i) { if (vlc != null) vlc.setSpuTrack(i <= 0 || i > ids.size() ? -1 : ids.get(i - 1).intValue()); } });
+    }
+  }
+
+  private void openMenu() {
+    if (dlgs > 0) return;
+    final ArrayList<String> names = new ArrayList<String>();
+    final ArrayList<Runnable> acts = new ArrayList<Runnable>();
+    names.add(ar ? "الصوت" : "Audio");
+    acts.add(new Runnable() { public void run() { audioMenu(); } });
+    names.add(ar ? "الترجمة" : "Subtitles");
+    acts.add(new Runnable() { public void run() { subMenu(); } });
+    names.add((ar ? "ملاءمة الشاشة: " : "Aspect: ") + (fitMode == 0 ? (ar ? "ملاءمة" : "Fit") : fitMode == 1 ? (ar ? "تكبير" : "Zoom") : (ar ? "تمديد" : "Stretch")));
+    acts.add(new Runnable() { public void run() { fitMode = (fitMode + 1) % 3; applyFit(); toast(ar ? "تم تغيير الملاءمة" : "Aspect changed", 1200); } });
+    names.add((ar ? "تبديل المشغّل إلى " : "Switch player to ") + ("vlc".equals(eng) ? "ExoPlayer" : "VLC"));
+    acts.add(new Runnable() { public void run() {
+      sample();
+      eng = "vlc".equals(eng) ? "exo" : "vlc";
+      vlcHw = true; vlcRetried = false; triedOther = false;
+      begin(lastT);
+    } });
+    names.add(ar ? "إغلاق" : "Close");
+    acts.add(new Runnable() { public void run() {} });
+    AlertDialog.Builder b = new AlertDialog.Builder(this);
+    b.setTitle(title.length() > 0 ? title : "Hala TV");
+    b.setItems(names.toArray(new String[0]), new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface d, int w) { if (w >= 0 && w < acts.size()) acts.get(w).run(); }
+    });
+    AlertDialog d = b.create();
+    d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      public void onDismiss(DialogInterface x) { dlgs--; hideSystem(); }
+    });
+    dlgs++;
+    d.show();
+  }
+
+  /* ----------------------------------------------------------------- keys */
+
+  @Override
+  public boolean onKeyDown(int kc, KeyEvent e) {
+    boolean rep = e.getRepeatCount() > 0;
+    switch (kc) {
+      case KeyEvent.KEYCODE_DPAD_RIGHT: seekBy(1, rep, 10); return true;
+      case KeyEvent.KEYCODE_DPAD_LEFT: seekBy(-1, rep, 10); return true;
+      case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: seekBy(1, rep, 30); return true;
+      case KeyEvent.KEYCODE_MEDIA_REWIND: seekBy(-1, rep, 30); return true;
+      case KeyEvent.KEYCODE_DPAD_CENTER:
+      case KeyEvent.KEYCODE_ENTER:
+      case KeyEvent.KEYCODE_NUMPAD_ENTER:
+      case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+      case KeyEvent.KEYCODE_SPACE:
+        if (!rep) togglePause();
+        return true;
+      case KeyEvent.KEYCODE_MEDIA_PLAY:
+        if (!rep && paused) togglePause();
+        return true;
+      case KeyEvent.KEYCODE_MEDIA_PAUSE:
+        if (!rep && !paused) togglePause();
+        return true;
+      case KeyEvent.KEYCODE_DPAD_UP:
+        if (!rep) { if (live) zap(-1); else openMenu(); }
+        return true;
+      case KeyEvent.KEYCODE_DPAD_DOWN:
+        if (!rep) { if (live) zap(1); else showBar(); }
+        return true;
+      case KeyEvent.KEYCODE_CHANNEL_UP:
+      case KeyEvent.KEYCODE_PAGE_UP:
+        if (!rep && live) zap(-1);
+        return true;
+      case KeyEvent.KEYCODE_CHANNEL_DOWN:
+      case KeyEvent.KEYCODE_PAGE_DOWN:
+        if (!rep && live) zap(1);
+        return true;
+      case KeyEvent.KEYCODE_MENU:
+      case 175:
+      case 222:
+        if (!rep) openMenu();
+        return true;
+      default:
+        return super.onKeyDown(kc, e);
+    }
+  }
+
+  @Override
+  public void onBackPressed() {
+    finishOut();
+  }
+
+  @Override
+  protected void onPause() {
+    sample();
+    try { if (exo != null) exo.pause(); } catch (Throwable e) {}
+    try { if (vlc != null) vlc.pause(); } catch (Throwable e) {}
+    paused = true;
+    super.onPause();
+  }
+
+  @Override
+  protected void onDestroy() {
+    hnd.removeCallbacksAndMessages(null);
+    done = true;
+    releaseAll();
+    if (vlcLib != null) { try { vlcLib.release(); } catch (Throwable e) {} vlcLib = null; }
     super.onDestroy();
   }
 }
