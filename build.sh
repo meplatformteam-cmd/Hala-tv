@@ -571,6 +571,7 @@ public class MainActivity extends Activity {
 
   private boolean voicePreferNative() {
     try {
+      if ("rec".equals(getSharedPreferences("h", 0).getString("vmode", ""))) return false;
       if ("Amazon".equalsIgnoreCase(Build.MANUFACTURER)) return false;
       android.app.UiModeManager um = (android.app.UiModeManager) getSystemService(android.content.Context.UI_MODE_SERVICE);
       boolean tv = um != null && um.getCurrentModeType() == android.content.res.Configuration.UI_MODE_TYPE_TELEVISION;
@@ -650,11 +651,11 @@ public class MainActivity extends Activity {
         if (pk > peak) peak = pk;
         long el = System.currentTimeMillis() - t0;
         vjsU("__voiceLvl", String.valueOf((int) Math.min(100, Math.log10(1 + rms) * 25)));
-        if (el < 500) floor = floor < 0 ? rms : floor * 0.7 + rms * 0.3;
+        if (el < 300) floor = floor < 0 ? rms : floor * 0.7 + rms * 0.3;
         else if (rms > Math.max(floor * 3, 250)) { speech = true; lastLoud = el; }
-        if (!probed && el >= 1500) { probed = true; if (peak <= 6 && !last) { skip = true; break; } }
-        if (speech && el - lastLoud > 1400) break;
-        if (!speech && el > 6500) break;
+        if (!probed && el >= 900) { probed = true; if (peak <= 6 && !last) { skip = true; break; } }
+        if (speech && el - lastLoud > 800) break;
+        if (!speech && el > 5000) break;
         if (el > 10000) break;
       }
     } catch (Throwable e) {
@@ -763,6 +764,8 @@ public class MainActivity extends Activity {
 
   private void voiceRecRun(final String tagA, final String tagB) {
     int[] srcs = {6, 1, 7, 5, 9, 0};
+    int ls = getSharedPreferences("h", 0).getInt("vsrc", -1);
+    for (int q = 1; q < srcs.length; q++) if (srcs[q] == ls) { srcs[q] = srcs[0]; srcs[0] = ls; break; }
     byte[] pcm = null;
     String used = "";
     int maxPeak = 0;
@@ -770,7 +773,7 @@ public class MainActivity extends Activity {
     for (int i = 0; i < srcs.length && recRun; i++) {
       byte[] p = voiceCapture(srcs[i], i == srcs.length - 1);
       if (recPeak > maxPeak) maxPeak = recPeak;
-      if (p != null) { pcm = p; used = String.valueOf(srcs[i]); break; }
+      if (p != null) { pcm = p; used = String.valueOf(srcs[i]); if (recSpeech) getSharedPreferences("h", 0).edit().putInt("vsrc", srcs[i]).apply(); break; }
     }
     if (pcm == null) {
       if (!recAny) vjsU2("__voiceErr", "audio", "norec;" + voiceDiag());
@@ -860,7 +863,7 @@ public class MainActivity extends Activity {
           voiceGot(r == null ? null : r.getStringArrayList(android.speech.SpeechRecognizer.RESULTS_RECOGNITION));
         }
       });
-      hnd.postDelayed(voiceWd, 6000);
+      hnd.postDelayed(voiceWd, 3500);
       me.startListening(voiceIntentFor(tag));
     } catch (Throwable e) {
       voiceKill();
@@ -871,6 +874,7 @@ public class MainActivity extends Activity {
   private void voiceGot(java.util.ArrayList<String> l) {
     if (l == null || l.isEmpty()) { voiceFail(7); return; }
     voiceKill();
+    if (nativeFirst) getSharedPreferences("h", 0).edit().putString("vmode", "native").apply();
     org.json.JSONArray ja = new org.json.JSONArray();
     for (String s : l) ja.put(s);
     vjs("__voice", ja.toString());
@@ -880,6 +884,7 @@ public class MainActivity extends Activity {
     String tag = voiceCur;
     if (nativeFirst && (e == 3 || e == 4 || e == 5 || e == 6 || e == 7 || e == 8)) {
       nativeFirst = false;
+      getSharedPreferences("h", 0).edit().putString("vmode", "rec").apply();
       voiceKill();
       vjs("__voiceState", "fallback");
       voiceRecStart(pendingLang);
