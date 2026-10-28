@@ -194,10 +194,32 @@ public class MainActivity extends Activity {
   private final java.util.ArrayList<Integer> vA = new java.util.ArrayList<Integer>();
   private final java.util.ArrayList<Integer> vT = new java.util.ArrayList<Integer>();
   private final Runnable vlcSoon = new Runnable() { public void run() { vlcTracks(); vlcInfo(); } };
+  /* real-video verification (ExoPlayer): audio alone never counts as success */
+  private long exoPlayAt, exoMoveAt;
+  private int exoLastN;
+  private boolean exoVerified, exoErrSent, exoTrKnown, exoVid = true, vlcFrameSent;
+  private void exoResetWatch() { exoPlayAt = 0; exoMoveAt = SystemClock.uptimeMillis(); exoLastN = -1; exoVerified = false; exoErrSent = false; exoTrKnown = false; exoVid = true; }
+  private void exoBad(String code) { if (exoErrSent) return; exoErrSent = true; js("err", JSONObject.quote(code)); }
+  private void exoWatch() {
+    long now = SystemClock.uptimeMillis();
+    if (exoErrSent || exo.getPlaybackState() != Player.STATE_READY || !exo.getPlayWhenReady()) { exoPlayAt = 0; exoMoveAt = now; return; }
+    if (exoPlayAt == 0) exoPlayAt = now;
+    if (exoTrKnown && !exoVid) { if (!exoVerified && now - exoPlayAt > 1200) { exoVerified = true; js("frame", "0"); } return; }
+    int n = 0;
+    try { androidx.media3.exoplayer.DecoderCounters dc = exo.getVideoDecoderCounters(); if (dc != null) { dc.ensureUpdated(); n = dc.renderedOutputBufferCount; } } catch (Throwable e) {}
+    if (!exoVerified) {
+      if (n > 0) { exoVerified = true; exoLastN = n; exoMoveAt = now; js("frame", "1"); }
+      else if (now - exoPlayAt > 3000) exoBad("NOFRAME");
+      return;
+    }
+    if (n != exoLastN) { exoLastN = n; exoMoveAt = now; }
+    else if (now - exoMoveAt > 6000) exoBad("FROZEN_VIDEO");
+  }
   private final Runnable tick = new Runnable() {
     public void run() {
       if (vlcOn() && exoRoot.getVisibility() == View.VISIBLE) { vlcTick(); hnd.postDelayed(this, 250); return; }
       if (exo == null || exoRoot.getVisibility() != View.VISIBLE) return;
+      exoWatch();
       long d = exo.getDuration();
       boolean live = exo.isCurrentMediaItemLive() || d == C.TIME_UNSET;
       js("time", "{\"t\":" + exo.getCurrentPosition() + ",\"d\":" + (live ? -1 : d) + "}");
@@ -252,6 +274,11 @@ public class MainActivity extends Activity {
     @JavascriptInterface
     public void exoTrack(final int type, final int idx) { runOnUiThread(new Runnable() { public void run() { if (vlcOn()) vlcPick(type, idx); else exoPick(type, idx); } }); }
 
+    int epP = 0, epN = 0;
+
+    @JavascriptInterface
+    public void extEp(final int p, final int n) { epP = p; epN = n; }
+
     @JavascriptInterface
     public void extPlay(final String url, final long startMs, final String engine, final String title, final boolean live, final boolean ar) {
       runOnUiThread(new Runnable() { public void run() {
@@ -264,6 +291,9 @@ public class MainActivity extends Activity {
           i.putExtra("title", title);
           i.putExtra("live", live);
           i.putExtra("ar", ar);
+          i.putExtra("epP", epP);
+          i.putExtra("epN", epN);
+          epP = 0; epN = 0;
           i.putExtra("ua", web.getSettings().getUserAgentString());
           startActivityForResult(i, 8);
         } catch (Throwable e) {
@@ -277,6 +307,32 @@ public class MainActivity extends Activity {
 
     @JavascriptInterface
     public void engine(String e) { eng = "vlc".equals(e) ? "vlc" : "exo"; }
+
+    private String codecJson;
+    @JavascriptInterface
+    public String codecs() {
+      if (codecJson != null) return codecJson;
+      JSONObject o = new JSONObject();
+      try {
+        String[] ms = {"video/avc", "video/hevc", "video/x-vnd.on2.vp9", "video/av01"};
+        String[] ks = {"avc", "hevc", "vp9", "av1"};
+        int[] lv = new int[4];
+        boolean h4k = false;
+        android.media.MediaCodecInfo[] all = new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos();
+        for (android.media.MediaCodecInfo ci : all) {
+          if (ci.isEncoder()) continue;
+          String nm = ci.getName().toLowerCase();
+          boolean hw = Build.VERSION.SDK_INT >= 29 ? ci.isHardwareAccelerated() : !(nm.startsWith("omx.google.") || nm.startsWith("c2.android."));
+          for (String t : ci.getSupportedTypes()) for (int k = 0; k < 4; k++) if (t.equalsIgnoreCase(ms[k])) {
+            lv[k] = Math.max(lv[k], hw ? 2 : 1);
+            if (k == 1 && hw) { try { if (ci.getCapabilitiesForType(t).getVideoCapabilities().isSizeSupported(3840, 2160)) h4k = true; } catch (Throwable e) {} }
+          }
+        }
+        for (int k = 0; k < 4; k++) o.put(ks[k], lv[k]);
+        o.put("h4k", h4k);
+      } catch (Throwable e) {}
+      return codecJson = o.toString();
+    }
 
     @JavascriptInterface
     public boolean vlcOk() {
@@ -463,6 +519,18 @@ public class MainActivity extends Activity {
     web.setHorizontalScrollBarEnabled(false);
     web.setBackgroundColor(Color.TRANSPARENT);
     web.setWebChromeClient(new WebChromeClient() {
+      @Override
+      public android.graphics.Bitmap getDefaultVideoPoster() {
+        android.graphics.Bitmap b = android.graphics.Bitmap.createBitmap(2, 2, android.graphics.Bitmap.Config.ARGB_8888);
+        b.eraseColor(Color.TRANSPARENT);
+        return b;
+      }
+
+      @Override
+      public android.view.View getVideoLoadingProgressView() {
+        return new android.view.View(MainActivity.this);
+      }
+
       @Override
       public boolean onShowFileChooser(WebView w, ValueCallback<Uri[]> cb, FileChooserParams p) {
         if (fcb != null) fcb.onReceiveValue(null);
@@ -987,7 +1055,7 @@ public class MainActivity extends Activity {
         case MediaPlayer.Event.Paused: js("pw", "false"); break;
         case MediaPlayer.Event.EndReached: js("end", "1"); break;
         case MediaPlayer.Event.EncounteredError: vlcFail("ERROR"); break;
-        case MediaPlayer.Event.Vout: vlcVout = e.getVoutCount(); break;
+        case MediaPlayer.Event.Vout: vlcVout = e.getVoutCount(); if (vlcVout > 0 && !vlcFrameSent) { vlcFrameSent = true; js("frame", "1"); } break;
         case MediaPlayer.Event.ESAdded:
         case MediaPlayer.Event.ESDeleted:
         case MediaPlayer.Event.ESSelected: hnd.removeCallbacks(vlcSoon); hnd.postDelayed(vlcSoon, 400); break;
@@ -1036,7 +1104,7 @@ public class MainActivity extends Activity {
     m.release();
     long now = SystemClock.uptimeMillis();
     vlcT0 = now; vlcMoveAt = now; vlcLastT = -1; vlcPlayAt = now;
-    vlcPlayed = false; vlcBuf = false; vlcVout = 0; vlcHasVideo = false;
+    vlcPlayed = false; vlcBuf = false; vlcVout = 0; vlcHasVideo = false; vlcFrameSent = false;
     vlc.play();
     hnd.removeCallbacks(tick);
     hnd.post(tick);
@@ -1089,7 +1157,8 @@ public class MainActivity extends Activity {
     else if (vlcBuf || !vlc.isPlaying()) vlcMoveAt = now;
     else if (vlcPlayed && vlcLastT > 0 && now - vlcMoveAt > 7000) { vlcFail("FROZEN"); return; }
     if (!vlcPlayed && now - vlcT0 > 15000) { vlcFail("STARTUP"); return; }
-    if (vlcPlayed && vlcHasVideo && vlcVout == 0 && now - vlcPlayAt > 6000) vlcFail("NOVIDEO");
+    if (vlcPlayed && vlcHasVideo && vlcVout == 0 && now - vlcPlayAt > 3500) vlcFail("NOVIDEO");
+    else if (vlcPlayed && !vlcHasVideo && !vlcFrameSent && vlcLastT > 0 && now - vlcPlayAt > 2000) { vlcFrameSent = true; js("frame", "0"); }
   }
 
   private void vlcInfo() {
@@ -1174,12 +1243,14 @@ public class MainActivity extends Activity {
     exoRelease();
     sid = session;
     exoEnsure();
+    exoResetWatch();
     exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().clearOverrides().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).build());
     exoRoot.setVisibility(View.VISIBLE);
     web.setBackgroundColor(Color.TRANSPARENT);
     exo.setMediaItem(MediaItem.fromUri(url), startMs > 0 ? startMs : C.TIME_UNSET);
     exo.prepare();
     exo.setPlayWhenReady(true);
+    hnd.removeCallbacks(tick);
     hnd.post(tick);
   }
 
@@ -1282,6 +1353,9 @@ public class MainActivity extends Activity {
         }
       }
     } catch (Exception e) {}
+    exoTrKnown = tr.getGroups().size() > 0;
+    exoVid = tr.containsType(C.TRACK_TYPE_VIDEO);
+    if (exoVid && !tr.isTypeSupported(C.TRACK_TYPE_VIDEO)) exoBad("NO_VIDEO_DECODER");
     boolean td = exo != null && exo.getTrackSelectionParameters().disabledTrackTypes.contains(C.TRACK_TYPE_TEXT);
     js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + ",\"nu\":" + txtBad + ",\"all\":" + jall.toString() + ",\"td\":" + (td ? 1 : 0) + "}");
   }
@@ -1495,6 +1569,7 @@ public class PlayerActivity extends Activity {
   private final Handler hnd = new Handler(Looper.getMainLooper());
   private String url = "", title = "", eng = "exo", ua = null;
   private boolean live, ar = true;
+  private int epP = 0, epN = 0;
   private long startMs;
 
   private FrameLayout root;
@@ -1570,6 +1645,8 @@ public class PlayerActivity extends Activity {
     ua = in.getStringExtra("ua");
     live = in.getBooleanExtra("live", false);
     ar = in.getBooleanExtra("ar", true);
+    epP = in.getIntExtra("epP", 0);
+    epN = in.getIntExtra("epN", 0);
     startMs = in.getLongExtra("start", 0);
     build();
     begin(startMs);
@@ -2216,6 +2293,14 @@ public class PlayerActivity extends Activity {
     if (dlgs > 0) return;
     final ArrayList<String> names = new ArrayList<String>();
     final ArrayList<Runnable> acts = new ArrayList<Runnable>();
+    if (!live && epN > 0) {
+      names.add(ar ? "الحلقة القادمة ▶" : "Next episode ▶");
+      acts.add(new Runnable() { public void run() { zap(1); } });
+    }
+    if (!live && epP > 0) {
+      names.add(ar ? "◀ الحلقة السابقة" : "◀ Previous episode");
+      acts.add(new Runnable() { public void run() { zap(-1); } });
+    }
     names.add(ar ? "الصوت" : "Audio");
     acts.add(new Runnable() { public void run() { audioMenu(); } });
     names.add(ar ? "الترجمة" : "Subtitles");
