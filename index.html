@@ -418,13 +418,37 @@ html.xbon #osd,html.xbon #pm{bottom:max(190px,22vh)}
 
 
 /* === v2 fixes === */
+#det .dc.cw{display:flex;flex-wrap:wrap;gap:10px;max-height:none!important;overflow:visible!important}
+#det .ac{display:inline-flex;align-items:center;gap:10px;padding:4px 18px;border-radius:999px;border:2px solid transparent;background:rgba(128,128,128,.24);color:var(--tx);font-size:20px;font-weight:700;cursor:pointer;outline:none;transition:transform .12s}
+#det .ac img{width:54px;height:54px;border-radius:50%;object-fit:cover;margin-inline-start:-14px;flex:none}
+#det .ac:focus{border-color:#fff;background:rgba(255,255,255,.22);transform:scale(1.07)}
+#act{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.9);overflow-y:auto;padding:5vh 5vw;display:flex;flex-direction:column;gap:2.4vh;color:#fff}
+#act .a-x{align-self:flex-start;padding:8px 26px;border-radius:999px;border:2px solid rgba(255,255,255,.4);background:transparent;color:#fff;font:700 22px Cairo,Tahoma,sans-serif;cursor:pointer;outline:none}
+#act .a-x:focus{background:#fff;color:#000}
+#act .a-top{display:flex;gap:3vw;align-items:flex-start}
+#act .a-pic{flex:none;height:44vh;max-width:30vw;aspect-ratio:2/3;object-fit:cover;border-radius:24px;background:#222}
+#act .a-in{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+#act .a-n{font-size:clamp(34px,3.6vw,60px);line-height:1.2}
+#act .a-m{color:#bbb;font-size:22px}
+#act .a-bio{font-size:22px;line-height:1.6;color:#e6e6ea;max-height:30vh;overflow:hidden;display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical}
+#act .a-h{font-size:26px;color:var(--gold,#e8c36a)}
+#act .a-row{display:flex;gap:18px;overflow-x:auto;padding:14px 8px 20px}#act .a-row::-webkit-scrollbar{height:0}
+#act .a-card{flex:none;width:clamp(150px,11vw,210px);border-radius:16px;border:2px solid transparent;background:#1a1a1e;outline:none;overflow:hidden;cursor:pointer;transition:transform .12s}
+#act .a-card img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover}
+#act .a-card span{display:block;padding:6px 8px;font-size:18px;font-weight:700;height:2.7em;overflow:hidden;line-height:1.35}
+#act .a-card:focus{border-color:#fff;transform:scale(1.07)}
+#act .a-oth{color:#9a9aa2;font-size:18px;line-height:1.6}
+
+body.bgv #det.srs::before{display:none}
+body.bgv #det.srs::after{background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.8))}
+body.bgv #det .dx,body.bgv #det h2,body.bgv #det .dm,body.bgv #det .dc{text-shadow:0 2px 12px rgba(0,0,0,.9)}
 .li .cn{flex:none;min-width:2.3em;text-align:center;font:900 .78em Cairo,Tahoma,sans-serif;color:var(--gold);background:rgba(128,128,128,.22);border-radius:10px;padding:2px 8px;direction:ltr}
 .ep .eye{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:rgba(0,0,0,.42);color:#fff;pointer-events:none}
 .ep .eye svg{width:clamp(44px,3.6vw,70px);height:auto;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
 .ep .eye b{font-size:clamp(20px,1.7vw,30px);font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.8);direction:ltr}
 body.bgv{background:#050506!important}
-body.bgv #cin{inset:-8px}
-body.bgv #cin .sh{background:linear-gradient(to top,rgba(0,0,0,.9) 0,rgba(0,0,0,.6) 45%,rgba(0,0,0,.55) 100%)}
+html body.bgv #cin{inset:-8px}
+html body.bgv #cin .sh{background:linear-gradient(to top,rgba(0,0,0,.9) 0,rgba(0,0,0,.62) 40%,rgba(0,0,0,.62) 100%)}
 
 /* ===== سينما: صف 4 أفلام + فيديو بكامل الشاشة خلفها ===== */
 #cin,#cin-info,#p-cin{display:none}
@@ -1420,7 +1444,7 @@ document.addEventListener('keydown',e=>{
    else spatial(k,'#det .ep');
    return}
   if(k==38&&a&&a.closest&&a.closest('.ss')){e.preventDefault();focusEl($('#d-play'));return}
-  if(k>=37&&k<=40){e.preventDefault();spatial(k,'#det .btn,#det .ss .pill,#det .ep')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}
+  if(k>=37&&k<=40){e.preventDefault();spatial(k,'#det .btn,#det .ss .pill,#det .ep,#det .ac')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}
   return;
  }
  if(v=='home'||v=='page'||v=='set'){
@@ -1494,7 +1518,7 @@ async function tmdb(it,fk){
  const lg=S.lang=='ar'?'ar':'en-US',ty=fk=='sr'?'tv':'movie',B='https://api.themoviedb.org/3/';
  const m=((await (await fetch(`${B}search/${ty}?api_key=${K}&language=${lg}&query=${enc(cleanTitle(it.name))}`)).json()).results||[])[0];if(!m)return null;
  const d=await (await fetch(`${B}${ty}/${m.id}?api_key=${K}&language=${lg}&append_to_response=credits`)).json();
- return {plot:d.overview,rating:d.vote_average,year:(d.release_date||d.first_air_date||'').slice(0,4),genre:(d.genres||[]).map(g=>g.name).join('، '),cast:((d.credits&&d.credits.cast)||[]).slice(0,8).map(c=>c.name).join('، ')};
+ return {plot:d.overview,rating:d.vote_average,year:(d.release_date||d.first_air_date||'').slice(0,4),genre:(d.genres||[]).map(g=>g.name).join('، '),cast:((d.credits&&d.credits.cast)||[]).slice(0,8).map(c=>c.name).join('، '),castL:((d.credits&&d.credits.cast)||[]).slice(0,10).map(c=>({id:c.id,name:c.name,pic:c.profile_path?'https://image.tmdb.org/t/p/w185'+c.profile_path:''}))};
 }
 async function xinfo(it,fk){
  if(!S.conf||S.conf.mode!='xt')return null;const id=it.sid||String(it.id).slice(1);
@@ -1503,7 +1527,7 @@ async function xinfo(it,fk){
 }
 async function showDet(it,fk){
  killPv();
- S.dFrom=(V()=='det'||V()=='app')?S.dFrom:V();S.det={it,fk};S.lastId=it.id;setView('det');
+ S.dFrom=(V()=='det'||V()=='app')?S.dFrom:V();S.det={it,fk};S.lastId=it.id;setView('det');window.CIN&&CIN.focus(it,fk);
  const b=$('#det'),q=x=>b.querySelector(x);
  b.innerHTML='<div class="di"><h2 class="ruq" dir="auto"></h2><div class="dm"></div><p class="dx" dir="auto"></p><p class="dc" dir="auto"></p><div class="db"><button class="btn" tabindex="0" id="d-play"></button><button class="btn sec" tabindex="0" id="d-fav"></button><button class="btn sec" tabindex="0" id="d-back"></button></div></div><div class="ss"></div><div class="ee"></div>';
  if(it.logo){const im=document.createElement('img');im.className='dp';im.src=it.logo;im.onerror=()=>im.remove();b.prepend(im)}
@@ -1516,7 +1540,62 @@ async function showDet(it,fk){
  if(V()!='det'||S.det.it!==it)return;
  const f={...x};Object.keys(a).forEach(k=>{if(a[k])f[k]=a[k]});
  q('.dm').textContent=[+f.rating>0?'★ '+(+f.rating).toFixed(1):'',f.year,f.genre].filter(Boolean).join(' · ');
- q('.dx').textContent=f.plot||t('noinfo');q('.dc').textContent=f.cast?t('cast')+': '+f.cast:'';
+ q('.dx').textContent=f.plot||t('noinfo');{const dc=q('.dc');dc.textContent='';const L=(f.castL&&f.castL.length)?f.castL:String(f.cast||'').split(/[,\u060C]/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(n=>({name:n}));
+ dc.classList.toggle('cw',!!L.length);
+ L.forEach(a=>{const b=document.createElement('span');b.className='ac';b.tabIndex=0;b.setAttribute('role','button');if(a.pic){const im=document.createElement('img');im.src=a.pic;im.alt='';im.onerror=()=>im.remove();b.append(im)}const nm=document.createElement('span');nm.textContent=a.name;b.append(nm);b.onclick=()=>{S.actFrom=b;openActor(a)};dc.append(b)})}
+}
+
+/* ===== صفحة الممثل ===== */
+const TKEY=()=>{const K='__TMDB_KEY__';return(!K||/^__/.test(K))?'':K};
+const _nz=x=>String(x||'').toLowerCase().replace(/\(\d{4}\)/g,' ').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+let _SI=null,_SIn=-1;
+function srvIndex(){const n=(S.mv||[]).length+(S.sr||[]).length;if(_SI&&_SIn===n)return _SI;const m=new Map(),add=(arr,fk)=>(arr||[]).forEach(c=>{const k=_nz(cleanTitle(c.name)||c.name);if(k.length>=3&&!m.has(k))m.set(k,{c,fk})});add(S.mv,'mv');add(S.sr,'sr');_SIn=n;return _SI=m}
+function actClose(){const o=$('#act');if(o)o.remove();const b=S.actFrom;S.actFrom=null;if(b&&b.isConnected)try{b.focus({preventScroll:true})}catch(e){}}
+function actKey(e){const o=$('#act');if(!o)return;const k=e.keyCode;
+ if(BACK.includes(k)){e.preventDefault();e.stopImmediatePropagation();actClose();return}
+ if(k>=37&&k<=40){e.preventDefault();e.stopImmediatePropagation();spatial(k,'#act .a-x,#act .a-card');return}
+ if(k==13){const a=document.activeElement;if(a&&o.contains(a)){e.preventDefault();e.stopImmediatePropagation();a.click()}}}
+window.addEventListener('keydown',actKey,true);
+async function openActor(a){
+ const ar=S.lang=='ar',lg=ar?'ar':'en-US',K=TKEY(),B='https://api.themoviedb.org/3/';
+ const keep=S.actFrom;actClose();S.actFrom=keep;
+ const o=document.createElement('div');o.id='act';
+ o.innerHTML='<button class="a-x" tabindex="0"></button><div class="a-top"><img class="a-pic" alt=""><div class="a-in"><h2 class="a-n" dir="auto"></h2><div class="a-m" dir="auto"></div><p class="a-bio" dir="auto"></p></div></div><h3 class="a-h"></h3><div class="a-row"></div><div class="a-oth" dir="auto"></div>';
+ document.body.append(o);
+ const q=x=>o.querySelector(x),px=q('.a-pic'),row=q('.a-row'),hh=q('.a-h'),oth=q('.a-oth');
+ q('.a-x').textContent=ar?'رجوع':'Back';q('.a-x').onclick=actClose;q('.a-n').textContent=a.name||'';q('.a-bio').textContent=ar?'عم أحمّل…':'Loading…';
+ if(a.pic){px.src=a.pic}else px.style.display='none';
+ focusEl(q('.a-x'));
+ const jf=async u=>(await Promise.race([fetch(u),new Promise((_,j)=>setTimeout(()=>j(0),9000))])).json();
+ try{
+  if(K){
+   let id=a.id;
+   if(!id){const r=await jf(`${B}search/person?api_key=${K}&language=${lg}&query=${encodeURIComponent(a.name)}`);const m=(r.results||[])[0];if(m)id=m.id}
+   if(!id)throw 0;
+   const d=await jf(`${B}person/${id}?api_key=${K}&language=${lg}&append_to_response=combined_credits`);
+   if(!$('#act'))return;
+   let bio=d.biography||'';if(!bio&&lg!='en-US'){try{bio=(await jf(`${B}person/${id}?api_key=${K}&language=en-US`)).biography||''}catch(e){}}
+   if(d.profile_path){px.src='https://image.tmdb.org/t/p/w500'+d.profile_path;px.style.display=''}
+   q('.a-n').textContent=d.name||a.name;
+   q('.a-m').textContent=[d.known_for_department,d.birthday,d.place_of_birth].filter(Boolean).join(' · ');
+   q('.a-bio').textContent=bio||(ar?'ما في نبذة متوفرة':'No biography available');
+   const cc=((d.combined_credits||{}).cast||[]).filter(c=>c.title||c.name).sort((x,y)=>(y.popularity||0)-(x.popularity||0)),seenI=new Set(),idx=srvIndex(),hit=[],miss=[],used=new Set();
+   for(const c of cc){if(seenI.has(c.id))continue;seenI.add(c.id);
+    const ks=[c.title,c.original_title,c.name,c.original_name].map(_nz).filter(x=>x.length>=3);let h=null;for(const k of ks){if(idx.has(k)){h=idx.get(k);break}}
+    if(h){if(!used.has(h.c)){used.add(h.c);hit.push(h)}}else if(miss.length<24){const y=(c.release_date||c.first_air_date||'').slice(0,4);miss.push((c.title||c.name)+(y?' ('+y+')':''))}}
+   hh.textContent=hit.length?(ar?'أفلام ومسلسلات له على السيرفر ('+hit.length+')':'On your server ('+hit.length+')'):(ar?'ما لقيت له أعمال على السيرفر':'Nothing found on your server');
+   hit.slice(0,40).forEach(({c,fk})=>{const e=document.createElement('div');e.className='a-card';e.tabIndex=0;if(c.logo){const i=document.createElement('img');i.src=thumb(c.logo,'w342');i.onerror=()=>i.remove();e.append(i)}const n=document.createElement('span');n.dir='auto';n.textContent=cleanTitle(c.name)||c.name;e.append(n);
+    e.onclick=()=>{S.actFrom=null;const o2=$('#act');if(o2)o2.remove();showDet(c,fk)};row.append(e)});
+   if(miss.length)oth.textContent=(ar?'أعمال ثانية (مش على السيرفر): ':'Other works: ')+miss.join(' • ');
+   const f=row.querySelector('.a-card');if(f)focusEl(f);
+  }else{
+   const nm=encodeURIComponent((a.name||'').replace(/ /g,'_'));let j=null;
+   for(const L of(ar?['ar','en']:['en','ar'])){try{const r=await jf(`https://${L}.wikipedia.org/api/rest_v1/page/summary/${nm}`);if(r&&r.extract){j=r;break}}catch(e){}}
+   if(!$('#act'))return;
+   if(j){const im=(j.originalimage&&j.originalimage.source)||(j.thumbnail&&j.thumbnail.source);if(im){px.src=im;px.style.display=''}q('.a-bio').textContent=j.extract;q('.a-m').textContent=j.description||''}else q('.a-bio').textContent=ar?'ما لقيت معلومات عنه':'No information found';
+   hh.textContent=ar?'لعرض أفلامه الموجودة على السيرفر لازم مفتاح TMDB بالتطبيق':'Add a TMDB key to the app to list his titles on your server';
+  }
+ }catch(e){if($('#act')){q('.a-bio').textContent=ar?'ما قدرت أجيب معلومات عنه (تأكد من الإنترنت)':'Could not load information';elog('actor: '+(e&&e.message||e))}}
 }
 async function sinfo(it){S.sc=S.sc||{};if(S.sc[it.sid])return S.sc[it.sid];const j=await (await jget(xapi('get_series_info','&series_id='+it.sid))).json();if(!j||!j.episodes||Array.isArray(j.episodes)&&!j.episodes.length)throw 0;return S.sc[it.sid]=j}
 function epUrl(ep){return `${S.conf.server}/series/${enc(S.conf.user)}/${enc(S.conf.pass)}/${ep.id}.${ep.container_extension||'mp4'}`}
@@ -1950,7 +2029,7 @@ window.CIN=(function(){
  const A=[$('#cin-a'),$('#cin-b')],vd=$('#cin-v'),tt=$('#ci-t'),mm=$('#ci-m'),pp=$('#ci-p'),pc=$('#p-cin'),pg=$('#page');
  const CLIP=22,DWELL=250,VDELAY=1200,MC=new Map(),INF=new Map();
  let gen=0,dw=0,qt=0,ii=0,shown='',cur=null,ck=0,t0=0,loops=0,strikes=0,ft=0;
- const ar=()=>S.lang=='ar',on=()=>V()=='page'||V()=='home',cinp=()=>pg.classList.contains('cinp')&&V()=='page',user=()=>store.get('cinv')!==0;
+ const ar=()=>S.lang=='ar',on=()=>V()=='page'||V()=='home'||V()=='det',cinp=()=>pg.classList.contains('cinp')&&V()=='page',user=()=>store.get('cinv')!==0;
  const hs=x=>{x=String(x||'');let h=0;for(let i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))|0;return Math.abs(h)};
  const key=it=>it.sid?'s'+it.sid:'m'+(it.id||it.url||it.name);
  function img(u,bd){
@@ -2008,7 +2087,7 @@ window.CIN=(function(){
   if(g!==gen||!on())return;
   play(u,it,g)}
  function focus(it,fk){
-  if(!on())return;if(fk=='lv'&&!cinp()){hide();return}const g=++gen;clearTimeout(dw);halt();cur=it;ck=fk;ft=Date.now();if(user())bgc(1);
+  if(!on())return;if(V()=='det'&&cur===it&&ck===fk&&!vd.paused&&vd.getAttribute('src')){if(user())bgc(1);return}if(fk=='lv'&&!cinp()&&V()!='det'){hide();return}const g=++gen;clearTimeout(dw);halt();cur=it;ck=fk;ft=Date.now();if(user())bgc(1);
   const c=MC.get(key(it));info(it,c);
   const bd=c&&c.bd,iu=bd?thumb(bd,'original'):(it.logo?thumb(it.logo,'original'):null);if(iu)img(iu,!!bd);
   if(fk=='lv')return;
@@ -2019,7 +2098,7 @@ window.CIN=(function(){
  $('#home').addEventListener('focusin',e=>{const r=e.target.closest('.cd,.hero');if(!r||!r._it||!on())return;if(r._fk=='mv'||r._fk=='sr')focus(r._it,r._fk);else hide()});
  $('#home').addEventListener('click',stop,true);
  $('#p-l').addEventListener('click',stop,true);   /* قبل ما يبدأ المشغّل: حرّر الاتصال والـ decoder */
- let lastV=V();new MutationObserver(()=>{const v=V();if(v!=lastV){lastV=v;hide()}}).observe(document.body,{attributes:true,attributeFilter:['data-v']});
+ let lastV=V();new MutationObserver(()=>{const v=V();if(v!=lastV){lastV=v;if(v!='det')hide()}}).observe(document.body,{attributes:true,attributeFilter:['data-v']});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else if(cur&&on())focus(cur,ck)});
  function hide(){stop();img(null);info(null);cur=null;bgc(0)}
  return{focus,stop,pill,hide,active(){return user()&&BGOK&&on()}}
