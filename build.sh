@@ -553,7 +553,183 @@ public class MainActivity extends Activity {
       requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 2);
       return;
     }
-    voiceListen(voiceTag(lang));
+    voiceKill();
+    voiceRecStart(lang);
+  }
+
+  // ===== Voice v2: own recorder (live level meter) + cloud STT in Arabic AND English =====
+  private static final String STT_KEY = "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw";
+  private volatile boolean recRun = false, recSpeech = false, recAny = false;
+  private volatile int recPeak = 0;
+
+  private void vjsU(final String fn, final String arg) { hnd.post(new Runnable() { public void run() { vjs(fn, arg); } }); }
+  private void vjsU2(final String fn, final String a, final String b2) { hnd.post(new Runnable() { public void run() { vjs2(fn, a, b2); } }); }
+
+  private void voiceRecStart(final String lang) {
+    if (recRun) return;
+    recRun = true;
+    final String tagA = voiceTag(lang);
+    final String tagB = tagA.startsWith("ar") ? "en-US" : "ar-JO";
+    new Thread(new Runnable() { public void run() {
+      try { voiceRecRun(tagA, tagB); }
+      catch (Throwable e) { vjsU2("__voiceErr", "audio", "rec:" + e); }
+      finally { recRun = false; }
+    } }).start();
+  }
+
+  private byte[] voiceCapture(int src, boolean last) {
+    final int RATE = 16000, CH = 1600;
+    int minBuf = android.media.AudioRecord.getMinBufferSize(RATE, android.media.AudioFormat.CHANNEL_IN_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT);
+    int bufBytes = Math.max(minBuf, CH * 2) * 4;
+    android.media.AudioRecord ar = null;
+    try {
+      ar = new android.media.AudioRecord(src, RATE, android.media.AudioFormat.CHANNEL_IN_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT, bufBytes);
+      if (ar.getState() != android.media.AudioRecord.STATE_INITIALIZED) { ar.release(); return null; }
+      ar.startRecording();
+      if (ar.getRecordingState() != android.media.AudioRecord.RECORDSTATE_RECORDING) { ar.release(); return null; }
+    } catch (Throwable e) {
+      try { if (ar != null) ar.release(); } catch (Throwable x) {}
+      return null;
+    }
+    recAny = true;
+    java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream();
+    short[] sb = new short[CH];
+    long t0 = System.currentTimeMillis(), lastLoud = 0;
+    double floor = -1;
+    int peak = 0;
+    boolean speech = false, probed = false, skip = false;
+    vjsU("__voiceState", "listening");
+    try {
+      while (recRun) {
+        int n = ar.read(sb, 0, CH);
+        if (n < 0) break;
+        if (n == 0) continue;
+        long sum = 0;
+        int pk = 0;
+        byte[] bb = new byte[n * 2];
+        for (int i = 0; i < n; i++) {
+          int v = sb[i];
+          sum += (long) v * v;
+          int a = v < 0 ? -v : v;
+          if (a > pk) pk = a;
+          bb[2 * i] = (byte) (v & 0xff);
+          bb[2 * i + 1] = (byte) ((v >> 8) & 0xff);
+        }
+        bo.write(bb, 0, n * 2);
+        double rms = Math.sqrt(sum / (double) n);
+        if (pk > peak) peak = pk;
+        long el = System.currentTimeMillis() - t0;
+        vjsU("__voiceLvl", String.valueOf((int) Math.min(100, Math.log10(1 + rms) * 25)));
+        if (el < 500) floor = floor < 0 ? rms : floor * 0.7 + rms * 0.3;
+        else if (rms > Math.max(floor * 3, 250)) { speech = true; lastLoud = el; }
+        if (!probed && el >= 1500) { probed = true; if (peak <= 6 && !last) { skip = true; break; } }
+        if (speech && el - lastLoud > 1400) break;
+        if (!speech && el > 6500) break;
+        if (el > 10000) break;
+      }
+    } catch (Throwable e) {
+    } finally {
+      try { ar.stop(); } catch (Throwable e) {}
+      try { ar.release(); } catch (Throwable e) {}
+    }
+    if (!speech && peak > 1200) speech = true;
+    recPeak = peak;
+    recSpeech = speech;
+    return skip ? null : bo.toByteArray();
+  }
+
+  private String[] voiceStt(byte[] pcm, String tag) throws Exception {
+    java.net.URL u = new java.net.URL("https://www.google.com/speech-api/v2/recognize?output=json&lang=" + tag + "&maxresults=6&pfilter=0&key=" + STT_KEY);
+    java.net.HttpURLConnection c = (java.net.HttpURLConnection) u.openConnection();
+    try {
+      c.setConnectTimeout(8000);
+      c.setReadTimeout(15000);
+      c.setRequestMethod("POST");
+      c.setDoOutput(true);
+      c.setRequestProperty("Content-Type", "audio/l16; rate=16000");
+      c.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 Chrome/120 Safari/537.36");
+      c.setFixedLengthStreamingMode(pcm.length);
+      java.io.OutputStream o = c.getOutputStream();
+      o.write(pcm);
+      o.close();
+      int code = c.getResponseCode();
+      if (code != 200) throw new java.io.IOException("HTTPERR" + code);
+      java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(c.getInputStream(), "UTF-8"));
+      java.util.ArrayList<String> r = new java.util.ArrayList<String>();
+      String ln;
+      while ((ln = br.readLine()) != null) {
+        ln = ln.trim();
+        if (ln.length() < 3) continue;
+        org.json.JSONObject jo = new org.json.JSONObject(ln);
+        org.json.JSONArray res = jo.optJSONArray("result");
+        if (res == null) continue;
+        for (int i = 0; i < res.length(); i++) {
+          org.json.JSONObject ro = res.optJSONObject(i);
+          if (ro == null) continue;
+          org.json.JSONArray alt = ro.optJSONArray("alternative");
+          if (alt == null) continue;
+          for (int j = 0; j < alt.length(); j++) {
+            org.json.JSONObject ao = alt.optJSONObject(j);
+            if (ao == null) continue;
+            String tr = ao.optString("transcript", "");
+            if (tr.length() > 0) r.add(tr);
+          }
+        }
+      }
+      return r.toArray(new String[0]);
+    } finally {
+      c.disconnect();
+    }
+  }
+
+  private void voiceRecRun(final String tagA, final String tagB) {
+    int[] srcs = {6, 1, 7, 5, 9, 0};
+    byte[] pcm = null;
+    String used = "";
+    int maxPeak = 0;
+    recAny = false;
+    for (int i = 0; i < srcs.length && recRun; i++) {
+      byte[] p = voiceCapture(srcs[i], i == srcs.length - 1);
+      if (recPeak > maxPeak) maxPeak = recPeak;
+      if (p != null) { pcm = p; used = String.valueOf(srcs[i]); break; }
+    }
+    if (pcm == null) {
+      if (!recAny) vjsU2("__voiceErr", "audio", "norec;" + voiceDiag());
+      else vjsU2("__voiceErr", "silent", "peak=" + maxPeak + ";" + voiceDiag());
+      return;
+    }
+    if (!recSpeech) { vjsU2("__voiceErr", "silent", "peak=" + recPeak + ";src=" + used + ";" + voiceDiag()); return; }
+    vjsU("__voiceState", "processing");
+    final byte[] fp = pcm;
+    final String[][] out = new String[2][];
+    final String[] err = new String[2];
+    final String[] tags = {tagA, tagB};
+    Thread[] th = new Thread[2];
+    for (int k = 0; k < 2; k++) {
+      final int kk = k;
+      th[k] = new Thread(new Runnable() { public void run() {
+        try { out[kk] = voiceStt(fp, tags[kk]); } catch (Throwable e) { err[kk] = String.valueOf(e); }
+      } });
+      th[k].start();
+    }
+    for (Thread x : th) { try { x.join(22000); } catch (InterruptedException e) {} }
+    org.json.JSONArray ja = new org.json.JSONArray();
+    java.util.HashSet<String> seen = new java.util.HashSet<String>();
+    for (int k = 0; k < 2; k++) {
+      if (out[k] == null) continue;
+      for (String s2 : out[k]) { if (seen.add(s2)) ja.put(s2); }
+    }
+    if (ja.length() == 0) {
+      boolean http = (err[0] != null && err[0].contains("HTTPERR")) || (err[1] != null && err[1].contains("HTTPERR"));
+      if (err[0] != null && err[1] != null) {
+        if (http) {
+          vjsU("__voiceState", "fallback");
+          hnd.post(new Runnable() { public void run() { voiceViaIntent = false; voiceTry = 0; voiceListen(tagA); } });
+        } else vjsU2("__voiceErr", "network", "stt:" + err[0]);
+      } else vjsU2("__voiceErr", "unclear", "peak=" + recPeak + ";src=" + used);
+      return;
+    }
+    vjsU("__voice", ja.toString());
   }
 
   private void voiceKill() {
@@ -643,7 +819,7 @@ public class MainActivity extends Activity {
   public void onRequestPermissionsResult(int rq, String[] p, int[] g) {
     super.onRequestPermissionsResult(rq, p, g);
     if (rq == 2) {
-      if (g != null && g.length > 0 && g[0] == PackageManager.PERMISSION_GRANTED) { voiceTry = 0; voiceViaIntent = false; voiceListen(voiceTag(pendingLang)); }
+      if (g != null && g.length > 0 && g[0] == PackageManager.PERMISSION_GRANTED) { voiceTry = 0; voiceViaIntent = false; voiceRecStart(pendingLang); }
       else vjs2("__voiceErr", "denied", "perm-denied;" + voiceDiag());
     }
   }
