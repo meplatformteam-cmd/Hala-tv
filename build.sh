@@ -887,6 +887,9 @@ package com.hala.tv;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.view.Window;
+import android.widget.ScrollView;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -976,6 +979,21 @@ public class PlayerActivity extends Activity {
         path.moveTo(cx, cy - a); path.lineTo(cx, cy + a); path.lineTo(cx + s, cy); path.close();
       }
       cv.drawPath(path, p);
+    }
+  }
+
+  static class Dot extends View {
+    boolean on, dark;
+    final Paint q = new Paint(Paint.ANTI_ALIAS_FLAG);
+    Dot(Context c, boolean o) { super(c); on = o; }
+    @Override protected void onDraw(Canvas cv) {
+      float w = getWidth(), h = getHeight(), r = Math.min(w, h) / 2f - 2f;
+      int col = dark ? Color.BLACK : Color.WHITE;
+      q.setStyle(Paint.Style.STROKE);
+      q.setStrokeWidth(3f);
+      q.setColor(on ? col : (dark ? 0x66000000 : 0x66FFFFFF));
+      cv.drawCircle(w / 2f, h / 2f, r, q);
+      if (on) { q.setStyle(Paint.Style.FILL); q.setColor(col); cv.drawCircle(w / 2f, h / 2f, r * 0.55f, q); }
     }
   }
 
@@ -1585,13 +1603,85 @@ public class PlayerActivity extends Activity {
     exo.setTrackSelectionParameters(b.build());
   }
 
-  private void pickList(String ttl, ArrayList<String> names, int checked, final Pick p) {
-    AlertDialog.Builder b = new AlertDialog.Builder(this);
-    b.setTitle(ttl);
-    b.setSingleChoiceItems(names.toArray(new String[0]), checked, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface d, int w) { d.dismiss(); p.on(w); }
+  private void pickList(String ttl, ArrayList<String> names, int checked, final Pick p) { sheet(ttl, names, checked, p); }
+
+  /* dark glass option sheet, remote friendly */
+  private void sheet(String ttl, ArrayList<String> names, int checked, final Pick p) {
+    final Dialog d = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+    LinearLayout panel = new LinearLayout(this);
+    panel.setOrientation(LinearLayout.VERTICAL);
+    panel.setPadding(dp(22), dp(18), dp(22), dp(14));
+    GradientDrawable pg = new GradientDrawable();
+    pg.setColor(0xF2202026);
+    pg.setCornerRadius(dp(24));
+    pg.setStroke(dp(1), 0x33FFFFFF);
+    panel.setBackground(pg);
+    TextView t = tv(17, Color.WHITE, true);
+    t.setText(ttl);
+    t.setSingleLine(true);
+    t.setPadding(dp(10), dp(2), dp(10), dp(10));
+    panel.addView(t, new LinearLayout.LayoutParams(-1, -2));
+    LinearLayout list = new LinearLayout(this);
+    list.setOrientation(LinearLayout.VERTICAL);
+    View focusMe = null;
+    for (int i = 0; i < names.size(); i++) {
+      final int idx = i;
+      final boolean on = i == checked;
+      final LinearLayout row = new LinearLayout(this);
+      row.setOrientation(LinearLayout.HORIZONTAL);
+      row.setGravity(Gravity.CENTER_VERTICAL);
+      row.setPadding(dp(16), dp(11), dp(16), dp(11));
+      row.setFocusable(true);
+      row.setFocusableInTouchMode(true);
+      row.setClickable(true);
+      final GradientDrawable nb = new GradientDrawable();
+      nb.setColor(0x14FFFFFF);
+      nb.setCornerRadius(dp(15));
+      final GradientDrawable fb = new GradientDrawable();
+      fb.setColor(Color.WHITE);
+      fb.setCornerRadius(dp(15));
+      row.setBackground(nb);
+      final Dot dot = new Dot(this, on);
+      LinearLayout.LayoutParams dl = new LinearLayout.LayoutParams(dp(20), dp(20));
+      dl.setMarginEnd(dp(14));
+      row.addView(dot, dl);
+      final TextView tx = tv(15, Color.WHITE, on);
+      tx.setText(names.get(i));
+      row.addView(tx, new LinearLayout.LayoutParams(0, -2, 1f));
+      row.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        public void onFocusChange(View v, boolean f) {
+          row.setBackground(f ? fb : nb);
+          tx.setTextColor(f ? Color.BLACK : Color.WHITE);
+          dot.dark = f;
+          dot.invalidate();
+        }
+      });
+      row.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) { d.dismiss(); p.on(idx); }
+      });
+      LinearLayout.LayoutParams rl = new LinearLayout.LayoutParams(-1, -2);
+      rl.topMargin = dp(6);
+      list.addView(row, rl);
+      if (focusMe == null || on) focusMe = row;
+    }
+    ScrollView sv = new ScrollView(this);
+    sv.setVerticalScrollBarEnabled(false);
+    sv.addView(list, new FrameLayout.LayoutParams(-1, -2));
+    panel.addView(sv, new LinearLayout.LayoutParams(-1, -2));
+    d.setContentView(panel);
+    Window w = d.getWindow();
+    if (w != null) {
+      int sw = getResources().getDisplayMetrics().widthPixels;
+      w.setLayout(Math.min(dp(520), (int) (sw * 0.8f)), WindowManager.LayoutParams.WRAP_CONTENT);
+      w.setGravity(Gravity.CENTER);
+      w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+      w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+      w.setDimAmount(0.55f);
+    }
+    final View fm = focusMe;
+    d.setOnShowListener(new DialogInterface.OnShowListener() {
+      public void onShow(DialogInterface x) { if (fm != null) fm.requestFocus(); }
     });
-    AlertDialog d = b.create();
     d.setOnDismissListener(new DialogInterface.OnDismissListener() {
       public void onDismiss(DialogInterface x) { dlgs--; hideSystem(); }
     });
@@ -1668,17 +1758,9 @@ public class PlayerActivity extends Activity {
     acts.add(new Runnable() { public void run() { switchInternal = true; finishOut(); } });
     names.add(ar ? "إغلاق" : "Close");
     acts.add(new Runnable() { public void run() {} });
-    AlertDialog.Builder b = new AlertDialog.Builder(this);
-    b.setTitle(title.length() > 0 ? title : "Hala TV");
-    b.setItems(names.toArray(new String[0]), new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface d, int w) { if (w >= 0 && w < acts.size()) acts.get(w).run(); }
+    sheet(title.length() > 0 ? title : "Hala TV", names, -1, new Pick() {
+      public void on(int w) { if (w >= 0 && w < acts.size()) acts.get(w).run(); }
     });
-    AlertDialog d = b.create();
-    d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-      public void onDismiss(DialogInterface x) { dlgs--; hideSystem(); }
-    });
-    dlgs++;
-    d.show();
   }
 
   /* ----------------------------------------------------------------- keys */
