@@ -626,6 +626,10 @@ body.bgv .tile{background:rgba(0,0,0,.62)!important}
 #page.cinr .gv .li,#page.cinp .gv .li{border:0!important;box-shadow:none!important;background-clip:border-box!important;-webkit-background-clip:border-box!important}
 #page.cinr .gv .li:focus{transform:scale(1.1)!important;z-index:4;box-shadow:0 0 0 .4vh #fff!important}
 #page.cinp .gv .li:focus{box-shadow:0 0 0 .45vh #fff!important}
+#sp-list .ri>span:first-child{flex:1;min-width:0}
+#sp-list .ri .vd{display:inline-block;font-weight:900;font-size:.8em;padding:1px 10px;margin-inline-end:10px;border-radius:999px;background:rgba(0,0,0,.35)}
+#sp-list .ri .vd.ok{color:#5be584}#sp-list .ri .vd.mid{color:#ffd166}#sp-list .ri .vd.no,#sp-list .ri .vd.yr,#sp-list .ri .vd.ep{color:#ff6b6b}#sp-list .ri .vd.un{color:#b8b8c0}
+#sp-list .ri .rs{display:block;font-size:.72em;font-weight:600;opacity:.75;direction:ltr;text-align:start;margin-top:3px;word-break:break-all}
 #updp{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);z-index:100000;display:none;width:min(560px,86vw);padding:18px 26px 20px;border-radius:22px;background:rgba(24,24,28,.94);border:1px solid rgba(255,255,255,.2);color:#fff;text-align:center;font:700 clamp(16px,1.6vw,26px)/1.5 Cairo,Tahoma,Arial,sans-serif;pointer-events:none}
 #updp .ut{margin-bottom:12px}#updp .ub{height:12px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden;direction:ltr;position:relative}
 #updp .uf{height:100%;width:0;border-radius:6px;background:#fff;transition:width .25s linear}
@@ -733,6 +737,12 @@ html.tcon #subov{bottom:calc(var(--u)*115px)}
 .gv .li img,.cd img{border-radius:inherit!important}
 .gv .li span:not(.fvb),.cd .cap{border-bottom-left-radius:inherit;border-bottom-right-radius:inherit}
 #page.cinr .gv .li,#page.cinp .gv .li{-webkit-mask-image:-webkit-radial-gradient(white,black)}
+
+/* ===== نظام المربعات: شيل اللوح الغامق (الظل) اللي ورا الشبكة + الإطار الغامق حوالين كل بوستر ===== */
+body[data-v=page] #page .pg>#p-l.gv,html body.bgv #page .pg>#p-l.gv,body.bgv #page .pg>#p-l.gv{background:none!important;border:0!important;box-shadow:none!important}
+.pg.gvw .gv .li{border:0!important;box-shadow:none;-webkit-background-clip:padding-box;background-clip:padding-box;background-color:rgba(255,255,255,.06);background-image:none}
+.pg.gvw .gv .li.nl,.pg.gvw .gv .li.lv{background-image:linear-gradient(160deg,#2a2a2d,#0a0a0a)}
+.pg.gvw .gv .li:focus{box-shadow:0 0 0 .45vh #fff!important}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -1403,8 +1413,8 @@ function setSub(x,lang,meta){
  subStop();nativeTextOff();SUB.err='';
  const dk=meta.key?meta.key+(meta.rel?'|'+meta.rel:''):'';let o0=meta.off;
  if(o0==null&&dk)o0=store.get('subdl:'+dk);if(o0==null&&meta.key)o0=store.get('subdl:'+meta.key);if(o0==null)o0=0;
- S.sub={kind:'cues',cues,lang:lang||'ar',off:o0,name:meta.name||'',key:meta.key||'',dk,shown:0};
- SUB.st='loaded';subStart();setDelayUI();spSt(t('subloaded')+' \u00B7 '+cues.length+' \u00B7 '+(S.sub.name||'')+(meta.cached?' \u00B7 '+t('subcache'):''));
+ S.sub={kind:'cues',cues,lang:lang||'ar',off:o0,name:meta.name||'',disp:meta.disp||'',key:meta.key||'',dk,shown:0};
+ SUB.st='loaded';subStart();setDelayUI();spSt(t('subloaded')+' \u00B7 '+cues.length+' \u00B7 '+(S.sub.disp||S.sub.name||'')+(meta.cached?' \u00B7 '+t('subcache'):''));if(meta.disp){try{osd('\u2713 '+meta.disp)}catch(e){}}
  if(meta.key&&meta.save){SC.put(meta.key,x,meta.name);store.set('subauto:'+meta.key,1)}
  subWatch();return true;
 }
@@ -1413,16 +1423,20 @@ function setSubOff(){subStop();nativeTextOff();SUB.mode='';const ti=trackInfo();
 /* ---------- panel ---------- */
 function openSubs(){
  if(!S.vod)return;$('#sp').classList.add('on');clearInterval(SUB.dt);SUB.dt=setInterval(dgUpd,1000);$('#v').controls=false;pmHide();
- $('#sp-sr').style.display=SUB.mode=='os'?'':'none';$('#sp-list').innerHTML='';spSt(S.sub?t('subcur')+(S.sub.name||S.sub.lang)+(S.sub.shown?' \u2713':''):'');setDelayUI();
+ $('#sp-sr').style.display=SUB.mode=='os'?'':'none';$('#sp-list').innerHTML='';spSt(S.sub?t('subcur')+(S.sub.disp||S.sub.name||S.sub.lang)+(S.sub.shown?' \u2713':''):'');setDelayUI();
  $('#sp-q').value=S.spq||trackInfo().title;focusEl($('#sp-e'));
  if(SUB.mode=='srv')srvSubs();
 }
 function closeSubs(){SUB.sq++;clearInterval(SUB.dt);$('#sp').classList.remove('on');$('#v').controls=S.vod&&!tchOn()}
 window.spRefresh=()=>{if(spOpen()&&SUB.mode=='srv')srvSubs(true)};
 const curMark=d=>{$$('#sp-list .ri').forEach(x=>x.classList.toggle('cur',x===d))};
-function listRow(name,small,fn,cur){
+function listRow(name,small,fn,cur,ex){
  const d=document.createElement('div');d.className='ri sx'+(cur?' cur':'');d.tabIndex=0;d.dir='auto';
- const l=document.createElement('span'),m=document.createElement('small');l.textContent=name;m.textContent=small||'';d.append(l,m);
+ const l=document.createElement('span'),m=document.createElement('small');m.textContent=small||'';
+ if(ex&&ex.vd){const b=document.createElement('span');b.className='vd '+ex.vd.k;b.textContent=ex.vd.txt;l.append(b,document.createTextNode(name));
+  if(ex.rel){const r=document.createElement('span');r.className='rs';r.textContent=ex.rel;l.append(r)}}
+ else l.textContent=name;
+ d.append(l,m);
  d.onclick=async()=>{curMark(d);await fn()};$('#sp-list').append(d);return d;
 }
 
@@ -1523,17 +1537,51 @@ async function srvSubs(quiet){
 }
 window.spExoCue=()=>{if(SUB.pend){SUB.pend.shown=1;SUB.st='shown';clearTimeout(SUB.pt)}if(SUB.exoWait&&spOpen()){SUB.exoWait=0;spSt(t('subshown')+(SUB.pend?' \u00B7 '+SUB.pend.n:''))}};
 
+/* ---------- subtitle result verification: real movie name + language + same-title verdict ---------- */
+const VT={ok:['✓ نفس الاسم','✓ Same title'],mid:['≈ اسم قريب','≈ Similar title'],no:['✗ اسم مختلف','✗ Different title'],yr:['✗ سنة مختلفة','✗ Different year'],ep:['✗ حلقة مختلفة','✗ Different episode'],un:['؟ ما قدرنا نقارن الاسم','? Name can’t be compared'],
+ nomatch:['⚠ ما لقينا ترجمة بنفس الاسم — هاي أقرب النتائج بس، تأكد قبل ما تختار','⚠ No subtitle with the same title — these are only the closest, double-check before picking'],
+ good:['✓ لقينا ترجمة عربية بنفس الاسم','✓ Found Arabic subtitles with the same title'],
+ nopick:['اختار ترجمة من القائمة (ما عملنا اختيار تلقائي لأن الاسم مش مؤكد)','Pick one from the list (not auto-selected because the title is not confirmed)']};
+const vt=k=>VT[k][S.lang=='ar'?0:1];
+const ARX=/[\u0600-\u06ff]/,LTX=/[a-z]/;
+function normT(x){return (x||'').toLowerCase().replace(/\(\s*(?:19|20)\d\d\s*\)/g,' ').replace(/&/g,' and ').replace(/[\u064b-\u065f\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[^a-z0-9\u0600-\u06ff]+/g,' ').trim()}
+function tokT(x){return normT(x).split(' ').filter(w=>w&&!STOPW.test(w))}
+function nameMatch(q,tt,series){
+ const A=tokT(q),B=tokT(tt);if(!A.length||!B.length)return -1;
+ const aAr=A.some(w=>ARX.test(w)),bAr=B.some(w=>ARX.test(w)),aLt=A.some(w=>LTX.test(w)),bLt=B.some(w=>LTX.test(w));
+ if((aAr&&!aLt&&bLt&&!bAr)||(aLt&&!aAr&&bAr&&!bLt))return -1;
+ const sb=new Set(B);let c=0;A.forEach(w=>{if(sb.has(w))c++});
+ const d=2*c/(A.length+B.length);return series?Math.max(d,c/A.length*.95):d}
+function bestMatch(ctx,tt){let m=-1;ctx.titles.forEach(q=>{const v=nameMatch(q,tt,ctx.se);if(v>m)m=v});return m}
+const isArSub=x=>/^(ar|ara|arabic)$/.test((x.lang||'ar').toLowerCase());
+const langLbl=x=>isArSub(x)?(S.lang=='ar'?'عربي ✓':'Arabic ✓'):(x.lang||'').toUpperCase()+(S.lang=='ar'?' ✗ مش عربي':' ✗ not Arabic');
+function annSub(x,ctx){
+ const tt=x.title||x.name||'';let m=bestMatch(ctx,tt),k=m<0?'un':m>=.8?'ok':m>=.5?'mid':'no';
+ if(!x.title&&k=='no'){const B=new Set(tokT(x.name||'')),c=Math.max(0,...ctx.titles.map(q=>{const A=tokT(q);return A.length?A.filter(w=>B.has(w)).length/A.length:0}));k=c>=1?'ok':c>=.5?'mid':'un'}
+ if(k!='no'&&ctx.year&&x.year&&Math.abs(ctx.year-x.year)>1)k='yr';
+ if(ctx.se&&ctx.ep){const pe=(x.se!=null&&x.ep!=null&&+x.se>0)?{se:+x.se,ep:+x.ep}:parseSE(x.name||'');if(pe&&(pe.se!=ctx.se||pe.ep!=ctx.ep))k='ep'}
+ const nonAr=!isArSub(x);
+ x.v={k,txt:vt(k),rank:nonAr?0:({ok:4,un:3,mid:2}[k]||1),good:k=='ok'||k=='mid'||k=='un'};
+ x.nonAr=nonAr;
+ x.disp=(x.title||x.name)+(x.year?' ('+x.year+')':'')+' · '+vt(k)+' · '+langLbl(x)+(x.title&&x.name?' · '+x.name:'');
+ return x}
+const annAll=(a,ctx)=>{a.forEach(x=>annSub(x,ctx));return a};
 /* ---------- OpenSubtitles Arabic (website via the app's HTTP client, official REST API fallback) ---------- */
 const WB='https://www.opensubtitles.org',DLB='https://dl.opensubtitles.org';
 let WEBBLK=0;
 const blockedRes=r=>r.status==403||r.status==429||r.status==503||/cf-chl|Just a moment|g-recaptcha|hcaptcha|Attention Required|are you a robot/i.test((r.body||'').slice(0,6000));
 function htmlText(h){return h.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&#0*39;/g,"'").replace(/\s+/g,' ').trim()}
-function parseResults(html){
+function parseResults(html,defT){
  const o=[],seen={};
  html.split(/<tr[\s>]/i).slice(1).forEach(row=>{
   const m=row.match(/href="[^"]*\/(?:subtitleserve|download)\/sub\/(\d+)/i);if(!m||seen[m[1]])return;seen[m[1]]=1;
   const tx=htmlText(row),dl=tx.match(/(\d[\d,]*)\s*x\b/);
-  o.push({id:m[1],name:tx.slice(0,110)||m[1],n:dl?+dl[1].replace(/,/g,''):0});
+  const sm=row.match(/<strong[^>]*>\s*<a[^>]*>([\s\S]*?)<\/a>/i)||row.match(/<a[^>]*class="[^"]*bnone[^"]*"[^>]*>([\s\S]*?)<\/a>/i);
+  let ti=sm?htmlText(sm[1]):'',rel='';
+  if(ti){const i2=tx.indexOf(ti);if(i2>=0)rel=tx.slice(i2+ti.length).replace(/^[\s\-–—:|]+/,'').split(/\s(?:\d+\s?CD\b|\d[\d,]*\s?x\b|\d{4}-\d\d-\d\d)/)[0].slice(0,110).trim()}
+  const ym=ti.match(/\(\s*((?:19|20)\d\d)\s*\)/),fl=row.match(/flag\s+([a-z]{2,3})\b/i);
+  ti=(ti||defT||'').replace(/\s*\(\s*(?:19|20)\d\d\s*\)\s*$/,'').replace(/^"([^"]+)"/,'$1').trim();
+  o.push({id:m[1],title:ti,year:ym?+ym[1]:0,name:rel||(ti?'':tx.slice(0,110))||m[1],n:dl?+dl[1].replace(/,/g,''):0,lang:fl?fl[1].toLowerCase():'ar'});
  });
  return o;
 }
@@ -1545,7 +1593,7 @@ function scoreRes(x,se,ep,raw){
  const A=relTokens(raw),B=relTokens(nm);A.forEach(k=>{if(B.has(k))s+=k.startsWith('grp:')?12:6});
  return s;
 }
-async function webFind(q,se,ep,raw){
+async function webFind(q,se,ep,raw,ctx){
  if(Date.now()-WEBBLK<6e5)return{blocked:1,items:[]};
  let neterr=0,err=0;const mid=se&&ep?`/season-${se}/episode-${ep}`:'',path=`/en/search/sublanguageid-ara${mid}/moviename-${enc(q)}`;
  for(const host of [DLB,WB]){
@@ -1553,9 +1601,12 @@ async function webFind(q,se,ep,raw){
   if(r.status==0){neterr=1;continue}
   if(blockedRes(r)){WEBBLK=Date.now();return{blocked:1,items:[]}}
   if(r.status!=200){err=r.status;continue}
-  let items=parseResults(r.body);
-  if(!items.length){const mv=parseMovieLinks(r.body)[0];if(mv){const r2=await xhttp('GET',host+`/en/search/sublanguageid-ara${mid}/idmovie-${mv.id}`,UA);if(blockedRes(r2)){WEBBLK=Date.now();return{blocked:1,items:[]}}if(r2.status==200)items=parseResults(r2.body)}}
-  if(items.length){items.sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw));return{items:items.slice(0,10).map(x=>({name:x.name,n:x.n,get:()=>webGet(x)}))}}
+  let items=parseResults(r.body,'');
+  if(!items.length){
+   const top=parseMovieLinks(r.body).map(m=>({m,s:bestMatch(ctx,m.name)})).sort((a,b)=>b.s-a.s)[0];
+   if(top&&(top.s<0||top.s>=.34)){const r2=await xhttp('GET',host+`/en/search/sublanguageid-ara${mid}/idmovie-${top.m.id}`,UA);if(blockedRes(r2)){WEBBLK=Date.now();return{blocked:1,items:[]}}if(r2.status==200)items=parseResults(r2.body,top.m.name.replace(/\s*\(\s*(?:19|20)\d\d\s*\)\s*$/,''))}
+  }
+  if(items.length){items.sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw));return{items:items.slice(0,25).map(x=>{const it={id:x.id,name:x.name,title:x.title,year:x.year,lang:x.lang,n:x.n};it.get=()=>webGet(it);return it})}}
  }
  return{items:[],err,neterr};
 }
@@ -1564,31 +1615,33 @@ async function webGet(x){
  for(const u of [`${DLB}/en/download/sub/${x.id}`,`${WB}/en/subtitleserve/sub/${x.id}`]){
   const r=await xbytes(u,UA);
   if(r.status!=200||!r.bytes)continue;
-  try{const b=extractSub(r.bytes);return finishGet(dec(b),x.name)}catch(e){if(e.message=='html'){spSt(t('subblk'));WEBBLK=Date.now();return false}if(e.message=='rar'){spSt(t('subbadfmt'));return false}}
+  try{const b=extractSub(r.bytes);return finishGet(dec(b),x.name,x.disp)}catch(e){if(e.message=='html'){spSt(t('subblk'));WEBBLK=Date.now();return false}if(e.message=='rar'){spSt(t('subbadfmt'));return false}}
  }
  spSt(t('subfail')+'opensubtitles.org');return false;
 }
-function finishGet(text,name){if(SUB.gs!==SUB.sess)return false;const ti=trackInfo(),q=qParse($('#sp-q').value||ti.title),k=ckey(q.title,q.se||ti.se,q.ep||ti.ep);return setSub(text,'ar',{name,key:k,save:1,rel:relKey(name)})}
+function finishGet(text,name,disp){if(SUB.gs!==SUB.sess)return false;const ti=trackInfo(),q=qParse($('#sp-q').value||ti.title),k=ckey(q.title,q.se||ti.se,q.ep||ti.ep);return setSub(text,'ar',{name,disp,key:k,save:1,rel:relKey(name)})}
 async function osLogin(){
  if(OS.tok)return true;
  const c=osCfg(),r=await xhttp('POST',OS.base+'/login',osH(false),JSON.stringify({username:c.u,password:c.p})),j=jp(r.body);
  if(r.status==200&&j.token){OS.tok=j.token;if(j.base_url)OS.base='https://'+j.base_url.replace(/^https?:\/\//,'')+'/api/v1';return true}
  spSt(r.status==0?t('subnet'):t('subbad'));return false;
 }
-async function osFind(q,se,ep,raw){
+async function osFind(q,se,ep,raw,ctx){
  const r=await xhttp('GET',OS.base+'/subtitles?query='+enc(q.toLowerCase())+'&languages=ar&order_by=download_count&order_direction=desc'+(se&&ep?'&season_number='+se+'&episode_number='+ep:''),osH(false)),j=jp(r.body);
  if(r.status==0){SUB.apiMsg=t('subnet');spSt(SUB.apiMsg);return null}
  if(r.status==401||r.status==403){SUB.apiMsg=t('subbad');spSt(SUB.apiMsg);return null}
- return (j.data||[]).filter(x=>x.attributes&&x.attributes.files&&x.attributes.files[0]).map(x=>({name:x.attributes.release||x.attributes.files[0].file_name||'\u2014',n:x.attributes.download_count||0,pen:(x.attributes.ai_translated||x.attributes.machine_translated)?-8:0,get:()=>osGet(x.attributes)})).sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw)).slice(0,10);
+ return (j.data||[]).filter(x=>x.attributes&&x.attributes.files&&x.attributes.files[0]).map(x=>{const at=x.attributes,fd=at.feature_details||{},isEp=/episode/i.test(fd.feature_type||'')||(fd.season_number>0&&fd.episode_number>0);
+  const it={name:at.release||at.files[0].file_name||'\u2014',title:(isEp?(fd.parent_title||fd.movie_name):(fd.title||fd.movie_name))||'',year:+(isEp?(fd.parent_year||fd.year):fd.year)||0,se:isEp?fd.season_number:null,ep:isEp?fd.episode_number:null,lang:at.language||'ar',n:at.download_count||0,pen:(at.ai_translated||at.machine_translated)?-8:0,ai:!!(at.ai_translated||at.machine_translated)};
+  it.get=()=>osGet(at,it);return it}).sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw)).slice(0,25);
 }
-async function osGet(at){
+async function osGet(at,it){
  spSt(t('subdl'));if(!(await osLogin()))return false;const fid=at.files[0].file_id,body=JSON.stringify({file_id:fid,sub_format:'srt'});
  let r=await xhttp('POST',OS.base+'/download',osH(true),body),j=jp(r.body);
  if(r.status==401){OS.tok=null;if(await osLogin()){r=await xhttp('POST',OS.base+'/download',osH(true),body);j=jp(r.body)}}
  if(r.status==406){spSt(t('sublimit'));return false}
  if(!j.link){spSt(t('subfail')+(j.message||r.status));return false}
  const f=await xbytes(j.link,{});if(f.status!=200||!f.bytes){spSt(t('subnet'));return false}
- try{return finishGet(dec(extractSub(f.bytes)),at.release||'')}catch(e){spSt(t('subbadfmt'));return false}
+ try{return finishGet(dec(extractSub(f.bytes)),it?it.name:(at.release||''),it&&it.disp)}catch(e){spSt(t('subbadfmt'));return false}
 }
 async function srvFind(q,se,ep){
  const r=await xhttp('GET',SRVB()+'/find?q='+enc(q)+'&lang=ar'+(se&&ep?'&se='+se+'&ep='+ep:''),{});
@@ -1600,33 +1653,44 @@ async function srvGet(id,name){
  return finishGet(r.body,name);
 }
 const subLive=tok=>tok===SUB.sq&&$('#sp').classList.contains('on');
-async function subFind(title,se,ep,raw,tok){
- let blocked=0,net=0,apiDead=0,timeout=0,lastHttp=0;SUB.apiMsg='';const t0=Date.now(),DL=45000,L=queryLadder(title);
+async function subFind(title,se,ep,raw,tok,ctx){
+ let blocked=0,net=0,apiDead=0,timeout=0,lastHttp=0,bad=null;SUB.apiMsg='';const t0=Date.now(),DL=45000,L=queryLadder(title);
+ const take=a=>{annAll(a,ctx);if(a.some(x=>x.v.good))return true;if(!bad)bad=a;return false};
  for(let i=0;i<L.length;i++){
   const q=L[i];
   if(!subLive(tok))return null;
   if(Date.now()-t0>DL){timeout=1;break}
   spSt(t('subsearching')+' '+q+(L.length>1?' ('+(i+1)+'/'+L.length+')':''));
-  if(srvOK())try{const a=await srvFind(q,se,ep);if(!subLive(tok))return null;if(a.length)return a}catch(e){}
-  if(osOK()&&!apiDead){const b=await osFind(q,se,ep,raw);if(!subLive(tok))return null;if(b&&b.length)return b;if(b===null)apiDead=1}
-  try{const w=await webFind(q,se,ep,raw);if(!subLive(tok))return null;if(w.items.length)return w.items;if(w.blocked)blocked=1;if(w.err)lastHttp=w.err;if(w.neterr)net=1}catch(e){net=1}
+  if(srvOK())try{const a=await srvFind(q,se,ep);if(!subLive(tok))return null;if(a.length&&take(a))return a}catch(e){}
+  if(osOK()&&!apiDead){const b=await osFind(q,se,ep,raw,ctx);if(!subLive(tok))return null;if(b&&b.length&&take(b))return b;if(b===null)apiDead=1}
+  try{const w=await webFind(q,se,ep,raw,ctx);if(!subLive(tok))return null;if(w.items.length&&take(w.items))return w.items;if(w.blocked)blocked=1;if(w.err)lastHttp=w.err;if(w.neterr)net=1}catch(e){net=1}
  }
  if(!subLive(tok))return null;
+ if(bad)return bad;
  spSt(apiDead&&SUB.apiMsg?SUB.apiMsg:timeout?t('subtimeout'):blocked&&!osOK()?t('subblk'):net?t('subnet')+(lastHttp?' (HTTP '+lastHttp+')':''):lastHttp?t('subfail')+'HTTP '+lastHttp:t('subnone'));return[];
 }
 async function osSearch(auto){
  const tok=++SUB.sq;SUB.mode='os';SUB.gs=SUB.sess;$('#sp-sr').style.display='';const ti=trackInfo(),inp=$('#sp-q').value.trim()||ti.title;if(!inp)return;S.spq=inp;
  const q=qParse(inp),manual=inp!==ti.title,se=manual?q.se:(ti.se||q.se),ep=manual?q.ep:(ti.ep||q.ep),title=q.title;
+ const yOf=x=>{const m=(x||'').match(/\b(19[2-9]\d|20[0-4]\d)\b/);return m?+m[1]:0};
+ const ctx={titles:[title],year:yOf(manual?inp:ti.raw),se,ep};
+ if(!manual){const c2=cleanTitle(ti.raw);if(c2&&!ctx.titles.includes(c2))ctx.titles.push(c2)}
  $('#sp-list').innerHTML='';
  const k=ckey(title,se,ep),ca=SC.get(k);
  if(ca&&auto){setSub(ca.x,'ar',{name:ca.name,key:k,cached:1,rel:relKey(ca.name)})}
- const a=await subFind(title,se,ep,ti.raw,tok);
- if(a===null||tok!==SUB.sq)return;
- if(!a.length){focusEl($('#sp-q'));return}
- spSt(ca&&auto&&S.sub?t('subok')+' \u00B7 '+S.sub.cues.length+' \u00B7 '+t('subcache'):'');
- a.forEach(x=>listRow(x.name,x.n?'\u2B07 '+x.n:'',()=>x.get()));
+ const a0=await subFind(title,se,ep,ti.raw,tok,ctx);
+ if(a0===null||tok!==SUB.sq)return;
+ if(!a0.length){focusEl($('#sp-q'));return}
+ const a=a0.map((x,i)=>(x._i=i,x)).sort((x,y)=>y.v.rank-x.v.rank||x._i-y._i).slice(0,12);
+ const nOk=a.filter(x=>x.v.k=='ok'&&!x.nonAr).length,allBad=a.every(x=>!x.v.good);
+ spSt(allBad?vt('nomatch'):(ca&&auto&&S.sub?t('subok')+' \u00B7 '+S.sub.cues.length+' \u00B7 '+t('subcache'):(nOk?vt('good')+' ('+nOk+')':'')));
+ a.forEach(x=>listRow(x.title?x.title+(x.year?' ('+x.year+')':''):x.name,langLbl(x)+(x.ai?' \u00B7 \uD83E\uDD16':'')+(x.n?' \u00B7 \u2B07 '+x.n:''),()=>x.get(),false,{vd:x.v,rel:x.title?x.name:''}));
  focusEl($('#sp-list .ri'));
- if(auto&&!ca&&a[0]){$('#sp-list .ri').classList.add('cur');const ok=await a[0].get();if(tok===SUB.sq&&ok===false&&!S.sub&&spOpen()&&a.length>1)spSt(t('subfail')+(S.lang=='ar'?'اختار ملف تاني من القائمة':'pick another file from the list'))}
+ const f=a[0];
+ if(auto&&!ca&&f){
+  if(!f.nonAr&&(f.v.k=='ok'||f.v.k=='un')){$('#sp-list .ri').classList.add('cur');const ok=await f.get();if(tok===SUB.sq&&ok===false&&!S.sub&&spOpen()&&a.length>1)spSt(t('subfail')+(S.lang=='ar'?'اختار ملف تاني من القائمة':'pick another file from the list'))}
+  else if(!allBad&&!S.sub)spSt(vt('nopick'));
+ }
 }
 function subAuto(){
  if(!S.vod||!S.track)return;const ti=trackInfo(),k=ckey(ti.title,ti.se,ti.ep);
@@ -2728,7 +2792,45 @@ function thumb(u,w){return(typeof u=='string'&&u.indexOf('image.tmdb.org/t/p/')>
 window.CIN=(function(){
  const A=[$('#cin-a'),$('#cin-b')],vd=$('#cin-v'),tt=$('#ci-t'),mm=$('#ci-m'),pp=$('#ci-p'),pc=$('#p-cin'),pg=$('#page');
  const CLIP=22,DWELL=140,VDELAY=1200,MC=new Map(),INF=new Map();
- let gen=0,dw=0,qt=0,ii=0,shown='',cur=null,ck=0,t0=0,loops=0,strikes=0,ft=0;
+ let gen=0,dw=0,qt=0,ii=0,shown='',cur=null,ck=0,t0=0,loops=0,strikes=0,ft=0,curEl=null,bdT=0;
+ /* ===== صورة خلفية واضحة (HD): TMDB أول شي، بعدين backdrop السيرفر، وآخر شي البوستر ===== */
+ const BD=new Map(),BDP=new Map(),BDL=store.get('cinbd')||{},TI='https://image.tmdb.org/t/p/',HI=(screen.width*(window.devicePixelRatio||1))>=1600;
+ const yearOf=it=>{const m=(String(it.name||'')+' '+String(it.sname||'')).match(/(?:^|[^\d])((?:19|20)\d\d)(?!\d)/);return m?m[1]:''};
+ const J=async u=>{const c=window.AbortController?new AbortController():null,tm=setTimeout(()=>{try{c&&c.abort()}catch(e){}},6000);try{return await (await fetch(u,c?{signal:c.signal}:{})).json()}finally{clearTimeout(tm)}};
+ function bdSave(){clearTimeout(bdT);bdT=setTimeout(()=>{try{const ks=Object.keys(BDL);if(ks.length>400)ks.slice(0,ks.length-300).forEach(x=>delete BDL[x]);store.set('cinbd',BDL)}catch(e){}},1500)}
+ function tmdbBd(it,fk,cb){
+  const K=TKEY();if(!K)return Promise.resolve('');
+  const k=key(it);let hit=BDL[k];if(hit)BD.set(k,hit);
+  if(BD.has(k)){const v=BD.get(k);if(v&&cb)cb(v);return Promise.resolve(v)}
+  let f=BDP.get(k);if(f){if(cb)f.cbs.push(cb);return f.p}
+  f={cbs:cb?[cb]:[]};const emit=u=>f.cbs.forEach(c=>{try{c(u)}catch(e){}});
+  f.p=(async()=>{
+   let url='',miss=false;
+   try{
+    const sr=fk=='sr'||!!it.sid,ty=sr?'tv':'movie',B='https://api.themoviedb.org/3/',L=S.lang=='ar'?'ar':'en';
+    const nm=(cleanTitle(String(it.sname||it.name||''))||'').trim();
+    if(!nm)miss=true;else{
+     const yr=yearOf(it),yp=yr?(sr?'&first_air_date_year=':'&year=')+yr:'';
+     let rs=(await J(`${B}search/${ty}?api_key=${K}&query=${enc(nm)}${yp}`)).results||[];
+     if(!rs.length&&yp)rs=(await J(`${B}search/${ty}?api_key=${K}&query=${enc(nm)}`)).results||[];
+     const m=rs.find(x=>x.backdrop_path)||rs[0];
+     if(!m)miss=true;else{
+      let bp=m.backdrop_path||'';
+      if(bp){url=TI+'w1280'+bp;emit(url)}   /* أول ما يرجع البحث: صورة HD جاهزة (1280) */
+      const d=await J(`${B}${ty}/${m.id}/images?api_key=${K}&include_image_language=null,en,${L}`).catch(()=>null),all=(d&&d.backdrops)||[];
+      if(!bp){const bs=all.filter(x=>x.width>=1280&&x.aspect_ratio>1.7),by=(a,b)=>(b.vote_average||0)-(a.vote_average||0)||b.width-a.width,pk=bs.filter(x=>!x.iso_639_1).sort(by)[0]||bs.sort(by)[0];if(pk)bp=pk.file_path}
+      if(bp){const e=all.find(x=>x.file_path===bp),w=e?e.width:0,fin=TI+((HI&&w&&w<=2560)?'original':'w1280')+bp;if(fin!==url){url=fin;emit(url)}}
+      else if(!url)miss=true}
+    }
+   }catch(e){}
+   if(url){BD.set(k,url);BDL[k]=url;bdSave()}else if(miss)BD.set(k,'');
+   return url})().then(x=>{BDP.delete(k);return x});
+  BDP.set(k,f);return f.p}
+ function warm(g){   /* حمّل مسبقاً صور الجيران (التالي والسابق) عشان التنقل يطلع فوري */
+  const el=curEl;if(!el||!TKEY()||!BGOK)return;const L=[];let x=el;
+  for(let i=0;i<3&&x;i++){x=x.nextElementSibling;if(x&&x._it&&(x._fk=='mv'||x._fk=='sr'))L.push(x)}
+  x=el.previousElementSibling;if(x&&x._it&&(x._fk=='mv'||x._fk=='sr'))L.push(x);
+  let i=0;(function nx(){if(g!==gen||i>=L.length)return;const e=L[i++];tmdbBd(e._it,e._fk).then(u=>{if(u){try{const im=new Image();im.src=u}catch(_){}}setTimeout(nx,200)})})()}
  const ar=()=>S.lang=='ar',on=()=>V()=='page'||V()=='home'||V()=='det',cinp=()=>pg.classList.contains('cinp')&&V()=='page',user=()=>store.get('cinv')!==0;
  const hs=x=>{x=String(x||'');let h=0;for(let i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))|0;return Math.abs(h)};
  const key=it=>it.sid?'s'+it.sid:'m'+(it.id||it.url||it.name);
@@ -2779,9 +2881,14 @@ window.CIN=(function(){
    if(++strikes>=2){store.set('cinv',0);halt();pill();osd(ar()?'الجهاز ما قدر يشغّل الفيديو بسلاسة، تم إيقافه تلقائياً (بتقدر ترجّعه من الزر)':'Video preview turned off: this device could not keep up')}}}catch(e){}},3500)}
  async function settle(it,fk,g){
   if(g!==gen||!on())return;
-  if(!MC.get(key(it)))img(null);
-  const m=await meta(it,fk);if(g!==gen||!on())return;
-  info(it,m);if(m.bd)img(thumb(m.bd,'w1280'),true,it.logo?thumb(it.logo,'w780'):'');else if(it.logo)img(thumb(it.logo,'w780'),false);
+  const pf=it.logo?thumb(it.logo,'w780'):'',mp=meta(it,fk);let hd=false;
+  const give=(u,fb)=>{if(g!==gen||!on()||!u)return false;hd=true;img(u,true,fb);return true};
+  if(TKEY()){await Promise.race([tmdbBd(it,fk,u=>give(u,pf)),new Promise(r=>setTimeout(r,3500))])}   /* TMDB أول ما يرجع بيعرض الصورة، من غير ما ينتظر السيرفر */
+  if(g!==gen||!on())return;
+  const m=await mp;if(g!==gen||!on())return;
+  info(it,m);
+  if(!hd){if(m.bd)give(thumb(m.bd,'w1280'),pf);else if(pf)img(pf,false);else img(null)}
+  warm(g);
   const u=m.u||it.url;
   if(!user()||!BGOK||!u||it.sid||/\.m3u8?(\?|$)/i.test(u))return;
   const w=VDELAY-(Date.now()-ft);if(w>0)await new Promise(r=>setTimeout(r,w));
@@ -2790,13 +2897,13 @@ window.CIN=(function(){
  function focus(it,fk){
   if(!on())return;if(V()=='det'&&cur===it&&ck===fk&&!vd.paused&&vd.getAttribute('src')){if(user())bgc(1);return}if(fk=='lv'&&!cinp()&&V()!='det'){hide();return}const g=++gen;clearTimeout(dw);halt();cur=it;ck=fk;ft=Date.now();if(user())bgc(1);
   const c=MC.get(key(it));info(it,c);
-  const bd=c&&c.bd,pf=it.logo?thumb(it.logo,'w780'):'';if(bd)img(thumb(bd,'w1280'),true,pf);else if(c&&pf)img(pf,false);
+  const kk=key(it),hd=BDL[kk]||BD.get(kk)||'',bd=c&&c.bd,pf=it.logo?thumb(it.logo,'w780'):'',nk=!TKEY()||BD.get(kk)==='';if(hd)img(hd,true,pf);else if(nk){if(bd)img(thumb(bd,'w1280'),true,pf);else if(c&&pf)img(pf,false)}
   if(fk=='lv')return;
   dw=setTimeout(()=>settle(it,fk,g),DWELL)}
  function pill(){if(!pc)return;const o=user();pc.textContent=ar()?('🎬 الفيديو: '+(o?'شغّال':'متوقف')):('🎬 Video: '+(o?'On':'Off'))}
  if(pc)pc.onclick=()=>{const o=user();store.set('cinv',o?0:1);strikes=0;pill();if(o){halt();if(!cinp())bgc(0)}else if(cur&&on())focus(cur,ck);const b=$('#p-cin');b&&b.focus({preventScroll:true})};
- $('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(r&&r._it&&on())focus(r._it,r._fk)});
- $('#home').addEventListener('focusin',e=>{const r=e.target.closest('.cd,.hero');if(!r||!r._it||!on())return;if(r._fk=='mv'||r._fk=='sr')focus(r._it,r._fk);else hide()});
+ $('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(r&&r._it&&on()){curEl=r;focus(r._it,r._fk)}});
+ $('#home').addEventListener('focusin',e=>{const r=e.target.closest('.cd,.hero');if(!r||!r._it||!on())return;if(r._fk=='mv'||r._fk=='sr'){curEl=r;focus(r._it,r._fk)}else hide()});
  $('#home').addEventListener('click',stop,true);
  $('#p-l').addEventListener('click',stop,true);   /* قبل ما يبدأ المشغّل: حرّر الاتصال والـ decoder */
  let lastV=V();new MutationObserver(()=>{const v=V();if(v!=lastV){lastV=v;if(v!='det')hide()}}).observe(document.body,{attributes:true,attributeFilter:['data-v']});
