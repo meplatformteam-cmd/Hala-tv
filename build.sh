@@ -1,4 +1,5 @@
 set -e
+if [ ! -f logo.png ]; then for L in logo_png.JPG logo_png.jpg logo.JPG logo.jpg logo.jpeg; do [ -f "$L" ] && { cp "$L" logo.png; break; }; done; fi
 [ -f logo.png ] || { echo 'ERROR: logo.png is missing next to build.sh - upload it to the repo root'; exit 1; }
 mkdir -p android/app/src/main/res/xml android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
@@ -440,16 +441,29 @@ public class MainActivity extends Activity {
             java.io.File dir = new java.io.File(getCacheDir(), "updates");
             dir.mkdirs();
             final java.io.File f = new java.io.File(dir, "app.apk");
+            updJs("p", -2, 0, 0);
             HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
             c.setConnectTimeout(15000);
             c.setReadTimeout(60000);
             InputStream is = c.getInputStream();
+            long total = 0;
+            try { total = Long.parseLong(c.getHeaderField("Content-Length")); } catch (Exception e) {}
             java.io.FileOutputStream os = new java.io.FileOutputStream(f);
             byte[] buf = new byte[16384];
-            int n;
-            while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
+            int n, last = -3;
+            long got = 0, lastMs = 0;
+            while ((n = is.read(buf)) > 0) {
+              os.write(buf, 0, n);
+              got += n;
+              int pct = total > 0 ? (int) Math.min(100, got * 100 / total) : -2;
+              long now = SystemClock.uptimeMillis();
+              if ((pct != last && now - lastMs > 120) || (total <= 0 && now - lastMs > 400)) { last = pct; lastMs = now; updJs("p", pct, got, total); }
+            }
             os.close();
             is.close();
+            if (got <= 0) throw new java.io.IOException("empty");
+            updJs("p", total > 0 ? 100 : -2, got, total > 0 ? total : got);
+            updJs("d", 100, got, total > 0 ? total : got);
             runOnUiThread(new Runnable() {
               public void run() {
                 try {
@@ -458,10 +472,12 @@ public class MainActivity extends Activity {
                   i.setDataAndType(u, "application/vnd.android.package-archive");
                   i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
                   startActivity(i);
-                } catch (Exception e) {}
+                } catch (Exception e) { updJs("e", 0, 0, 0); }
               }
             });
-          } catch (Exception e) {}
+          } catch (Exception e) {
+            updJs("e", 0, 0, 0);
+          }
         }
       }).start();
     }
@@ -1053,6 +1069,12 @@ public class MainActivity extends Activity {
       if (g != null && g.length > 0 && g[0] == PackageManager.PERMISSION_GRANTED) { voiceTry = 0; voiceViaIntent = false; voiceRecStart(pendingLang); }
       else vjs2("__voiceErr", "denied", "perm-denied;" + voiceDiag());
     }
+  }
+
+  private void updJs(final String st, final int pct, final long got, final long tot) {
+    runOnUiThread(new Runnable() { public void run() {
+      if (web != null) web.evaluateJavascript("window.__updProg&&window.__updProg(" + JSONObject.quote(st) + "," + pct + "," + got + "," + tot + ")", null);
+    } });
   }
 
   private void js(String k, String json) {
@@ -2675,7 +2697,25 @@ public class PlayerActivity extends Activity {
 EOF
 cat > android/gen.py <<'EOF'
 from PIL import Image
-logo = Image.open('logo.png').convert('RGBA')
+import os
+raw = Image.open('logo.png').convert('RGBA')
+px = raw.load()
+W, H = raw.size
+opaque = raw.getchannel('A').getextrema()[0] > 250
+if opaque:
+    # photo/JPG logo (white on dark): brightness becomes the alpha, so the logo is clean and uncropped on any background
+    lum = raw.convert('RGB').convert('L')
+    lut = [max(0, min(255, int((v - 44) * 255 / 206))) for v in range(256)]
+    al = lum.point(lut)
+    logo = Image.new('RGBA', raw.size, (255, 255, 255, 0))
+    logo.putalpha(al)
+else:
+    logo = raw
+bb = logo.getchannel('A').point(lambda v: 255 if v > 90 else 0).getbbox()
+if bb:
+    pad = int(0.05 * max(bb[2] - bb[0], bb[3] - bb[1]))
+    box = (max(0, bb[0] - pad), max(0, bb[1] - pad), min(logo.width, bb[2] + pad), min(logo.height, bb[3] + pad))
+    logo = logo.crop(box)
 def make(w, h, path, scale):
     im = Image.new('RGB', (w, h), (0, 0, 0))
     k = min(w * scale / logo.width, h * scale / logo.height)
@@ -2684,7 +2724,6 @@ def make(w, h, path, scale):
     im.save(path)
 make(320, 180, 'android/app/src/main/res/drawable/banner.png', 0.78)
 make(192, 192, 'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png', 0.62)
-import os
 os.makedirs('android/app/src/main/res/drawable-nodpi', exist_ok=True)
 k = 324.0 / logo.height
 sl = logo.resize((max(1, int(logo.width * k)), 324), Image.LANCZOS)
