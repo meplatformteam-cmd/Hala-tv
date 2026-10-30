@@ -777,6 +777,60 @@ body[data-v=set] #set{padding-top:calc(7vh + 18px)!important;padding-bottom:28vh
 #wam .btn,#tip .btn{background:rgba(128,128,128,.18)}
 #wam .btn.pri,#tip .btn.pri,#wam .btn:focus,#tip .btn:focus{background:var(--hi);color:var(--ov)}
 </style>
+<style id="cw-css">
+#home .tile.cwtile{flex:none;height:100%;aspect-ratio:2/3;padding:0;background:#141418!important;border:1px solid rgba(255,255,255,.12)}
+.cwtile .cwbg{position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(160deg,#3a0d0d,#0b0b0f 70%)}
+.cwtile .cwbg img{width:100%;height:100%;object-fit:cover;opacity:.6;transform:scale(1.04)}
+.cwtile::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;background:linear-gradient(to top,rgba(0,0,0,.94) 0,rgba(0,0,0,.4) 55%,rgba(0,0,0,.55) 100%)}
+.cwtile .cwc2{position:absolute;top:0;right:0;bottom:0;left:0;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 10px 2.4vh;text-align:center;color:#fff}
+.cwtile .cwr{position:relative;width:clamp(56px,10vh,92px);height:clamp(56px,10vh,92px);margin:auto 0;border-radius:50%;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cwtile .cwr svg{position:absolute;top:0;left:0;width:100%;height:100%;fill:none;stroke-width:3;transform:rotate(-90deg)}
+.cwtile .cwr .t{stroke:rgba(255,255,255,.28)}.cwtile .cwr .v{stroke:#ff3b30;stroke-linecap:round}
+.cwtile .cwr b{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,3.4vh,32px);padding-inline-start:.12em}
+.cwtile .cwn{font-weight:900;font-size:clamp(20px,1.9vw,32px);line-height:1.2}
+.cwtile .cws{opacity:.78;font-size:clamp(13px,1.05vw,18px);margin-top:.5vh}
+.cwtile .cwb{position:absolute;z-index:3;left:0;bottom:0;height:4px;background:#ff3b30}
+@media(max-width:900px){#home .tile.cwtile{height:300px}}
+html.mob #home .tile.cwtile{flex:1;height:auto;min-height:96px;max-height:130px;aspect-ratio:auto}
+#cwv{position:fixed;top:0;right:0;bottom:0;left:0;width:100vw;height:100vh;z-index:60;display:none;background:#0b0b0f;overflow:hidden;color:#fff}
+#cwv.on{display:block;-webkit-animation:cwfi .35s ease-out;animation:cwfi .35s ease-out}
+@keyframes cwfi{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:none}}
+#cwv-amb{position:absolute;top:0;left:0;width:100vw;height:100vh;overflow:hidden;opacity:0;transition:opacity .4s}#cwv.st2 #cwv-amb{opacity:1}
+#cwv-bg{position:absolute;top:-4vh;left:-4vw;width:22vw;height:15vh;object-fit:cover;-webkit-filter:blur(7px) saturate(1.5);filter:blur(7px) saturate(1.5);-webkit-transform:scale(5.2);transform:scale(5.2);-webkit-transform-origin:0 0;transform-origin:0 0;opacity:.5}
+.cwv-sh{position:absolute;top:0;right:0;bottom:0;left:0;background:radial-gradient(ellipse at 50% 28%,rgba(255,50,40,.16),rgba(11,11,15,0) 60%),linear-gradient(to bottom,rgba(11,11,15,.5),rgba(11,11,15,.95) 64%)}
+.cwv-top{position:absolute;top:2.4vh;left:4vw;right:4vw;display:flex;align-items:center;gap:16px;z-index:2}
+#cwv-hd{flex:1;font-size:clamp(20px,2vw,32px);font-weight:900;color:var(--gold)}
+#cwv .rcb{font-size:clamp(17px,1.5vw,24px);font-weight:800;color:#fff;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.18)}
+#cwv .cwv-play{background:#fff;color:#111}
+#cwv .rcb:focus{background:#fff;color:#000;transform:scale(1.08);box-shadow:0 0 0 4px rgba(255,255,255,.35)}
+#cwv-pick{position:absolute;top:11vh;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4vh}
+#cwv.st2 #cwv-pick,#cwv-list{display:none}#cwv.st2 #cwv-list{display:block}
+#cwv-sub{font-size:clamp(20px,2.2vw,36px);font-weight:800;opacity:.9}
+.cwv-sq{display:flex;gap:3.2vw;align-items:center;justify-content:center}
+.cwk{position:relative;width:min(34vw,52vh);height:min(34vw,52vh);border-radius:34px;overflow:hidden;background:linear-gradient(160deg,#3a0d0d,#141418 70%);border:2px solid rgba(255,255,255,.12);cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;outline:none}
+.cwk img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+.cwk::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.25) 65%,rgba(0,0,0,.5))}
+.cwk-in{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:0 5% 6%;display:flex;flex-direction:column;align-items:center;gap:.8vh;text-align:center}
+.cwk-ic svg{width:8vh;height:8vh;fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.cwk-l{font-size:clamp(26px,3.4vh,48px);font-weight:900}.cwk-n{font-size:clamp(15px,1.15vw,20px);opacity:.78}
+.cwk.mt{opacity:.62}
+.cwk:focus{transform:scale(1.06);border-color:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.25),0 28px 80px rgba(255,40,30,.38);opacity:1}
+.cwv-info{position:absolute;top:12vh;inset-inline-start:5vw;inset-inline-end:5vw;max-width:62vw;z-index:2}
+#cwv-tag,#cwv-ti,#cwv-mt{text-align:start}
+#cwv-tag{color:var(--gold);font-weight:800;font-size:clamp(16px,1.5vw,24px)}
+#cwv-ti{font-size:clamp(32px,6vh,68px);font-weight:900;line-height:1.15;margin:1vh 0;text-shadow:0 4px 24px rgba(0,0,0,.7);max-height:2.4em;overflow:hidden}
+#cwv-mt{color:rgba(255,255,255,.85);font-size:clamp(16px,1.5vw,24px);font-weight:700;min-height:1.4em}
+#cwv-act{display:flex;gap:14px;margin-top:2.4vh}
+#cwv-row{position:absolute;left:0;right:0;bottom:2.5vh;display:flex;gap:1.8vw;padding:3vh 5vw;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;z-index:2}#cwv-row::-webkit-scrollbar{display:none}
+.cwi{flex:none;width:24vh;outline:none;transition:transform .16s;cursor:pointer}
+.cwp{position:relative;width:24vh;height:36vh;border-radius:16px;overflow:hidden;background:#1b1b20;border:2px solid transparent;transition:border-color .16s,box-shadow .16s}
+.cwp img{width:100%;height:100%;object-fit:cover;display:block}
+.cwp b{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.28)}.cwp b i{display:block;height:100%;background:#ff3b30}
+.cwi-n{margin-top:1vh;font-size:clamp(14px,1.15vw,19px);font-weight:800;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cwi-l{margin-top:.3vh;font-size:clamp(12px,.95vw,16px);opacity:.65}
+.cwi:focus{transform:scale(1.08);z-index:3}.cwi:focus .cwp{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.3),0 18px 50px rgba(0,0,0,.6)}
+html.ph .cwv-sq{flex-direction:column}html.ph .cwk{width:min(70vw,34vh);height:min(70vw,34vh)}html.ph .cwv-info{max-width:90vw}
+</style>
 </head>
 <style id="gt-css">
 #gt{display:none;position:fixed;inset:0;z-index:2147483000}#gt-w{position:fixed;inset:0;z-index:2147483000}
@@ -822,6 +876,16 @@ body[data-v=set] #set{padding-top:calc(7vh + 18px)!important;padding-bottom:28vh
  <div id="rc" style="display:none!important"><div class="rch"><h3 id="rc-t" data-i="rc_t"></h3><button class="pill rcb" tabindex="0" id="rc-all"></button><button class="pill rcb" tabindex="0" id="rc-cu"></button></div><div class="rcr" id="rc-r"></div></div>
 </div>
 
+<div id="cwv"><div id="cwv-amb"><img id="cwv-bg" alt=""></div><div class="cwv-sh"></div>
+ <div class="cwv-top"><button class="pill rcb" tabindex="0" id="cwv-bk"></button><span id="cwv-hd"></span></div>
+ <div id="cwv-pick"><div id="cwv-sub"></div><div class="cwv-sq">
+  <div class="cwk" id="cwk-mv" tabindex="0"><img alt=""><div class="cwk-in"><div class="cwk-ic"></div><div class="cwk-l"></div><div class="cwk-n"></div></div></div>
+  <div class="cwk" id="cwk-sr" tabindex="0"><img alt=""><div class="cwk-in"><div class="cwk-ic"></div><div class="cwk-l"></div><div class="cwk-n"></div></div></div>
+ </div></div>
+ <div id="cwv-list"><div class="cwv-info"><div id="cwv-tag"></div><h1 id="cwv-ti"></h1><div id="cwv-mt"></div>
+  <div id="cwv-act"><button class="pill rcb cwv-play" tabindex="0" id="cwv-pl"></button><button class="pill rcb" tabindex="0" id="cwv-rm"></button></div></div>
+  <div id="cwv-row"></div></div>
+</div>
 <div id="rcv"><div id="rcv-amb"><img id="rcv-bg" alt=""></div><div class="rcv-sh"></div><img id="rcv-art" alt="">
  <div class="rcv-top"><button class="pill rcb" tabindex="0" id="rcv-bk"></button><span id="rcv-hd"></span><button class="pill rcb" tabindex="0" id="rcv-cu"></button></div>
  <div class="rcv-info"><div id="rcv-tag"></div><h1 id="rcv-ti" dir="auto"></h1><div id="rcv-mt" dir="auto"></div><div id="rcv-why" dir="auto"></div>
@@ -933,6 +997,8 @@ Object.assign(T.ar,{rc_t:'مقترحات',rc_cu:'خصص اقتراحاتك',rc_c
 Object.assign(T.ar,{rc_all:'عرض الكل',rc_top:'الأنسب إلك',rc_bw:n=>'لأنك شاهدت '+n,rc_gr:g=>g+' · مختارة إلك',rc_new:'أُضيف حديثاً',rc_tr:'الأعلى تقييماً بمكتبتك',rc_tag:'مقترح لك',rc_mv:'فيلم',rc_sr:'مسلسل',rc_det:'التفاصيل',rc_nb:'جديد',rc_mt:g=>'يناسب ذوقك: '+g});
 Object.assign(T.ar,{xp_q:'الخروج من المشاهدة؟',xp_saved:'سيُحفظ موضع المشاهدة',xp_stay:'متابعة المشاهدة',xp_go:'الخروج',xa_q:'هل تريد الخروج من Hala TV؟',xa_no:'إلغاء',xa_go:'نعم، خروج',sk_live:'بث مباشر — لا يدعم التقديم',sk_nodur:'المدة غير معروفة بعد',sk_s:'ث',s_hist:'سجل المشاهدة',hist_on:'حفظ سجل المشاهدة',hist_hint:'السجل بينحفظ محلياً على هذا الجهاز فقط (مش على السيرفر وما بينتقل لأجهزة ثانية)، ولكل حساب سجله لحاله.',hist_offn:' هلق مطفي: ما رح نسجل أي مشاهدة جديدة، والسجل القديم بضل موجود.',hclr:'🗑 مسح سجل المشاهدة',hclr_q:'تمسح سجل مشاهدة هذا الحساب؟',hclr_s:'بيتمسح السجل وتقدّم المشاهدة و«كمّل المشاهدة». المفضلة والحساب والإعدادات وسجل الحسابات الثانية ما بتتأثر.',hclr_do:'مسح',hclr_ok:'✓ انمسح السجل',sort:'ترتيب',so_a1:'أ – ي',so_a2:'ي – أ',so_e1:'A – Z',so_e2:'Z – A',so_new:'الأحدث أولاً',so_orig:'الترتيب الأصلي',noaud:'ما في مسار صوت مدعوم بجهازك لهذا العنوان'});
 Object.assign(T.en,{rc_t:'Suggestions',rc_cu:'Customize picks',rc_cus:'Choose your taste and it learns from what you watch. Everything stays on this device, from your own library only',rc_g:'Genres',rc_l:'Language',rc_y:'Release year',rc_k:'Show',rc_any:'Any',rc_k_all:'Movies & series',rc_k_mv:'Movies only',rc_k_sr:'Series only',rc_done:'Done',rc_multi:'Pick one or more',rc_noinfo:'Your library has no data for this option yet',rc_rl:'Reset recommendation history',rc_rlq:'Reset recommendation history?',rc_rls:'Clears what the app learned from your viewing. Watch history and favorites are not affected.',rc_rld:'Reset',rc_rlok:'Recommendation history cleared',rc_cl:'Clear my preferences',rc_clok:'Preferences cleared',rc_none:'Pick your tastes in Customize picks, or watch something and we will suggest titles',rc_y1:'2020 and later',rc_y2:'2010 – 2019',rc_y3:'2000 – 2009',rc_y4:'Before 2000'});
+Object.assign(T.ar,{cw_t:'مواصلة المشاهدة',cw_pick:'اختر ما تريد إكماله',cw_none:'ما في شي لتكمله بعد',cw_hint:'ابدأ فيلماً أو مسلسلاً وبيظهر هون لتكمله من وين وقفت',cw_n:n=>n+' قيد المتابعة',cw_left:m=>'باقي '+m+' د',cw_seen:'مشاهَد',cw_play:'متابعة',cw_rm:'إزالة',cw_rmd:'تمت الإزالة من القائمة'});
+Object.assign(T.en,{cw_t:'Continue watching',cw_pick:'Choose what to resume',cw_none:'Nothing to resume yet',cw_hint:'Start a movie or series and it will appear here so you can pick up where you left off',cw_n:n=>n+' in progress',cw_left:m=>m+' min left',cw_seen:'watched',cw_play:'Resume',cw_rm:'Remove',cw_rmd:'Removed from the list'});
 Object.assign(T.en,{rc_all:'See all',rc_top:'Top picks for you',rc_bw:n=>'Because you watched '+n,rc_gr:g=>g+' picked for you',rc_new:'Recently added',rc_tr:'Top rated in your library',rc_tag:'Picked for you',rc_mv:'Movie',rc_sr:'Series',rc_det:'Details',rc_nb:'New',rc_mt:g=>'Matches your taste: '+g});
 Object.assign(T.en,{xp_q:'Stop watching?',xp_saved:'Your position will be saved',xp_stay:'Keep watching',xp_go:'Exit',xa_q:'Exit Hala TV?',xa_no:'Cancel',xa_go:'Yes, exit',sk_live:'Live — seeking not available',sk_nodur:'Duration not known yet',sk_s:'s',s_hist:'Watch history',hist_on:'Save watch history',hist_hint:'History is stored locally on this device only (not on the server, not synced), separately for each account.',hist_offn:' Currently off: new viewing is not recorded and existing history is kept.',hclr:'🗑 Clear watch history',hclr_q:'Clear this account\u2019s watch history?',hclr_s:'This removes history, resume points and Continue Watching. Favorites, the account, settings and other accounts\u2019 history are not affected.',hclr_do:'Clear',hclr_ok:'✓ History cleared',sort:'Sort',so_a1:'أ – ي',so_a2:'ي – أ',so_e1:'A – Z',so_e2:'Z – A',so_new:'Newest first',so_orig:'Original order',noaud:'No supported audio track for this title on your device'});
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],enc=encodeURIComponent;
@@ -969,6 +1035,7 @@ function applyLang(){
  $('#b-fav').title=t('p_fav');$('#b-new').title=t('newsug');$('#b-lang').title=t('lang');$('#b-out').title=t('out');
  if(V()=='home'){renderHome();weather()} else if(V()=='page')renderPage();
  try{if(RV.on)rcvBuild()}catch(e){}
+ try{if(CW.on){CW.st==2?cwList(CW.kind):cwPick()}}catch(e){}
 }
 $$('.lg').forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;applyLang()});
 $('#b-lang').onclick=()=>{S.lang=S.lang=='ar'?'en':'ar';applyLang();focusEl($('#b-lang'))};
@@ -1124,19 +1191,73 @@ function rcTile(){try{const r=document.createElement('div');r.className='tile rc
   const pk=[];[src('__mv'),src('__sr')].forEach(a=>{for(let n=0,g=0;n<40&&g<6&&a.length;n++){const c=a[Math.random()*a.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}});
   pk.slice(0,12).forEach(u=>{const i=document.createElement('img');i.alt='';i.loading='lazy';i.decoding='async';i.src=thumb(u,'w185');i.onerror=()=>i.remove();z.append(i)});
   const tx=document.createElement('div');tx.className='rct';tx.textContent=t('rc_t');r.append(z,tx);r.onclick=()=>rcvOpen('all');return r}catch(e){try{elog('rct '+e)}catch(x){}return document.createDocumentFragment()}}
+/* ===== مواصلة المشاهدة: بطاقة + شاشة مربعين (أفلام / مسلسلات) ===== */
+var CW={on:0,st:0,kind:'mv',cur:null,ft:0,from:null};
+function cwItems(kind){try{return Object.values(getProg()).filter(p=>p&&p.kind==kind&&p.d>0&&p.url&&!adBlk(p)).sort((a,b)=>b.ts-a.ts).slice(0,30)}catch(e){return[]}}
+const cwPc=p=>Math.max(1,Math.min(100,Math.round(p.t/p.d*100)));
+const cwLbl=p=>p.kind=='sr'&&p.se?t('season')+' '+p.se+' · '+t('episode')+' '+p.ep:t(p.kind=='sr'?'rc_sr':'rc_mv');
+function cwTile(){try{
+ const m=cwItems('mv'),s=cwItems('sr'),top=m.concat(s).sort((a,b)=>b.ts-a.ts)[0];
+ const r=document.createElement('div');r.className='tile cwtile';r.tabIndex=0;
+ const bg=document.createElement('div');bg.className='cwbg';
+ if(top&&top.logo){const i=document.createElement('img');i.alt='';i.decoding='async';i.src=thumb(top.logo,'w342');i.onerror=()=>i.remove();bg.append(i)}
+ const pc=top?cwPc(top):0,c=document.createElement('div');c.className='cwc2';
+ c.innerHTML='<div class="cwr"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="28"/><circle class="v" cx="32" cy="32" r="28" stroke-dasharray="'+(pc*1.759).toFixed(1)+' 176"/></svg><b>\u25B6</b></div><div class="cwn"></div><div class="cws"></div>';
+ c.querySelector('.cwn').textContent=t('cw_t');
+ c.querySelector('.cws').textContent=top?m.length+' '+t('p_mv')+' \u00B7 '+s.length+' '+t('p_sr'):t('cw_none');
+ r.append(bg,c);
+ if(top){const b=document.createElement('i');b.className='cwb';b.style.width=pc+'%';r.append(b)}
+ r.onclick=()=>cwOpen();return r}catch(e){try{elog('cwt '+e)}catch(x){}return document.createDocumentFragment()}}
+function cwOpen(){if(CW.on)return;CW.on=1;CW.from=document.activeElement;killPv();$('#cwv').classList.add('on');cwPick()}
+function cwClose(quiet){if(!CW.on)return;CW.on=0;clearTimeout(CW.ft);$('#cwv').classList.remove('on','st2');$('#cwv-row').innerHTML='';$('#cwv-bg').removeAttribute('src');const f=CW.from;CW.from=null;if(!quiet&&f&&f.isConnected)focusEl(f)}
+function cwPick(foc){CW.st=1;CW.cur=null;$('#cwv').classList.remove('st2');
+ $('#cwv-hd').textContent=t('cw_t');$('#cwv-bk').textContent=(S.lang=='ar'?'\u203A ':'\u2039 ')+t('back');$('#cwv-sub').textContent=t('cw_pick');
+ ['mv','sr'].forEach(k=>{const e=$('#cwk-'+k),a=cwItems(k);e.classList.toggle('mt',!a.length);
+  e.querySelector('.cwk-ic').innerHTML=IC[k];e.querySelector('.cwk-l').textContent=t(k=='mv'?'p_mv':'p_sr');
+  e.querySelector('.cwk-n').textContent=a.length?t('cw_n',a.length):t('cw_none');
+  const im=e.querySelector('img');if(a[0]&&a[0].logo){im.src=thumb(a[0].logo,'w342');im.style.display=''}else{im.removeAttribute('src');im.style.display='none'}});
+ focusEl($('#cwk-'+(foc||(cwItems('mv').length||!cwItems('sr').length?'mv':'sr'))))}
+function cwList(kind,idx){CW.st=2;CW.kind=kind;$('#cwv').classList.add('st2');const a=cwItems(kind),row=$('#cwv-row');row.innerHTML='';
+ $('#cwv-hd').textContent=t(kind=='mv'?'p_mv':'p_sr')+' \u00B7 '+t('cw_t');$('#cwv-bk').textContent=(S.lang=='ar'?'\u203A ':'\u2039 ')+t('back');
+ $('#cwv-pl').textContent='\u25B6 '+t('cw_play');$('#cwv-rm').textContent='\u2715 '+t('cw_rm');
+ if(!a.length){CW.cur=null;$('#cwv-tag').textContent='';$('#cwv-ti').textContent=t('cw_none');$('#cwv-mt').textContent=t('cw_hint');$('#cwv-act').style.display='none';$('#cwv-bg').removeAttribute('src');focusEl($('#cwv-bk'));return}
+ $('#cwv-act').style.display='';a.forEach(p=>row.append(cwCard(p)));
+ const kids=[...row.children];focusEl(kids[Math.min(idx|0,kids.length-1)])}
+function cwCard(p){const d=document.createElement('div');d.className='cwi';d.tabIndex=0;d._it=p;
+ const pp=document.createElement('div');pp.className='cwp';
+ if(p.logo){const i=document.createElement('img');i.loading='lazy';i.decoding='async';i.alt='';i.src=thumb(p.logo,'w342');i.onerror=()=>i.remove();pp.append(i)}
+ const tr=document.createElement('b'),pb=document.createElement('i');pb.style.width=cwPc(p)+'%';tr.append(pb);pp.append(tr);
+ const n=document.createElement('div'),l=document.createElement('div');n.className='cwi-n';n.textContent=cleanTitle(p.name)||p.name;l.className='cwi-l';l.textContent=cwLbl(p);
+ d.append(pp,n,l);d.onfocus=()=>{clearTimeout(CW.ft);CW.ft=setTimeout(()=>cwHero(p),70)};d.onclick=()=>cwPlay(p);return d}
+function cwHero(p){if(!CW.on||!p)return;CW.cur=p;const bg=$('#cwv-bg'),pc=cwPc(p),left=Math.max(1,Math.round((p.d-p.t)/60));
+ if(p.logo)bg.src=thumb(p.logo,'w185');else bg.removeAttribute('src');
+ $('#cwv-tag').textContent=cwLbl(p);$('#cwv-ti').textContent=cleanTitle(p.name)||p.name;
+ $('#cwv-mt').textContent=pc+'% '+t('cw_seen')+'  \u00B7  '+t('cw_left',left)}
+function cwPlay(p){p=p||CW.cur;if(!p)return;cwClose(1);direct(p,p.kind)}
+function cwRemove(){const p=CW.cur;if(!p)return;const i=cwItems(CW.kind).findIndex(x=>x.id==p.id);
+ try{if(S.demo){delete S.demoProg[p.id]}else{const pr=hget('prog')||{};delete pr[p.id];hset('prog',pr)}}catch(e){}
+ osd(t('cw_rmd'));cwList(CW.kind,i)}
+function cwvKey(e){if(!CW.on)return false;const k=e.keyCode,a=document.activeElement;
+ if(BACK.includes(k)){e.preventDefault();if(!e.repeat){if(CW.st==2)cwPick(CW.kind);else cwClose()}return true}
+ if(k>=37&&k<=40){e.preventDefault();spatial(k,CW.st==2?'#cwv .cwi,#cwv .rcb':'#cwv .cwk,#cwv #cwv-bk')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}return true}
+$('#cwv-bk').onclick=()=>{if(CW.st==2)cwPick(CW.kind);else cwClose()};
+$('#cwk-mv').onclick=()=>cwList('mv');$('#cwk-sr').onclick=()=>cwList('sr');
+$('#cwv-pl').onclick=()=>cwPlay();$('#cwv-rm').onclick=()=>cwRemove();
+function sgPick(){if(S._sgIt&&Date.now()-(S._sgT||0)<8000)return{k:S._sgK,it:S._sgIt};
+ let k=store.get('sgk')=='mv'?'sr':'mv';if(!src(k=='mv'?'__mv':'__sr').length)k=k=='mv'?'sr':'mv';
+ const it=rnd(src(k=='mv'?'__mv':'__sr'),1)[0];store.set('sgk',k);S._sgK=k;S._sgIt=it;S._sgT=Date.now();return{k,it}}
 function renderSug(){
- killPv();renderTiles();
+ killPv();renderTiles();const sg=sgPick();
  const SL=src('__all'),lc=SL._jo||(SL._jo=SL.filter(c=>JO.test(c.name))),box=$('#sug');box.innerHTML='';
  box.append(
-  hero(rnd(src('__mv'),1)[0],'mv',x=>showDet(x,'mv'),t('nomv')),
-  hero(rnd(src('__sr'),1)[0],'sr',x=>showDet(x,'sr'),t('nosr')),
-  rcTile());
+  hero(sg.it,sg.k,x=>showDet(x,sg.k)),
+  cwTile());
  [...box.children].forEach(d=>{if(d._it&&d._fk!='lv')bgUrl(d._it).catch(()=>{})});/* تسخين: جيب رابط المعاينة مسبقاً */
  const a=document.activeElement;if(!a||a==document.body||!a.closest('#home'))focusEl($('#home .tile')||$('#b-fav'));
  clearTimeout(_rcT);_rcT=setTimeout(renderRC,40);
 }
 $('#b-fav').onclick=()=>showPage('__fav');
-$('#b-new').onclick=renderSug;
+$('#b-new').onclick=()=>{S._sgT=0;renderSug()};
 $('#b-out').onclick=()=>{store.del('conf');location.reload()};
 const CK={a:null,b:null,hm:'',ap:'',day:-1,lg:''};
 function tick(){const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0'),hm=(h%12||12)+':'+m,ap=h<12?t('am'):t('pm');
@@ -1938,7 +2059,7 @@ function exitAsk(kind){
  else dlgOpen(t('xa_q'),'',[{t:t('xa_no'),cur:1},{t:t('xa_go'),dng:1,fn:appQuit}],1)}
 document.addEventListener('keydown',e=>{
  if(BACK.includes(e.keyCode))S.kdBackT=Date.now();
- if(modalKey(e)||waKey(e)||tipKey(e)||pwdKey(e)||kidKey(e)||rcvKey(e))return;
+ if(modalKey(e)||waKey(e)||tipKey(e)||pwdKey(e)||kidKey(e)||rcvKey(e)||cwvKey(e))return;
  const k=e.keyCode,a=document.activeElement,typing=a&&a.tagName=='INPUT',v=V();
  if(v=='login'){
   const f=$$('#login .lg,#login .tab,#login input,#login .btn').filter(x=>x.offsetParent),i=f.indexOf(a);
@@ -2556,7 +2677,7 @@ function tipShow(force){
  clearTimeout(XT.tm);XT.tm=setTimeout(()=>{if(XT.on)tipClose()},60000);
  return true;
 }
-function tipBusy(){const dl=$("#dlg"),pw=$("#pwd");return XT.on||waOn()||(dl&&dl.classList.contains("on"))||(pw&&pw.classList.contains("on"))||(RV&&RV.on)||(VQ&&VQ.on)||kbOpen()||document.hidden}
+function tipBusy(){const dl=$("#dlg"),pw=$("#pwd");return XT.on||waOn()||(dl&&dl.classList.contains("on"))||(pw&&pw.classList.contains("on"))||(RV&&RV.on)||(CW&&CW.on)||(VQ&&VQ.on)||kbOpen()||document.hidden}
 function tipTry(){try{const v=V();if((v!="home"&&v!="page")||!tipOn()||tipBusy()||Date.now()-(XT.last||0)<45000)return;tipShow()}catch(e){}}
 function tipHome(){if(!S.tipFirst){S.tipFirst=1;setTimeout(tipTry,3000)}}
 function tipPage(k,keep){if(keep||!(k=="__all"||k=="__mv"||k=="__sr"))return;setTimeout(tipTry,1500)}
@@ -2580,7 +2701,7 @@ setInterval(()=>{
   if((v!="home"&&v!="page")||!tipOn()||document.hidden){XT.t0=Date.now();return}
   if(Date.now()-XT.t0<300000)return;
   const a=document.activeElement,dl=$("#dlg"),pw=$("#pwd");
-  if(XT.on||waOn()||(dl&&dl.classList.contains("on"))||(pw&&pw.classList.contains("on"))||(RV&&RV.on)||(VQ&&VQ.on)||kbOpen())return;
+  if(XT.on||waOn()||(dl&&dl.classList.contains("on"))||(pw&&pw.classList.contains("on"))||(RV&&RV.on)||(CW&&CW.on)||(VQ&&VQ.on)||kbOpen())return;
   if(!tipShow())XT.t0=Date.now();
  }catch(e){}
 },5000);
@@ -3377,7 +3498,8 @@ R('H','.sbx','البحث الشامل والصوت','البحث في كل الق
 R('H','.tw','الساعة والطقس والشبكة','الوقت والتاريخ والطقس واسم الشبكة وحالة الاشتراك.|معلومات للعرض فقط.|تتحدث تلقائياً.','Clock, weather, network','Time, date, weather, network and account info.|Display only.|Updates automatically.'),
 R('H','#wg','الويدجتس','بطاقات اختيارية: أوقات الصلاة، أسعار العملات، راديو، ملاحظة وويدجت خاص.|فعّلها من الإعدادات.|تظهر هنا مرتبة.','Widgets','Optional cards: prayer times, FX rates, radio, note, custom.|Enable them in Settings.|They appear here.'),
 R('H','#tiles','القنوات والأفلام والمسلسلات','ثلاث بلاطات للأقسام الرئيسية مع عدد العناصر.|اضغط البلاطة (OK على الريموت).|ينفتح القسم بقائمته.','Channels, Movies, Series','Three tiles for main sections with counts.|Press a tile (OK on remote).|The section opens.'),
-R('H','#sug','الاقتراحات وكمّل المشاهدة','اقتراحات سريعة، و«كمّل من وين وقفت» لآخر ما شاهدته مع شريط التقدم.|اضغط أي بطاقة.|يبدأ التشغيل مباشرة من آخر موضع.','Suggestions & Continue','Quick picks and “Continue watching” with progress.|Press a card.|Playback resumes where you stopped.'),
+R('H','#sug .hero','اقتراح اليوم','بطاقة واحدة تبدّل بين فيلم ومسلسل مقترح في كل مرة، وتعرض معاينة عند التحديد.|اضغطها لفتح التفاصيل، أو زر الاقتراحات لتبديلها.|تظهر تفاصيل العمل وتقدر تشغّله.','Today\u2019s pick','One card that alternates between a suggested movie and series, with a preview on focus.|Press it for details, or use the refresh button to swap it.|Details open and you can play it.'),
+R('H','#sug .cwtile','مواصلة المشاهدة','تجمع كل ما بدأت مشاهدته مع حلقة التقدم، مقسّمة إلى أفلام ومسلسلات.|اضغط البطاقة ثم اختر مربع «أفلام» أو «مسلسلات».|تظهر أعمالك غير المكتملة، اختر واحداً ليكمل من آخر موضع، أو أزِله من القائمة.','Continue watching','Everything you started, with a progress ring, split into Movies and Series.|Press the card, then pick the Movies or Series square.|Your unfinished titles appear; choose one to resume, or remove it from the list.'),
 R('H','#b-fav','المفضلة','اختصار لقائمة ما أضفته بالقلب ♥.|اضغط الزر.|تنفتح صفحة المفضلة.','Favorites','Shortcut to items you hearted ♥.|Press it.|Favorites page opens.'),
 R('H','#b-new','اقتراحات جديدة','تبديل الاقتراحات بمجموعة أخرى.|اضغط الزر.|تتجدد البطاقات.','New suggestions','Reshuffles the suggestions.|Press it.|New cards appear.'),
 R('H','#b-lang','تبديل اللغة','تبديل سريع بين العربية والإنجليزية.|اضغط الزر.|تتغير لغة كل الشاشات واتجاهها.','Language','Quick Arabic/English switch.|Press it.|All screens change language/direction.'),
