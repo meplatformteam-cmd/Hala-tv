@@ -766,6 +766,18 @@ body[data-v=set] #set{padding-top:calc(7vh + 18px)!important;padding-bottom:28vh
 .tph{margin-top:clamp(10px,2vh,20px);font-size:clamp(16px,2.2vh,22px);color:var(--gold);font-weight:700}
 .tps{font-size:clamp(17px,2.4vh,26px);line-height:1.6;margin:6px auto 14px;max-width:34em}
 .tpi{display:block;margin:0 auto;height:clamp(170px,34vh,380px);width:calc(clamp(170px,34vh,380px) * .667);object-fit:cover;border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.55);background:rgba(255,255,255,.08)}
+.tph2{padding-bottom:clamp(10px,1.8vh,18px);margin-bottom:clamp(10px,1.8vh,18px);border-bottom:1px solid rgba(128,128,128,.28)}
+.tpq{font-size:clamp(22px,3.2vh,34px)!important;margin:12px 0 6px!important}
+.tpm{display:flex;gap:clamp(14px,2vw,26px);align-items:flex-start;text-align:start;margin-bottom:6px}
+.tpm .tpi{margin:0;flex:none;height:clamp(150px,30vh,320px);width:calc(clamp(150px,30vh,320px)*.667)}
+.tpt{flex:1;min-width:0}
+.tpl{color:var(--gold);font-weight:700;font-size:clamp(15px,2vh,21px)}
+.tpn{margin:4px 0;font-size:clamp(21px,3vh,32px);font-weight:900;line-height:1.3}
+.tpd{color:var(--mu);font-size:clamp(14px,1.9vh,20px);margin-bottom:8px}
+.tpw,.tpp,.tpa{font-size:clamp(15px,2.1vh,22px);line-height:1.6;margin:0 0 6px}
+.tpp,.tpa{color:var(--mu)}
+.tpw:empty,.tpp:empty,.tpa:empty{display:none}
+@media(max-width:700px){.tpm{flex-direction:column;align-items:center}}
 .tpf{color:var(--mu);font-size:clamp(14px,1.9vh,20px);margin:12px 0 14px}
 .tpb{display:flex;gap:12px;flex-wrap:wrap}.tpb .btn{flex:1;min-width:150px;width:auto}
 @media(prefers-reduced-motion:reduce){.tpc{animation:none}}
@@ -1243,19 +1255,29 @@ function cwvKey(e){if(!CW.on)return false;const k=e.keyCode,a=document.activeEle
 $('#cwv-bk').onclick=()=>{if(CW.st==2)cwPick(CW.kind);else cwClose()};
 $('#cwk-mv').onclick=()=>cwList('mv');$('#cwk-sr').onclick=()=>cwList('sr');
 $('#cwv-pl').onclick=()=>cwPlay();$('#cwv-rm').onclick=()=>cwRemove();
-function sgPick(){if(S._sgIt&&Date.now()-(S._sgT||0)<8000)return{k:S._sgK,it:S._sgIt};
+var SG_MS=600000;/* بطاقة النص: تبديل فيلم/مسلسل كل 10 دقايق */
+function sgPick(){if(S._sgIt&&Date.now()-(S._sgT||0)<SG_MS)return{k:S._sgK,it:S._sgIt};
  let k=store.get('sgk')=='mv'?'sr':'mv';if(!src(k=='mv'?'__mv':'__sr').length)k=k=='mv'?'sr':'mv';
  const it=rnd(src(k=='mv'?'__mv':'__sr'),1)[0];store.set('sgk',k);S._sgK=k;S._sgIt=it;S._sgT=Date.now();return{k,it}}
 function renderSug(){
  killPv();renderTiles();const sg=sgPick();
  const SL=src('__all'),lc=SL._jo||(SL._jo=SL.filter(c=>JO.test(c.name))),box=$('#sug');box.innerHTML='';
  box.append(
+  rcTile(),
   hero(sg.it,sg.k,x=>showDet(x,sg.k)),
   cwTile());
  [...box.children].forEach(d=>{if(d._it&&d._fk!='lv')bgUrl(d._it).catch(()=>{})});/* تسخين: جيب رابط المعاينة مسبقاً */
  const a=document.activeElement;if(!a||a==document.body||!a.closest('#home'))focusEl($('#home .tile')||$('#b-fav'));
  clearTimeout(_rcT);_rcT=setTimeout(renderRC,40);
 }
+function sgRotate(){try{
+ if(V()!='home'||(typeof CW!='undefined'&&CW.on)||document.hidden)return;
+ const box=$('#sug'),cur=box&&box.querySelector('.hero');if(!cur)return;
+ if(document.activeElement===cur||cur.matches(':hover')){setTimeout(sgRotate,30000);return}
+ S._sgT=0;const sg=sgPick(),nh=hero(sg.it,sg.k,x=>showDet(x,sg.k));
+ cur.replaceWith(nh);if(nh._it)bgUrl(nh._it).catch(()=>{});
+}catch(e){try{elog('sgr '+e)}catch(x){}}}
+setInterval(sgRotate,SG_MS);
 $('#b-fav').onclick=()=>showPage('__fav');
 $('#b-new').onclick=()=>{S._sgT=0;renderSug()};
 $('#b-out').onclick=()=>{store.del('conf');location.reload()};
@@ -2600,85 +2622,311 @@ function waKey(e){
  return true;
 }
 
-/* --- نصائح الأفلام: مقولة أو حكمة أو نكتة + ترشيح فيلم بأدب --- */
-const TPA=[
- {k:"مثل",x:"«الصبر مفتاح الفرج»"},
- {k:"مثل",x:"«رُبَّ صدفة خير من ألف ميعاد»"},
- {k:"مثل",x:"«الوقت كالسيف إن لم تقطعه قطعك»"},
- {k:"مثل",x:"«القناعة كنز لا يفنى»"},
- {k:"حكمة",x:"«الراحة مش كسل، الراحة وقود لبكرة»"},
- {k:"حكمة",x:"«السعادة مش بالأشياء الكبيرة، هي لحظة هدوء بعد يوم طويل»"},
- {k:"حكمة",x:"«كل يوم فيه شي حلو، بس لازم تفتح عينك عليه»"},
- {k:"حكمة",x:"«الوقت اللي بتقضيه بشي بيفرّحك ما بيروح هدر»"},
- {k:"نكتة",x:"قال المشاهد للفيلم: ليش إنت طويل هيك؟ قاله الفيلم: وإنت ليش بتقلّب القنوات كل دقيقة؟ 😄"},
- {k:"نكتة",x:"سأل واحد صاحبه: ليش بتحضر الإعلانات للآخر؟ قاله: عشان أتأكد إن الفيلم ما رح يبدأ بدوني 😄"},
- {k:"نكتة",x:"أحلى فيلم هو اللي بتحضره وإنت مرتاح، وأسوأ فيلم هو اللي بتحضره وإنت جوعان! 😄"},
- {k:"نكتة",x:"قلت للريموت: بدي استراحة. قال لي: تمام، بس أنا اللي ضايع من أسبوع! 😄"}
+/* --- بطاقة النصيحة: معلومة صحية حسب الوقت + ترشيح فيلم أو مسلسل بتفاصيل حقيقية --- */
+const TPH=[
+ {i:"💧",w:"m",a:["مي وليمون أول الصباح","كاسة مي دافية مع عصرة ليمون أول ما تصحى بترطّب جسمك بعد ساعات النوم وبتنعشك قبل الفطور."],e:["Lemon water to start the day","A glass of warm water with a squeeze of lemon first thing rehydrates you after the night and wakes you up before breakfast."]},
+ {i:"💧",w:"",a:["اشرب مي وإنت عم تتفرج","خلّي كاسة مي جنبك وخذ رشفة كل ما تبدأ مشهد جديد. العطش بيجي متأخر، والجسم بيحتاج حوالي 6 إلى 8 كاسات باليوم."],e:["Sip water while you watch","Keep a glass next to you and take a sip every few scenes. Thirst shows up late, and most adults need around 6 to 8 glasses a day."]},
+ {i:"🏃",w:"de",a:["لعبت رياضة اليوم؟","إذا لا، مشي سريع 20 دقيقة بيحرّك الدورة الدموية وبيحسّن مزاجك وبيخليك تنام أحسن. بعدها الفيلم بيصير أحلى وإنت مرتاح الضمير."],e:["Did you exercise today?","If not, a brisk 20-minute walk gets your blood moving, lifts your mood and helps you sleep better. The movie feels even better afterwards."]},
+ {i:"🧘",w:"",a:["قوم وتمدّد","الجلوس ساعتين ورا بعض بيشدّ الظهر والرقبة. قوم دقيقتين، حرّك كتافك ورقبتك وامشي بالبيت، وارجع كمّل."],e:["Stand up and stretch","Sitting for two hours straight tightens your back and neck. Stand for two minutes, roll your shoulders and neck, walk around, then carry on."]},
+ {i:"🚶",w:"e",a:["مشي بعد العشا","10 دقايق مشي خفيف بعد الأكل بيساعد الهضم وبيخفف الثقل. وبعدها اقعد على راحتك للسهرة."],e:["A walk after dinner","10 minutes of easy walking after a meal helps digestion and that heavy feeling. Then settle in for the evening."]},
+ {i:"💪",w:"e",a:["تمرين صغير وقت الإعلانات","بين حلقة وحلقة اعمل 10 سكوات أو 10 ضغطات. دقيقتين بس، بس مع الأيام بيعملوا فرق بالنشاط واللياقة."],e:["A mini workout between episodes","Between two episodes do 10 squats or 10 push-ups. Just two minutes, but over time it adds up for energy and fitness."]},
+ {i:"👀",w:"",a:["قاعدة 20-20-20 لعيونك","كل 20 دقيقة طلّ على شي بعيد مسافة 20 قدم (حوالي 6 متر) لمدة 20 ثانية. بتخفف إجهاد العين من الشاشات."],e:["The 20-20-20 rule for your eyes","Every 20 minutes look at something about 20 feet (6 m) away for 20 seconds. It eases eye strain from screens."]},
+ {i:"💡",w:"en",a:["لا تتفرج بغرفة معتمة تماماً","ضوء خفيف خلف الشاشة أو بالغرفة بيقلل التباين الشديد وبيريّح عيونك وإنت عم تحضر."],e:["Do not watch in a pitch-dark room","A soft light behind the screen or in the room reduces harsh contrast and rests your eyes while you watch."]},
+ {i:"📺",w:"",a:["مسافة ومستوى الشاشة","اقعد على بعد مريح من الشاشة (عدة أمتار للتلفزيون) وخلّي منتصفها بمستوى عيونك تقريباً، حتى ما تشد رقبتك لفوق."],e:["Screen distance and height","Sit a comfortable distance away and keep the middle of the screen near eye level so your neck is not strained upwards."]},
+ {i:"😴",w:"n",a:["السهر على حساب نومك","الكبار بيحتاجوا 7 إلى 9 ساعات نوم. الحلقة الجاية بتستناك بكرة، ونومك مش رح يستنى."],e:["Do not trade sleep for one more episode","Adults need 7 to 9 hours of sleep. The next episode will wait until tomorrow; your sleep will not."]},
+ {i:"🌙",w:"en",a:["خفّف السطوع قبل النوم","شاشة ساطعة بآخر ساعة قبل النوم بتأخّر النعاس عند كتير ناس. نزّل السطوع وخلّي الفيلم الأخير هادي."],e:["Dim the screen before bed","A bright screen in the last hour before sleep delays drowsiness for many people. Lower the brightness and pick something calm last."]},
+ {i:"☕",w:"d",a:["آخر فنجان قهوة","الكافيين بيضل بالجسم ساعات طويلة. حاول يكون آخر فنجان قهوة أو شاي قبل النوم بحوالي 6 ساعات."],e:["Your last cup of coffee","Caffeine stays in your body for hours. Try to have your last coffee or tea about 6 hours before bedtime."]},
+ {i:"🥜",w:"e",a:["سناك أذكى للسهرة","بدل الشيبس جرّب حفنة مكسرات غير مملّحة، أو تفاحة، أو خيار وجزر. بتشبعك وبتخفف السكر والملح."],e:["A smarter movie snack","Instead of chips try a handful of unsalted nuts, an apple, or cucumber and carrot sticks. They fill you up with less salt and sugar."]},
+ {i:"🍳",w:"m",a:["بروتين بالفطور","بيضة أو لبنة أو جبنة مع الفطور بتشبعك لوقت أطول وبتخفف الجوع قبل الغدا."],e:["Protein at breakfast","An egg, labneh or cheese with breakfast keeps you full longer and cuts mid-morning hunger."]},
+ {i:"🍵",w:"en",a:["مشروب دافي بدل الغازي","كاسة يانسون أو زهورات أو شاي أخضر دافية بتناسب السهرة أكثر من المشروبات الغازية المليانة سكر."],e:["Something warm instead of soda","A warm cup of anise, herbal or green tea suits the evening far better than sugary soft drinks."]},
+ {i:"🪑",w:"",a:["جلستك مهمة","خلّي ظهرك مسنود وقدميك على الأرض، وما تتفرج وإنت نايم ورقبتك مثنية. غيّر وضعيتك كل فترة."],e:["Mind your posture","Keep your back supported and feet on the floor, and avoid watching with your neck bent. Change position every so often."]},
+ {i:"🫁",w:"",a:["دقيقة تنفّس عميق","شهيق 4 ثواني، حبس نفس 4، وزفير 6. كرّرها 5 مرات. بتهدّي الأعصاب بعد يوم طويل."],e:["One minute of deep breathing","Breathe in for 4 seconds, hold for 4, out for 6. Repeat 5 times. It calms the nerves after a long day."]},
+ {i:"☀️",w:"m",a:["شمس الصبح","10 إلى 15 دقيقة برا بضوء النهار الصبح بتساعد على ضبط ساعتك البيولوجية وبتحسّن النوم والمزاج."],e:["Morning daylight","10 to 15 minutes outside in morning light helps set your body clock and supports sleep and mood."]},
+ {i:"👨‍👩‍👧",w:"e",a:["الفرجة مع حدا أحلى","شوف الفيلم مع حدا من أهلك أو أصحابك، أو كلّم حدا بتحبه اليوم. الصلة مع الناس من أهم عوامل الراحة النفسية."],e:["Better together","Watch with family or a friend, or call someone you care about today. Social connection is one of the biggest factors in wellbeing."]},
+ {i:"🦷",w:"n",a:["نظّف أسنانك قبل النوم","بعد السناك والسهرة، فرشاة ومعجون قبل ما تنام بتحمي أسنانك أكثر من أي وقت ثاني."],e:["Brush before bed","After snacks and a late night, brushing before sleep protects your teeth more than any other time."]},
+ {i:"🛋️",w:"e",a:["استراحة بين كل حلقتين","الجلوس 4 ساعات متواصلة بدون حركة مش لصالح قلبك ولا ظهرك. استراحة 5 دقايق بين الحلقات بتفرق."],e:["A break every two episodes","Sitting for hours without moving is not kind to your heart or back. A 5-minute break between episodes makes a difference."]},
+ {i:"🍽️",w:"e",a:["كُل ببطء وبانتباه","الأكل قدام الشاشة بدون انتباه بيخلّيك تاكل أكثر من حاجتك. حط الكمية بصحن وكُل ببطء."],e:["Eat slowly and mindfully","Eating in front of a screen without noticing makes you eat more than you need. Put a portion on a plate and eat slowly."]},
+ {i:"🍊",w:"d",a:["فاكهة طازة","حبة فاكهة طازة باليوم بتزوّدك بالألياف والفيتامينات وبتغنيك عن الحلويات. برتقالة أو تفاحة أو حفنة عنب."],e:["Fresh fruit","A piece of fresh fruit a day gives you fibre and vitamins and can replace sweets. An orange, an apple or some grapes."]},
+ {i:"🧂",w:"d",a:["خفّف الملح","جرّب تحط ليمون أو زعتر أو بهارات بدل الملح الزايد. الملح الكتير بيرفع الضغط مع الوقت."],e:["Go easy on salt","Try lemon, thyme or spices instead of extra salt. Too much salt raises blood pressure over time."]},
+ {i:"🥗",w:"d",a:["نصف صحنك خضار","خلّي نص صحن الغدا خضار وسلطة. بتشبّعك بسعرات أقل وبتعطيك ألياف مهمة للهضم."],e:["Half your plate vegetables","Make half of your lunch plate vegetables or salad. It fills you up with fewer calories and gives you fibre for digestion."]},
+ {i:"📵",w:"n",a:["ريّح عقلك قبل النوم","قبل النوم بنص ساعة ابعد عن الأخبار المزعجة والتصفح. فيلم هادي أو كتاب بيجهّزك لنوم أعمق."],e:["Rest your mind before sleep","Half an hour before bed, step away from upsetting news and scrolling. A calm film or a book prepares you for deeper sleep."]},
+ {i:"🧊",w:"d",a:["الجو حر؟ رطّب أكثر","بالحر والتكييف الجسم بيخسر سوائل أكثر مما بتحس. زيد كاسات المي وخلّيها بحرارة معتدلة."],e:["Hot day? Hydrate more","Heat and air-conditioning make you lose more fluid than you notice. Drink a bit more water, at a moderate temperature."]},
+ {i:"🤸",w:"m",a:["تمدد الصباح","3 دقايق تمدد للرقبة والكتفين والظهر أول اليوم بتفكّ تيبّس النوم وبتعطيك نشاط."],e:["Morning stretch","3 minutes of neck, shoulder and back stretches in the morning loosen up sleep stiffness and give you energy."]}
 ];
-const TPE=[
- {k:"Proverb",x:"“Every cloud has a silver lining.”"},
- {k:"Proverb",x:"“Slow and steady wins the race.”"},
- {k:"Proverb",x:"“Better late than never.”"},
- {k:"Wisdom",x:"“Rest is not laziness, it is fuel for tomorrow.”"},
- {k:"Wisdom",x:"“Happiness is often just a quiet moment after a long day.”"},
- {k:"Wisdom",x:"“Every day has something good in it, you just have to look.”"},
- {k:"Joke",x:"I told my remote I needed a break. It said: sure, I have been lost for a week! 😄"},
- {k:"Joke",x:"The movie asked me: why do you change channels every minute? I had no good answer. 😄"},
- {k:"Joke",x:"The best movie is the one you watch relaxed, the worst is the one you watch hungry! 😄"}
-];
-const XT={t0:Date.now(),on:0,el:null,it:null,fk:"mv",tm:0};
+const TPG={
+ horror:["أجواء رعب بتشدّ الأعصاب وبتخلّيك على أطراف مقعدك من أول مشاهد.","Horror that keeps you on the edge of your seat from the first scenes."],
+ comedy:["كوميديا بتفرّج الهم وبتعطيك ضحكة من القلب بعد يوم طويل.","A comedy that lifts your mood and gives you a proper laugh after a long day."],
+ drama:["دراما إنسانية بتلمس القلب، قصة بتضل براسك بعد ما تخلص.","A human drama that touches the heart, a story that stays with you after it ends."],
+ action:["أكشن بإيقاع سريع ومشاهد بتشدّ النفس، مناسب لسهرة مليانة حماس.","Fast-paced action with big set pieces, ideal for an energetic evening."],
+ romance:["قصة حب دافية ومشاعر حلوة، مناسبة لسهرة هادية.","A warm love story with lovely emotion, perfect for a quiet evening."],
+ thriller:["تشويق بيخلّيك تحاول تحزر وتخمّن للمشهد الأخير.","Suspense that keeps you guessing until the final scene."],
+ scifi:["خيال علمي بيفتح الخيال ويخلّيك تفكر بالمستقبل بعد ما تخلص.","Science fiction that opens the imagination and makes you think about the future."],
+ animation:["رسوم متحركة بصرياً حلوة وبتناسب كل العمر، مش للصغار بس.","Beautiful animation for all ages, not just for kids."],
+ crime:["جريمة وتحقيق وحبكة محكمة بتخلّيك تربط الخيوط مع الأبطال.","Crime and investigation with a tight plot that lets you connect the dots alongside the characters."],
+ fantasy:["عالم خيالي كبير بيهرّبك من الواقع لساعتين.","A big imaginative world that carries you away from reality for a couple of hours."],
+ adventure:["مغامرة وسفر واكتشاف، بتحسّ إنك عم تعيش الرحلة معهم.","Adventure, travel and discovery, you feel like you are on the journey with them."],
+ family:["مناسب للعيلة كلها، بتحضروه سوا وبتستمتعوا.","Suitable for the whole family, something you can enjoy together."],
+ doc:["وثائقي بيعطيك معلومات حقيقية وبيوسّع معرفتك وإنت مرتاح.","A documentary that gives you real information and widens your knowledge."],
+ war:["قصة حرب بتورّيك الشجاعة والتضحية والثمن الإنساني.","A war story showing courage, sacrifice and the human cost."],
+ history:["قصة من التاريخ بتخلّيك تعيش الزمن وتتعلّم منه.","A story from history that lets you live the era and learn from it."],
+ mystery:["لغز وغموض وأسرار بتنكشف شوي شوي.","Mystery and secrets that unfold little by little."]
+};
+/* ===== بنك النصائح الكبير: صحة + تقنية + حكمة + أمثال. كل مصفوفة: [أيقونة، وقت(m صباح d نهار e مسا n ليل أو فاضي)، عنوان عربي، نص عربي، عنوان إنجليزي، نص إنجليزي] ===== */
+const _cv=a=>({i:a[0],w:a[1],a:[a[2],a[3]],e:[a[4],a[5]]});
+[
+["💧","","لون بولك بيحكي","اللون الأصفر الفاتح غالباً علامة ترطيب كافٍ، والغامق جداً إشارة إنك تحتاج مي أكثر.","Your urine colour tells a story","Pale yellow usually means you are well hydrated; very dark means you need more water."],
+["🍉","d","أكل فيه مي","البطيخ والخيار والخس فيها نسبة مي عالية وبتساعدك ترطّب جسمك، خصوصاً بالصيف.","Foods that hydrate","Watermelon, cucumber and lettuce are mostly water and help keep you hydrated, especially in summer."],
+["🥛","m","لبن أو زبادي بالصباح","اللبن والزبادي فيهم كالسيوم وبروتين لعظامك، وبعض الأنواع فيها بكتيريا نافعة للهضم.","Yoghurt in the morning","Yoghurt and milk give calcium and protein for your bones, and some types contain bacteria that are good for digestion."],
+["🫒","","زيت الزيتون","استخدمه على السلطة وبالطبخ الخفيف، فيه دهون غير مشبعة أفضل من الدهون المشبعة بالسمن والزبدة.","Olive oil","Use it on salads and in light cooking; its unsaturated fats are a better choice than the saturated fats in ghee and butter."],
+["🌰","e","حفنة مكسرات","حفنة صغيرة (حوالي 30 غرام) باليوم من المكسرات غير المملّحة مفيدة للقلب وبتشبّع.","A handful of nuts","A small handful (about 30 g) of unsalted nuts a day is good for the heart and keeps you full."],
+["🐟","d","سمك مرتين بالأسبوع","السمك، خصوصاً السردين والسلمون، غني بأوميغا 3 المفيد للقلب والدماغ.","Fish twice a week","Fish, especially sardines and salmon, is rich in omega-3, which supports the heart and brain."],
+["🥦","d","نوّع ألوان صحنك","كل لون من الخضار والفواكه فيه مواد مفيدة مختلفة. كل ما كان صحنك ملوّن أكثر كان أغنى.","Eat the rainbow","Each colour of vegetable and fruit brings different beneficial compounds. The more colourful your plate, the richer it is."],
+["🍞","m","خبز القمح الكامل","فيه ألياف أكثر من الخبز الأبيض وبيشبّعك لوقت أطول وبيخفف الجوع قبل الغدا.","Wholemeal bread","It has more fibre than white bread, keeps you full longer and reduces hunger before lunch."],
+["🧃","","العصير الجاهز فيه سكر","كاسة عصير جاهز ممكن فيها سكر مثل المشروبات الغازية. الفاكهة الكاملة أحسن لأنها فيها ألياف.","Packaged juice is sugary","A glass of packaged juice can hold as much sugar as soda. Whole fruit is better because it has fibre."],
+["🍬","e","السكر المضاف","منظمة الصحة العالمية بتنصح تكون السكريات المضافة أقل من 10% من سعراتك اليومية، وأقل كمان أفضل.","Added sugar","The WHO advises keeping added sugars under 10% of daily calories, and lower is even better."],
+["🥣","m","شوفان بالفطور","الشوفان فيه ألياف ذائبة بتعطيك شبع وطاقة هادية. أضف له فاكهة بدل السكر.","Oats for breakfast","Oats have soluble fibre that gives steady energy and fullness. Top with fruit instead of sugar."],
+["🫘","d","البقوليات كنز رخيص","الحمص والعدس والفول فيها بروتين وألياف وبتشبّع بسعر قليل.","Pulses are a cheap treasure","Chickpeas, lentils and beans provide protein and fibre and keep you full for little money."],
+["🌿","e","كاسة نعناع بعد الوجبة","مشروب النعناع الدافي بيريّح الهضم عند كتير ناس بعد الوجبات الدسمة.","Mint after a heavy meal","A warm cup of mint settles digestion for many people after a rich meal."],
+["🍽️","","صحن أصغر","استخدام صحن أصغر بيخليك تاكل كمية أقل بدون ما تحس بحرمان.","Use a smaller plate","A smaller plate lets you eat less without feeling deprived."],
+["⏰","","استنى 20 دقيقة","إشارة الشبع بتاخد وقت لتوصل للدماغ. قبل ما تاخد حصة تانية، استنى 20 دقيقة وشوف.","Wait 20 minutes","The fullness signal takes time to reach your brain. Before seconds, wait 20 minutes and see."],
+["🚰","","عطش ولا جوع؟","أحياناً الجسم بيخلط بين العطش والجوع. لو جعت بين الوجبات، جرّب كاسة مي أول.","Thirst or hunger?","The body sometimes confuses thirst with hunger. If you feel hungry between meals, try a glass of water first."],
+["🏋️","","قوّي عضلاتك","تمارين المقاومة (أوزان أو وزن الجسم) مرتين بالأسبوع بتحافظ على عضلاتك وعظامك مع التقدم بالعمر.","Strengthen your muscles","Resistance training (weights or bodyweight) twice a week protects muscle and bone as you age."],
+["🚴","d","150 دقيقة بالأسبوع","منظمة الصحة العالمية بتنصح الكبار بـ 150 دقيقة على الأقل نشاط معتدل بالأسبوع، يعني حوالي 20 دقيقة باليوم.","150 minutes a week","The WHO recommends at least 150 minutes of moderate activity a week for adults, about 20 minutes a day."],
+["👣","","زد خطواتك شوي","مش لازم رقم سحري. كل خطوة زيادة عن أمس بتفيد. اركن بعيد شوي أو انزل محطة قبل.","Add a few steps","No magic number is needed. Every extra step beyond yesterday helps. Park a bit further or get off a stop early."],
+["🪜","d","السلالم بدل المصعد","طلوع طابقين أو تلاتة بالسلالم تمرين قلب مجاني ومعه بتوفّر وقت الانتظار.","Take the stairs","Climbing a couple of floors is a free cardio workout and saves waiting for the lift."],
+["🧎","n","تمدد خفيف قبل النوم","5 دقايق تمدد هادي قبل النوم بتريّح العضلات وبتجهّز الجسم للراحة.","Gentle stretching before bed","Five minutes of slow stretching relaxes muscles and prepares the body for rest."],
+["🛏️","n","غرفة نوم مريحة","غرفة باردة نسبياً ومظلمة وهادية بتحسّن جودة النوم عند أغلب الناس.","A restful bedroom","A relatively cool, dark and quiet room improves sleep quality for most people."],
+["⏳","","وقت نوم ثابت","النوم والاستيقاظ بنفس الوقت تقريباً، حتى بالعطلة، بينظّم ساعتك البيولوجية.","A steady sleep schedule","Going to bed and waking at about the same time, even on weekends, steadies your body clock."],
+["📱","n","ابعد الموبايل عن السرير","وجود الموبايل جنبك بيغريك تتصفح وتسهر. حطه بعيد واستعمل منبه عادي.","Keep your phone away from the bed","A phone beside you tempts you to scroll and stay up. Put it across the room."],
+["💤","d","قيلولة قصيرة","قيلولة 15 إلى 20 دقيقة بتنعشك. الأطول من هيك ممكن تخليك تصحى بخمول.","A short nap","A 15 to 20 minute nap refreshes you. Much longer can leave you groggy."],
+["🧴","d","واقي الشمس","بالصيف استعمل واقي شمس وقبعة ونظارة شمس، وتجنب التعرض المباشر وقت الظهيرة.","Sun protection","In summer use sunscreen, a hat and sunglasses, and avoid direct midday sun."],
+["🧼","","غسل اليدين صح","اغسل إيديك 20 ثانية بالصابون قبل الأكل وبعد الحمام. من أبسط الطرق لتجنب العدوى.","Wash hands properly","Wash for 20 seconds with soap before eating and after the toilet. One of the simplest ways to avoid infection."],
+["🦷","m","فرشاة وخيط","فرشاة سنانك مرتين باليوم دقيقتين، واستعمل خيط الأسنان مرة باليوم.","Brush and floss","Brush twice a day for two minutes and floss once a day."],
+["🔄","","غيّر فرشاة الأسنان","غيّرها كل 3 شهور تقريباً أو لما يتفرّق شعرها.","Replace your toothbrush","Replace it about every 3 months or when the bristles fray."],
+["🩺","","الفحص الدوري","فحص سنوي بسيط بيكشف مشاكل بدري. اعرف أرقامك: ضغطك وسكرك ودهونك.","Regular check-ups","A simple yearly check-up catches problems early. Know your numbers: blood pressure, sugar and cholesterol."],
+["🚭","","الإقلاع عن التدخين","فوايد الإقلاع بتبدأ خلال أيام. اطلب مساعدة من طبيبك، في خطط وأدوات بتزيد فرصة النجاح.","Quitting smoking","Benefits start within days. Ask your doctor for help; plans and aids raise your chance of success."],
+["🧠","","تعلّم شي جديد","لغة أو وصفة أو لعبة جديدة بتبقي دماغك نشيط وبتعطيك شعور بالإنجاز.","Learn something new","A new language, recipe or game keeps your brain active and gives a sense of achievement."],
+["📖","n","15 دقيقة قراءة","القراءة قبل النوم بدل الشاشة بتهدّي العقل وبتجهّزك لنوم أعمق.","Read for 15 minutes","Reading before bed instead of a screen calms the mind and prepares you for deeper sleep."],
+["🧩","","ألغاز وشطرنج","الألغاز والشطرنج والكلمات المتقاطعة تمرين ممتع للتفكير وبتخليك تتسلى.","Puzzles and chess","Puzzles, chess and crosswords are a fun workout for thinking."],
+["📝","e","اكتب 3 أشياء حلوة","قبل ما تنام اكتب 3 أشياء حلوة صارت اليوم. هالعادة بتحسّن المزاج مع الأيام.","Write down 3 good things","Before sleep, write three good things from today. The habit lifts mood over time."],
+["🌳","d","وقت مع الطبيعة","مشي بحديقة أو بين الشجر بيخفف التوتر وبيرفع المزاج، حتى لو 15 دقيقة.","Time in nature","A walk in a park or among trees reduces stress and lifts mood, even for 15 minutes."],
+["🗣️","","احكي مع حدا","الحكي مع صديق أو قريب بيخفف الضغط النفسي. وإذا التعب استمر، تكلم مع مختص، هاد قوة مش ضعف.","Talk to someone","Talking with a friend or relative eases stress. If the strain continues, speak to a professional; that is strength, not weakness."],
+["🙆","m","تمدد الرقبة","ميّل راسك ببطء لكل جهة 15 ثانية، بدون ما تلوي بقوة. بتفك شد الرقبة.","Neck stretch","Tilt your head slowly to each side for 15 seconds, without forcing it. It eases neck tension."],
+["🧍","","وقفة صحيحة","كتفين لورا بارتياح، راسك فوق عمودك، وبطنك مشدود شوي. الوقفة الصحيحة بتخفف آلام الظهر.","Stand tall","Shoulders relaxed back, head above your spine, core lightly engaged. Good posture eases back pain."],
+["💻","d","مكتبك بمستوى العين","لو بتشتغل على كمبيوتر خلّي أعلى الشاشة بمستوى عينك وكوعيك بزاوية مريحة.","Eye-level screen","If you work on a computer, keep the top of the screen at eye level and your elbows at a comfortable angle."],
+["🥾","","حذاء مريح","للمشي اختار حذاء مريح بدعم للقدم. قدمك بتشيل جسمك كله.","Comfortable shoes","For walking choose supportive, comfortable shoes. Your feet carry your whole body."],
+["🍯","","العسل برضو سكر","العسل طبيعي وفيه نكهة حلوة، لكنه سكر. استعمله بكمية قليلة.","Honey is still sugar","Honey is natural and delicious, but it is still sugar. Use it in small amounts."],
+["⚡","d","كافيين باعتدال","للكبار الأصحاء الحد المقبول حوالي 400 ملغ كافيين باليوم، يعني حوالي 4 فناجين قهوة. مشروبات الطاقة بتزيد الكمية بسرعة.","Caffeine in moderation","For healthy adults about 400 mg of caffeine a day is a common limit, roughly four cups of coffee. Energy drinks add up quickly."],
+["☀️","d","الحر الشديد","وقت الظهيرة (12 إلى 4) تجنب الجهد بالشمس، البس خفيف وفاتح، وزد المي.","Extreme heat","Avoid effort in the sun around midday, wear light-coloured clothes and drink more water."],
+["🚨","","علامات الطوارئ","ألم صدر شديد، ضيق نفس مفاجئ، ضعف بجهة واحدة أو صعوبة بالكلام: اتصل بالإسعاف فوراً، لا تنتظر.","Know the emergency signs","Severe chest pain, sudden breathlessness, one-sided weakness or trouble speaking: call emergency services at once, do not wait."],
+["🩹","","إسعافات أولية بالبيت","خلّي علبة إسعافات أولية بمكان معروف، وراجع تواريخ الصلاحية كل فترة.","A home first-aid kit","Keep a first-aid kit somewhere known and check expiry dates every so often."],
+["🎧","","سماعات بصوت معتدل","قاعدة 60/60: صوت لحد 60% من الحد الأقصى ولمدة 60 دقيقة، ثم استراحة. بتحمي سمعك.","Headphones at a sane volume","The 60/60 rule: up to 60% volume for up to 60 minutes, then a break. It protects your hearing."],
+["🔊","n","صوت أخف بالليل","خفّض صوت التلفزيون بالليل، بترتاح أذنك وبيرتاح جيرانك وبتنام أحسن.","Lower the volume at night","Turn the TV down at night; your ears, your neighbours and your sleep will thank you."],
+["🪴","","نبتة بالبيت","نبتة خضرا بالبيت بتحسّن المزاج وبتعطي إحساس بالراحة، وما بتحتاج كتير عناية.","A plant at home","A green plant lifts the mood and brightens a room, and needs little care."],
+["🌬️","m","هوّي بيتك","افتح الشبابيك 5 إلى 10 دقايق يومياً لتجديد الهواء، حتى بالشتا.","Air out your home","Open the windows for 5 to 10 minutes daily to refresh the air, even in winter."],
+["🍎","m","فاكهة قبل الحلويات","لما تشتهي شي حلو، جرّب تفاحة أو تمرتين أول. غالباً بتكفيك.","Fruit before sweets","When you crave something sweet, try an apple or a couple of dates first. It is often enough."],
+["🥕","e","سناك مقرمش","جزر وخيار بالليمون بيعطوك قرمشة بدل الشيبس بسعرات قليلة.","A crunchy snack","Carrot and cucumber with lemon give you the crunch of chips with far fewer calories."],
+["🍗","d","طبخ أخف","اشوي أو اسلق أو اطبخ بالفرن بدل القلي. نفس الطعم تقريباً وبتخفف الدهون.","Lighter cooking","Grill, boil or bake instead of frying. Much the same flavour with less fat."],
+["🥤","","ماء بنكهة طبيعية","حط شرايح ليمون أو خيار أو نعناع بالمي بدل المشروبات المحلاة، بتغيير الطعم.","Naturally flavoured water","Add lemon, cucumber or mint slices to water instead of sweet drinks for a change of taste."],
+["🧘","m","5 دقايق هدوء","جلسة صامتة 5 دقايق أول اليوم، بدون موبايل، بتهدّي الذهن وبتبدّل بداية يومك.","Five quiet minutes","Five silent minutes at the start of the day, without your phone, settles the mind and changes how the day begins."],
+["🧑‍🤝‍🧑","e","زور حدا","زيارة أو مكالمة لصديق قديم بتفيدك وبتفيده أكثر مما تتخيل.","Visit someone","A visit or a call to an old friend does more good, for both of you, than you expect."],
+["🌅","e","مشي الغروب","مشي هادئ وقت الغروب بيجمع بين نشاط خفيف ومنظر حلو وبيحضّرك للمسا.","A sunset walk","A calm walk at sunset combines light activity with a lovely view and winds you down for the evening."]
+].forEach(a=>TPH.push(_cv(a)));
+const TPT=[
+["📶","","النت بطيء؟ ريستارت","أطفئ الراوتر 30 ثانية ثم شغّله. هالخطوة البسيطة بتحل أكثر مشاكل الاتصال المؤقتة.","Slow internet? Restart","Switch the router off for 30 seconds and back on. This simple step fixes most temporary connection problems."],
+["📡","","مكان الراوتر مهم","حطه بمكان مرتفع ووسط البيت، بعيد عن الجدران السميكة والميكروويف والأغراض المعدنية.","Router placement matters","Put it high and central, away from thick walls, microwaves and metal objects."],
+["📶","","2.4 ولا 5 جيجاهرتز؟","شبكة 2.4 مداها أبعد لكن أبطأ، وشبكة 5 أسرع لكن مداها أقصر. للتلفزيون القريب من الراوتر اختار 5.","2.4 or 5 GHz?","2.4 GHz reaches further but is slower; 5 GHz is faster but shorter-range. For a TV near the router, pick 5."],
+["🔌","","كيبل شبكة أثبت","لو تقدر، وصّل التلفزيون بكيبل إيثرنت. أثبت من الواي فاي، خصوصاً للبث بجودة عالية.","A network cable is steadier","If you can, connect the TV with an Ethernet cable. It is steadier than Wi-Fi, especially for high-quality streaming."],
+["📺","","كم سرعة بتحتاج للبث؟","للبث بدقة HD بتكفي حوالي 5 ميغابت بالثانية، ولدقة 4K حوالي 15 إلى 25 ميغابت.","How much speed to stream?","HD streaming needs roughly 5 Mbps, and 4K roughly 15 to 25 Mbps."],
+["🔢","","ميغابت مش ميغابايت","سرعة الإنترنت بالميغابت (Mbps)، وحجم الملفات بالميغابايت (MB). كل 8 ميغابت = 1 ميغابايت، يعني 100 ميغابت تقريباً 12.5 ميغابايت بالثانية.","Megabits are not megabytes","Internet speed is in megabits (Mbps), file size in megabytes (MB). 8 megabits = 1 megabyte, so 100 Mbps is about 12.5 MB/s."],
+["🌈","","شو يعني HDR؟","HDR بيوسّع مدى الإضاءة والألوان، فبتشوف تفاصيل أكثر بالمشاهد المظلمة والمضيئة بنفس الوقت.","What is HDR?","HDR widens the range of brightness and colour, so you see more detail in dark and bright scenes at once."],
+["🔄","","معدل التحديث Hz","شاشة 120 هرتز بتعرض حركة أنعم من 60 هرتز، وهاد بيبان بالرياضة والألعاب.","Refresh rate in Hz","A 120 Hz screen shows smoother motion than 60 Hz, noticeable in sports and games."],
+["🎛️","","وضع الصورة الصح","جرّب وضع Cinema أو Movie بإعدادات الصورة. ألوانه أقرب لنية المخرج من وضع Vivid المبالغ فيه.","The right picture mode","Try Cinema or Movie mode in picture settings. Its colours are closer to what the director intended than the exaggerated Vivid mode."],
+["🔈","","الصوت المحيطي","أنظمة مثل Dolby Atmos بتحط الصوت حواليك وفوقك، فبتحس بالمشهد أكثر. الساوند بار بيفرق كتير عن سماعات التلفزيون.","Surround sound","Systems like Dolby Atmos place sound around and above you, so scenes feel bigger. A soundbar makes a big difference over TV speakers."],
+["🔗","","HDMI ARC","وصلة HDMI ARC بترسل صوت التلفزيون للساوند بار بكيبل واحد وبتخليك تتحكم بالصوت بريموت واحد.","HDMI ARC","An HDMI ARC port sends TV audio to a soundbar over one cable and lets one remote control the volume."],
+["🔥","","احمي شاشة OLED","الصور الثابتة لساعات ممكن تترك أثر على شاشات OLED. نوّع المحتوى وفعّل حماية الشاشة.","Protect an OLED screen","Static images for hours can leave marks on OLED screens. Vary content and enable screen protection."],
+["🔐","","كلمة مرور قوية","اختار كلمة مرور طويلة (12 حرف أو أكثر) وفريدة لكل حساب، وما تستعمل اسمك أو تاريخ ميلادك.","A strong password","Choose a long password (12+ characters), unique for each account, and avoid your name or birth date."],
+["🗝️","","مدير كلمات المرور","بدل ما تحفظ عشرات الكلمات، مدير كلمات المرور بيولّدها وبيحفظها بشكل مشفّر.","Use a password manager","Instead of memorising dozens of passwords, a password manager generates and stores them encrypted."],
+["🔒","","تحقق بخطوتين","فعّل التحقق بخطوتين (2FA) على الإيميل والبنك والسوشال. حتى لو انسرقت كلمة السر، حسابك بيضل محمي.","Turn on 2-step verification","Enable 2FA on email, banking and social accounts. Even if a password leaks, the account stays protected."],
+["🎣","","احذر التصيّد","رسالة بتطلب منك تضغط رابط عاجل؟ توقف. افحص عنوان المرسل ولا تدخل بياناتك من رابط مجهول.","Beware of phishing","A message urging you to click a link? Stop. Check the sender and never enter details through an unknown link."],
+["📞","","رمز التحقق سري","ما تعطي رمز التحقق (OTP) لأي حدا، حتى لو قال إنه من البنك. البنوك ما بتطلبه منك.","Keep verification codes secret","Never give your OTP to anyone, even someone claiming to be from your bank. Banks do not ask for it."],
+["💾","","نسخة احتياطية","قاعدة 3-2-1: 3 نسخ من بياناتك، على نوعين من التخزين، ونسخة وحدة خارج البيت أو على السحابة.","Back up your data","The 3-2-1 rule: three copies, on two kinds of storage, with one off-site or in the cloud."],
+["🔋","","عمر بطارية الموبايل","غالباً البطارية بتعمّر أطول لو بقيت بين 20% و80%. وابعدها عن الحر الشديد.","Phone battery life","A battery generally lasts longer if kept between 20% and 80%. Keep it away from extreme heat."],
+["🔄","","حدّث أجهزتك","تحديثات النظام والتطبيقات فيها إصلاحات أمنية مهمة. لا تأجّلها كتير.","Keep devices updated","System and app updates contain important security fixes. Do not postpone them for long."],
+["🧹","","التطبيق بطيء؟","جرّب تمسح الكاش (الذاكرة المؤقتة) للتطبيق، وبعدها أعد تشغيله. بيحل مشاكل كتيرة.","App sluggish?","Try clearing the app cache and restarting it. It fixes many problems."],
+["📴","","ريستارت أسبوعي","إعادة تشغيل الموبايل أو التلفزيون مرة بالأسبوع بتفرّغ الذاكرة وبتحل بطء غريب.","Weekly restart","Restarting your phone or TV once a week frees memory and clears odd slowness."],
+["🗑️","","نظّف تطبيقاتك","احذف التطبيقات اللي ما استعملتها من شهور. بتوفّر مساحة وبتقلل المخاطر الأمنية.","Clean out unused apps","Delete apps you have not used for months. You save space and reduce security risks."],
+["🛡️","","شو الـ VPN؟","الـ VPN بيشفّر اتصالك وبيخفي عنوانك من الموقع. مفيد على الشبكات العامة، لكنه مش حل سحري لكل شي.","What is a VPN?","A VPN encrypts your connection and hides your address from sites. Useful on public networks, but not a cure-all."],
+["☕","","الواي فاي العام","على شبكة عامة تجنّب الدخول لحسابك البنكي أو إدخال بيانات حساسة.","Public Wi-Fi","On a public network avoid banking or entering sensitive data."],
+["📲","","قبل ما تمسح QR","رموز QR المجهولة ممكن تفتح مواقع خبيثة. شوف الرابط اللي بيظهر قبل ما تفتحه.","Before scanning a QR code","Unknown QR codes can open malicious sites. Look at the link that appears before opening it."],
+["🤖","","الذكاء الاصطناعي ممكن يغلط","أدوات الذكاء الاصطناعي أحياناً بتألف معلومات تبدو مقنعة. تحقق من أي معلومة مهمة من مصدر موثوق.","AI can be wrong","AI tools sometimes invent convincing-sounding information. Verify anything important from a trusted source."],
+["💬","","وضّح طلبك للذكاء الاصطناعي","كل ما كان طلبك أوضح وأكثر تفصيلاً، كانت النتيجة أحسن. اذكر الهدف والسياق والشكل المطلوب.","Be clear with AI","The clearer and more detailed your request, the better the result. State the goal, the context and the format you want."],
+["💿","","SSD أسرع من HDD","الـ SSD بدون أجزاء متحركة، فهو أسرع وأهدأ وأقوى ضد الصدمات من القرص التقليدي.","SSD is faster than HDD","An SSD has no moving parts, so it is faster, quieter and tougher against shocks than a traditional disk."],
+["🧠","","شو هي الـ RAM؟","الـ RAM ذاكرة عمل مؤقتة بتحتفظ بما تستعمله الآن، وبتنمحي عند الإطفاء. كل ما زادت قدرت تفتح برامج أكثر بسلاسة.","What is RAM?","RAM is temporary working memory holding what you are using now, and it clears when powered off. More of it lets you run more programs smoothly."],
+["☁️","","شو يعني السحابة؟","السحابة (Cloud) يعني بياناتك محفوظة على سيرفرات بالإنترنت، فبتوصلها من أي جهاز.","What is the cloud?","The cloud means your data lives on servers on the internet, so you can reach it from any device."],
+["🔌","","مش كل USB-C متساوي","نفس الشكل ممكن يختلف بالسرعة وقدرة الشحن. استعمل الكيبل والشاحن المناسبين لجهازك.","Not all USB-C is equal","The same plug can differ in speed and charging power. Use the right cable and charger for your device."],
+["🎧","","تأخر الصوت بالبلوتوث","السماعات اللاسلكية ممكن تأخر الصوت جزء من ثانية. لو لاحظت عدم تزامن مع الصورة، استعمل سماعة بزمن تأخير قليل أو سلكية.","Bluetooth audio delay","Wireless headphones can delay sound by a fraction of a second. If lips look out of sync, use low-latency or wired headphones."],
+["📼","","H.265 يوفّر حجم","ترميز H.265 (HEVC) بيضغط الفيديو لحجم أقل بكثير من H.264 بجودة مقاربة، فبيوفر إنترنت ومساحة.","H.265 saves size","The H.265 (HEVC) codec compresses video to a much smaller size than H.264 at similar quality, saving data and space."],
+["🧭","","GPS بدون إنترنت","تحديد موقعك بالـ GPS بيعتمد على الأقمار الصناعية وما بيحتاج إنترنت. الإنترنت بس لتحميل الخريطة.","GPS without internet","GPS positioning relies on satellites and does not need internet. You only need data to load the map."],
+["🕵️","","تتبّع التلفزيون الذكي","بعض التلفزيونات الذكية بتجمع بيانات عن اللي بتشوفه. راجع إعدادات الخصوصية وعطّل التتبّع إذا بدك.","Smart TV tracking","Some smart TVs collect data on what you watch. Review privacy settings and turn tracking off if you prefer."],
+["⏬","","الترجمة بضغطة","أثناء تشغيل الفيديو اضغط السهم لتحت على الريموت لفتح خيارات الترجمة.","Subtitles in one press","While a video plays, press the down arrow on your remote to open subtitle options."],
+["❤️","","أضف للمفضلة بسرعة","أثناء المشاهدة اضغط السهم لفوق أو الزر الأصفر بالريموت لتضيف العمل للمفضلة.","Add to favourites fast","While watching, press the up arrow or the yellow remote button to add the title to favourites."],
+["▶️","","كمّل من حيث وقفت","بطاقة «مواصلة المشاهدة» بالرئيسية بترجعك لآخر موضع وقفت عنده بالفيلم أو المسلسل.","Pick up where you left off","The Continue Watching card on Home takes you back to where you stopped in a movie or series."],
+["👶","","قفل الأطفال","لفتح قفل الأطفال بالريموت اضغط: ↑ ↑ ↓ ↓.","Child lock","To unlock the child lock with the remote press: ↑ ↑ ↓ ↓."],
+["📸","","الصور بتحمل موقعك","صور الموبايل ممكن تحتوي على موقع التصوير. قبل ما تشاركها علناً، ممكن تعطّل حفظ الموقع.","Photos carry your location","Phone photos can contain where they were taken. Before posting publicly, consider turning off location tagging."],
+["💡","","لمبات LED","لمبة LED بتستهلك كهربا أقل بنحو 75% من اللمبة العادية وبتعمّر أطول بكثير.","LED bulbs","An LED bulb uses roughly 75% less electricity than an old incandescent and lasts far longer."],
+["🔌","","الأجهزة النايمة بتستهلك","الأجهزة على وضع الاستعداد (Standby) بتسحب كهربا. موزّع كهربا بزر بيسهّل فصلها كلها.","Sleeping devices still draw power","Devices on standby still use electricity. A power strip with a switch makes it easy to cut them all."],
+["🌐","","الإنترنت مش الويب","الإنترنت هو الشبكة العالمية للأجهزة، والويب هو المواقع والصفحات اللي بنتصفحها عليها. الإيميل والألعاب كمان على الإنترنت بدون ما تكون ويب.","The internet is not the web","The internet is the global network of devices; the web is the pages we browse on it. Email and games also use the internet without being the web."],
+["🔆","d","سطوع الشاشة حسب الغرفة","نهاراً زيد السطوع وليلاً نزّله. شاشة ساطعة بغرفة معتمة بتتعب عينك.","Match brightness to the room","Raise brightness by day and lower it at night. A bright screen in a dark room tires your eyes."],
+["🔋","","ريموت ما بيشتغل؟","غالباً البطاريات. غيّرها قبل ما تفكر بالعطل، وانتبه لاتجاه القطبين.","Remote not working?","It is usually the batteries. Replace them before suspecting a fault, and check polarity."],
+["🧯","","موزّع كهربا آمن","لا تحمّل موزّع الكهربا أحمال كبيرة (سخان، مكواة). الأجهزة الصغيرة بس، وبدّله لو سخن.","Safe power strips","Do not load a power strip with heavy appliances such as heaters. Small devices only, and replace it if it gets hot."],
+["🧾","","اقرأ الأذونات","قبل ما تثبّت تطبيق شوف شو بيطلب من أذونات. لعبة بسيطة ما بتحتاج جهات اتصالك.","Read app permissions","Before installing an app check what it asks for. A simple game does not need your contacts."],
+["📶","","قوة الإشارة","لو الواي فاي ضعيف بغرفة بعيدة، مقوّي إشارة أو شبكة Mesh أنسب من تغيير الراوتر.","Weak Wi-Fi in a far room","A range extender or a mesh system often helps more than replacing the router."]
+].map(_cv);
+const TPW=[
+["✨","","ابدأ بصغير","الإنجاز الكبير بيتكوّن من خطوات صغيرة متكررة. ابدأ بخطوة اليوم ولا تنتظر اللحظة المثالية.","Start small","Big achievements are built from small repeated steps. Take one today and do not wait for the perfect moment."],
+["✨","","الراحة جزء من الشغل","اللي بيرتاح بوقته بيرجع أقوى. الراحة مش كسل، هي وقود لبكرة.","Rest is part of the work","Those who rest on time come back stronger. Rest is not laziness; it is fuel for tomorrow."],
+["✨","","قارن نفسك بنفسك","قارن نفسك بنسختك من أمس، مش بغيرك. كل واحد بمرحلة وبطريق مختلف.","Compare yourself with yourself","Measure against who you were yesterday, not against others. Everyone is on a different road."],
+["✨","","الامتنان بيغيّر النظرة","لما بتلاحظ اللي عندك بدل اللي ناقصك، بيصير يومك أخف وأحلى.","Gratitude changes the view","When you notice what you have instead of what you lack, the day feels lighter."],
+["✨","","السؤال الأهم","لما تتضايق من شي، اسأل نفسك: هل رح يفرق معي بعد سنة؟ غالباً الجواب بيريّحك.","The question that helps","When something upsets you, ask: will this matter in a year? The answer often brings relief."],
+["✨","","الاستماع هدية","أحياناً أحلى شي بتعطيه لحدا إنك تسمعه بجد، بدون ما تقاطع وبدون ما تحكم.","Listening is a gift","Sometimes the best thing you can give is to truly listen, without interrupting or judging."],
+["✨","","اللطف ما بيكلف","كلمة طيبة أو ابتسامة ما بتكلفك شي، بس ممكن تغيّر يوم حدا بأكمله.","Kindness costs nothing","A kind word or a smile costs you nothing, but it can change someone's entire day."],
+["✨","","الفشل معلّم","اللي ما بيغلط ما بيجرّب. كل غلطة بتعلّمك شي لو بتتعامل معها بفضول مش بجلد ذات.","Failure teaches","Those who never err never try. Every mistake teaches if you meet it with curiosity rather than self-blame."],
+["✨","","الصبر مش انتظار","الصبر إنك تظل تشتغل وتتقدم بهدوء، مش بس إنك تنتظر وتتأفف.","Patience is not just waiting","Patience means continuing to work and move forward calmly, not just waiting and complaining."],
+["✨","","اختار معاركك","مش كل شي بيستاهل طاقتك. وفّر غضبك للأمور اللي فعلاً بتغيّرها.","Choose your battles","Not everything deserves your energy. Save your anger for the things you can actually change."],
+["✨","","الوقت أغلى من المال","المال بتقدر تعوّضه، الوقت لأ. اصرف وقتك على اللي بيفرق ومع اللي بتحبهم.","Time is worth more than money","Money can be earned again; time cannot. Spend it on what matters and with the people you love."],
+["✨","","قول لا بلطف","الحدود الصحية مش أنانية. اللي بيعرف يقول لا بلطف بيحافظ على نفسه وعلى علاقاته.","Say no kindly","Healthy boundaries are not selfish. Saying no gently protects you and your relationships."],
+["✨","","قرار اليوم","مش لازم تحل كل شي الليلة. اختار أهم شي واحد لبكرة ونام مرتاح.","Today's decision","You do not have to solve everything tonight. Pick the single most important thing for tomorrow and sleep well."],
+["✨","","العادات بتصنعك","أنت نتيجة عاداتك الصغيرة اليومية. غيّر عادة وحدة بيتغيّر شي كبير مع الأيام.","Habits shape you","You are the sum of small daily habits. Change one and something big shifts over time."],
+["✨","","التعلّم ما بيخلص","أذكى الناس بتضل تسأل. الفضول أصغر عمرك وأوسع عقلك.","Learning never ends","The wisest keep asking. Curiosity keeps you young and widens the mind."],
+["✨","","الكلمة أمانة","قبل ما تحكي اسأل: هل هو صحيح؟ هل هو لطيف؟ هل هو لازم؟ هالأسئلة بتوفّر كتير ندم.","Words are a trust","Before speaking ask: is it true, is it kind, is it needed? These questions save a lot of regret."],
+["✨","","العطاء بيرجع","اللي بيعطي من قلبه، بيرجعله الخير من حيث ما بيتوقع.","Giving returns","Those who give from the heart receive good from unexpected places."],
+["✨","","الهدوء قوة","مش كل رد لازم يكون سريع. أحياناً أقوى جواب هو الصمت الهادئ.","Calm is strength","Not every reply has to be quick. Sometimes the strongest answer is calm silence."],
+["✨","","اليوم هو الوحيد اللي عندك","أمس راح وبكرة مش مضمون. اليوم هو الفرصة الوحيدة اللي بإيدك.","Today is all you hold","Yesterday is gone and tomorrow is not guaranteed. Today is the only chance in your hands."],
+["✨","","الصحة تاج","الصحة تاج على راس الأصحاء ما بيشوفه إلا المرضى. اهتم فيها قبل ما تفقدها.","Health is a crown","Health is a crown on the healthy that only the sick can see. Look after it before it is gone."],
+["✨","","حلو الحياة بالبساطة","فنجان قهوة مع صديق، مشي بالهوا، أكلة بيتية. أحلى اللحظات غالباً الأبسط.","Life's sweetness is simple","Coffee with a friend, a walk in fresh air, a home-cooked meal. The best moments are often the simplest."],
+["✨","","اسمح لنفسك تبدأ من جديد","مهما كان الماضي، دايماً في فرصة تبدأ صفحة جديدة. أول خطوة هي القرار.","Allow a fresh start","Whatever the past, there is always a chance for a new page. The first step is the decision."],
+["✨","","لا تؤجل فرحتك","ما تستنى المناسبة الكبيرة لتفرح. فرحة صغيرة اليوم أحسن من وعد كبير بكرة.","Do not postpone joy","Do not wait for a big occasion. A small joy today beats a big promise tomorrow."],
+["✨","","الصدق بيريّح","اللي بيحكي الصدق ما بيحتاج يتذكر شو قال. الصدق بيوفّر عليك جهد كبير.","Honesty is restful","Those who tell the truth need not remember what they said. Honesty saves a lot of effort."],
+["✨","","اصنع الفرصة","مش كل الفرص بتيجي، في فرص لازم تصنعها بإيدك وتطرق الأبواب لحتى تنفتح.","Make your opportunity","Not every opportunity arrives; some you build yourself, knocking on doors until one opens."],
+["✨","","مين حولك؟","الناس اللي حواليك بتأثر فيك. اختار اللي بيرفعوك ويشجعوك مش اللي بيحبطوك.","Who surrounds you?","The people around you shape you. Choose those who lift and encourage you, not those who discourage you."],
+["✨","","التسامح راحة","التمسّك بالزعل بيتعب صاحبه أكثر من اللي زعّله. سامح لأجل راحتك أنت.","Forgiveness is relief","Holding a grudge wears out the holder more than the offender. Forgive for your own peace."],
+["✨","","التعب مرحلة","لما تحس إنك تعبان ومش شايف الطريق، تذكّر إنه مرحلة وبتعدي. كمّل خطوة خطوة.","Tiredness is a stage","When you feel worn out and cannot see the road, remember it is a stage and will pass. Keep going step by step."],
+["✨","","الهدف بيعطي معنى","اكتب هدف واحد صغير لهالأسبوع. وجود هدف بيعطي أيامك اتجاه وطعم.","A goal gives meaning","Write one small goal for this week. Having one gives your days direction and flavour."],
+["✨","","الاعتذار شجاعة","اللي بيعتذر بصدق بيكبر بعيون الناس وبعين نفسه. الكبرياء مش دايماً قوة.","Apology is courage","Sincere apologies make you bigger in others' eyes and your own. Pride is not always strength."],
+["✨","","راقب أفكارك","أفكارك بتصير مشاعر وأفعال. جرّب تبدّل فكرة سلبية بسؤال: شو ممكن أتعلم من هالموقف؟","Watch your thoughts","Thoughts become feelings and actions. Try swapping a negative thought for: what can I learn from this?"],
+["✨","","قدّر اللي بيحبوك","ما تنتظر الفقد لتقول للناس إنك بتحبهم. قلها اليوم، لأهلك وأصحابك.","Value those who love you","Do not wait for loss to tell people you love them. Say it today to family and friends."],
+["✨","","الاستمرار بيغلب الموهبة","الموهبة بتبدأ، لكن الاستمرار والانضباط هما اللي بيوصلوا بعيد.","Persistence beats talent","Talent starts the journey, but persistence and discipline carry you far."],
+["✨","","اهتم بالتفاصيل","اللي بيتقن الشغلات الصغيرة بيتقن الكبيرة. الجودة بتبدأ من التفصيل.","Mind the details","Those who master small things master big ones. Quality starts in the details."],
+["✨","","تنفّس","وقت الضغط خذ نفس عميق قبل ما ترد أو تقرر. 5 ثواني ممكن توفّر لك مشكلة كاملة.","Breathe","Under pressure take a deep breath before replying or deciding. Five seconds can save a whole problem."],
+["✨","","الاعتدال أمان","بكل شي، بالأكل والشغل والسهر والفرجة، الاعتدال هو الطريق الآمن.","Moderation is safe","In food, work, late nights and watching alike, moderation is the safe road."],
+["✨","","اسأل ولا تفترض","كتير من سوء الفهم بيجي من الافتراض. اسأل بلطف بدل ما تخمّن النية.","Ask, do not assume","Much misunderstanding comes from assumption. Ask kindly instead of guessing intentions."],
+["✨","","ابتسم","الابتسامة صدقة وعدوى حلوة. جرّب تبتسم لأول حدا تشوفه اليوم.","Smile","A smile is a gift and a lovely contagion. Try smiling at the first person you see today."],
+["✨","","خلّص اللي بدأته","واحد منجز أحسن من عشرة مبدوءين. اختار شي وكمّله لآخره.","Finish what you start","One finished thing beats ten started. Pick something and see it through."]
+].map(_cv);
+const TPP=[
+["📜","","«من جدّ وجد، ومن زرع حصد»","اللي بيتعب ويجتهد بيوصل لهدفه، واللي بيزرع الخير بيحصد ثماره.","“Whoever strives, finds; whoever sows, reaps”","Those who work hard reach their goal, and those who plant good harvest it."],
+["📜","","«الصبر مفتاح الفرج»","بالصبر بتنفرج الأمور مهما اشتدت. العجلة قد تضيّع النتيجة.","“Patience is the key to relief”","With patience things ease however hard they seem. Haste can lose the result."],
+["📜","","«القناعة كنز لا يفنى»","اللي بيرضى بما عنده بيعيش غني القلب، لأن الرضا ما بينتهي.","“Contentment is a treasure that never runs out”","Those satisfied with what they have are rich at heart, because contentment does not end."],
+["📜","","«الوقت كالسيف إن لم تقطعه قطعك»","الوقت بيمر سواء استعملته أو لا. اللي ما بيستثمره بيخسره.","“Time is like a sword; if you do not cut it, it cuts you”","Time passes whether or not you use it. Those who do not invest it lose it."],
+["📜","","«ربّ صدفة خير من ألف ميعاد»","أحياناً أحلى الأشياء بتيجي بدون تخطيط. خلّي قلبك مفتوح للمفاجآت الطيبة.","“A chance meeting can beat a thousand plans”","Sometimes the loveliest things arrive unplanned. Keep your heart open to happy surprises."],
+["📜","","«الجار قبل الدار»","اختيار الجار الطيب أهم من البيت نفسه، لأن الجيرة بتأثر على راحتك كل يوم.","“The neighbour before the house”","Choosing a good neighbour matters more than the house itself, as neighbours affect your comfort daily."],
+["📜","","«الصديق وقت الضيق»","الصديق الحقيقي بينعرف بوقت الشدة مش بوقت الفرح.","“A friend in need”","A true friend is known in hard times, not in good ones."],
+["📜","","«يد واحدة ما بتصفّق»","الإنجازات الكبيرة بتحتاج تعاون. شغل الفريق أقوى من شغل الفرد.","“One hand cannot clap”","Great achievements need cooperation. Teamwork is stronger than going alone."],
+["📜","","«ما حكّ جلدك مثل ظفرك»","أنسب حدا يحل مشكلتك هو أنت. اعتمد على نفسك أولاً.","“Nothing scratches your skin like your own nail”","The best person to solve your problem is you. Rely on yourself first."],
+["📜","","«في التأني السلامة وفي العجلة الندامة»","التروّي بيجنبك الأخطاء، والاستعجال غالباً بيورّث ندم.","“Caution brings safety, haste brings regret”","Taking your time avoids mistakes; rushing often brings regret."],
+["📜","","«الحاجة أم الاختراع»","الضرورة بتحفّز الإنسان يبتكر حلول جديدة. الصعوبات أحياناً بداية الإبداع.","“Necessity is the mother of invention”","Need pushes people to find new solutions. Hardship is sometimes the start of creativity."],
+["📜","","«من سار على الدرب وصل»","اللي بيكمل الطريق بإصرار بيوصل بالنهاية، حتى لو بطيء.","“Whoever walks the road arrives”","Those who keep going with determination eventually arrive, however slowly."],
+["📜","","«درهم وقاية خير من قنطار علاج»","الوقاية أرخص وأسهل بكثير من العلاج. اهتم بصحتك قبل ما تمرض.","“A dirham of prevention is worth a hundredweight of cure”","Prevention is cheaper and easier than treatment. Care for your health before you fall ill."],
+["📜","","«الكتاب خير جليس»","الكتاب صاحب بيعلّمك وبيسليك وما بيمل منك.","“A book is the best companion”","A book is a friend that teaches and entertains you and never tires of you."],
+["📜","","«لا تؤجّل عمل اليوم إلى الغد»","المماطلة بتراكم الشغل وبتزيد الضغط. ابدأ بالمهمة هلق ولو بخطوة صغيرة.","“Do not put off today's work until tomorrow”","Procrastination piles up work and pressure. Start the task now, even with one small step."],
+["📜","","«كل تأخيرة فيها خيرة»","أحياناً التأخير بيكون لصالحك وما بتعرف السبب إلا بعدين. ثق إنه في حكمة.","“Every delay hides a blessing”","Sometimes a delay works in your favour and you only see why later. Trust there is wisdom in it."],
+["📜","","«خير الكلام ما قلّ ودلّ»","أحسن الكلام اللي يكون قصير وواضح ومفيد.","“The best speech is short and meaningful”","The best words are brief, clear and useful."],
+["📜","","«لكل مقام مقال»","لكل موقف الكلام المناسب له. اختار كلامك حسب الظرف والشخص.","“Every situation has its fitting words”","Each situation has its own right words. Choose yours to suit the moment and the person."],
+["📜","","«إذا كان الكلام من فضة فالسكوت من ذهب»","أحياناً الصمت أبلغ وأحكم من الكلام، خصوصاً وقت الغضب.","“If speech is silver, silence is gold”","Sometimes silence is wiser than speech, especially when angry."],
+["📜","","«كما تدين تدان»","اللي بتعامل فيه الناس رح يرجعلك. عامل غيرك بالطريقة اللي بدك ياها.","“As you treat, so you will be treated”","How you treat people comes back to you. Treat others as you wish to be treated."],
+["📜","","«الحركة بركة»","اللي بيتحرك وبيشتغل بيلاقي الرزق والخير، واللي بيقعد ما بيتغيّر وضعه.","“Movement brings blessing”","Those who move and work find provision and good; those who sit still see no change."],
+["📜","","«الطيور على أشكالها تقع»","كل واحد بيميل لمن يشبهه. فكّر مين الناس اللي حولك وشو بيعكسوا عنك.","“Birds of a feather flock together”","People gravitate to those like themselves. Think about who is around you and what that says."],
+["📜","","«الباب اللي بيجيك منه الريح سدّه واستريح»","ابتعد عن مصدر المشاكل بدل ما تتحمله. راحتك أهم.","“Close the door the draught comes from, and rest”","Step away from the source of trouble instead of enduring it. Your peace matters."],
+["📜","","«العقل زينة»","اللي بيفكّر قبل ما يتصرف بيكسب احترام الناس وراحة باله.","“Reason is an adornment”","Those who think before acting earn respect and peace of mind."],
+["📜","","«إذا هبّت رياحك فاغتنمها»","الفرصة ما بتتكرر دايماً. لما بتجيك فرصة طيبة، استغلها بسرعة.","“When your wind blows, seize it”","Opportunity does not always repeat. When a good one comes, take it quickly."],
+["📜","","«ومن يتهيّب صعود الجبال يعش أبد الدهر بين الحفر»","من بيت شعر شهير: اللي بيخاف من التحديات الكبيرة بيضل بمكانه ولا بيتقدم.","“He who fears climbing mountains lives forever among the pits”","A famous line of verse: those who fear big challenges stay where they are and never advance."],
+["📜","","«ما كل ما يتمنى المرء يدركه»","من بيت شعر شهير: مش كل أمنية بتتحقق، وهاد جزء من الحياة. الرضا والمحاولة هما المهم.","“Not all that a man wishes does he attain”","A famous line of verse: not every wish comes true, and that is part of life. Trying and acceptance matter."],
+["📜","","«على قدر أهل العزم تأتي العزائم»","من بيت شعر شهير: الإنجازات بتكبر بقدر عزيمة أصحابها.","“Resolve comes in proportion to the resolute”","A famous line of verse: achievements grow in proportion to the determination of those behind them."],
+["📜","","«العلم في الصغر كالنقش على الحجر»","اللي بيتعلمه الإنسان بصغره بيثبت بذاكرته. شجع أولادك على التعلّم والقراءة.","“Learning in youth is like carving in stone”","What a person learns when young stays firm in memory. Encourage children to learn and read."],
+["📜","","«الأقربون أولى بالمعروف»","الأهل والأقارب أولى بالخير والاهتمام. ابدأ بالقريب منك.","“Family comes first in kindness”","Relatives deserve your kindness and care first. Begin with those closest to you."],
+["📜","","«القرد بعين أمه غزال»","كل واحد بيشوف أولاده وأشياءه أجمل ما فيها. فاحذر من التحيز ولا تقيّم بعاطفتك فقط.","“To its mother's eye, the monkey is a gazelle”","Everyone sees their own as the most beautiful. Beware of bias and do not judge by feeling alone."],
+["📜","","«جبل ما يهزّك ريح»","كن ثابت بمبادئك وقوي بوجه الصعاب، ما تخلي كل كلمة أو ظرف يهزّك.","“Be a mountain no wind can shake”","Stay firm in your principles and strong against hardship; do not let every word or setback shake you."],
+["📜","","«ابن وقتك»","تعامل مع الظروف اللي عايشها بذكاء ومرونة. اللي بيتأقلم بينجح.","“Be a child of your time”","Deal with the circumstances you live in with intelligence and flexibility. Those who adapt succeed."],
+["📜","","«قطرة قطرة بتعمل نهر»","التراكم البسيط بيصنع شي كبير. كل جهد صغير بيحسب.","“Drop by drop makes a river”","Small accumulation builds something big. Every little effort counts."],
+["📜","","«الغايب حجته معه»","اللي بيغيب عن شي بيكون له عذر، فلا تستعجل بلومه قبل ما تسمعه.","“The absent one carries his excuse”","Someone who is absent usually has a reason, so do not rush to blame before hearing them."]
+].map(_cv);
+const TPC={h:["🩺","صحتك أولاً","Health first"],t:["💡","معلومة تقنية","Tech know-how"],w:["✨","حكمة اليوم","Thought of the day"],p:["📜","مثل وعبرة","Proverb & lesson"]};
+const TPQ=["h","t","w","h","p","t","w","h","p","t"];
+const XT={t0:Date.now(),on:0,el:null,it:null,fk:"mv",tm:0,c:{}};
 function tipOn(){return store.get("tips")!==0}
-function tipReason(it){
- const nm=cleanTitle(it.name)||it.name,r=it.rt>0?(+it.rt).toFixed(1):"";
- const ar=[
-  "بنصحك بلطف تحضر «"+nm+"»"+(r?"، تقييمه "+r+" من 10":"")+". فيه أجواء بتشدّك من أول دقايق، وبصراحة راح يروح عليك لو ما حضرته.",
-  "جرّب «"+nm+"» الليلة. قصة حلوة وسهرة مريحة، وإذا فاتك راح تندم إنك ما شفته من بدري.",
-  "«"+nm+"» من الأفلام اللي بتستاهل وقتك"+(r?" (تقييمه "+r+"/10)":"")+". خذ استراحة وحضّره، ما بتخسر إشي.",
-  "لو بدك نصيحة صديق: «"+nm+"». فيلم بيعطيك متعة وراحة بال، وفرصة حلوة ما لازم تروح عليك."
- ];
- const en=[
-  "A gentle suggestion: watch “"+nm+"”"+(r?", rated "+r+" out of 10":"")+". It pulls you in from the first minutes, and honestly you would miss out if you skipped it.",
-  "Try “"+nm+"” tonight. A lovely story and a relaxing evening, and you may regret not seeing it sooner.",
-  "“"+nm+"” is worth your time"+(r?" (rated "+r+"/10)":"")+". Take a break and put it on, you have nothing to lose.",
-  "Friendly advice: “"+nm+"”. It brings enjoyment and peace of mind, a nice chance not to miss."
- ];
- const L=S.lang=="ar"?ar:en;return L[Math.random()*L.length|0];
+function tipHealth(){
+ const h=new Date().getHours(),bk=h>=5&&h<11?"m":h>=11&&h<17?"d":h>=17&&h<22?"e":"n";
+ let n=+store.get("tipn")||0;store.set("tipn",n+1);
+ const c=TPQ[n%TPQ.length],A={h:TPH,t:TPT,w:TPW,p:TPP}[c];
+ let seen=store.get("tipx_"+c);if(!Array.isArray(seen))seen=[];
+ let P=[];A.forEach((x,i)=>{if(seen.indexOf(i)>=0)return;const m=c=="h"&&x.w&&x.w.indexOf(bk)>=0;if(!x.w||c!="h"||m){P.push(i);if(m){P.push(i);P.push(i)}}});
+ if(!P.length){seen=[];A.forEach((x,i)=>P.push(i))}
+ const i=P[Math.random()*P.length|0];seen.push(i);store.set("tipx_"+c,seen.slice(-(A.length-1)));
+ const r=Object.assign({},A[i]);r.c=c;return r;
 }
 function tipPick(){
- let fk="mv",L=[];
- try{L=(src("__mv")||[]).filter(c=>c&&c.logo&&c.name)}catch(e){}
- if(!L.length){fk="sr";try{L=(src("__sr")||[]).filter(c=>c&&c.logo&&c.name)}catch(e){}}
+ const pool=k=>{try{return(src(k)||[]).filter(c=>c&&c.logo&&c.name)}catch(e){return[]}};
+ let fk=store.get("tipk")=="mv"?"sr":"mv",L=pool(fk=="mv"?"__mv":"__sr");
+ if(!L.length){fk=fk=="mv"?"sr":"mv";L=pool(fk=="mv"?"__mv":"__sr")}
  if(!L.length)return null;
  let seen=store.get("tipseen");if(!Array.isArray(seen))seen=[];
  let P=L.filter(c=>!seen.includes(c.id));if(!P.length){P=L;seen=[]}
- const good=P.filter(c=>c.rt>=6.5),pool=good.length>=5?good:P,it=pool[Math.random()*pool.length|0];
- seen.push(it.id);store.set("tipseen",seen.slice(-15));
+ const good=P.filter(c=>c.rt>=6.5),pl=good.length>=5?good:P,it=pl[Math.random()*pl.length|0];
+ seen.push(it.id);store.set("tipseen",seen.slice(-25));store.set("tipk",fk);
  return{it:it,fk:fk};
 }
 function tipBuild(){
  if(XT.el)return;
  const d=document.createElement("div");d.id="tip";
- d.innerHTML='<div class="tpc"><span class="tpk"></span><p class="tpq" dir="auto"></p><div class="tph"></div><p class="tps" dir="auto"></p><img class="tpi" alt=""><p class="tpf"></p><div class="tpb"></div></div>';
+ d.innerHTML='<div class="tpc"><div class="tph2"><span class="tpk"></span><p class="tpq" dir="auto"></p><p class="tps" dir="auto"></p></div><div class="tpm"><img class="tpi" alt=""><div class="tpt"><div class="tpl"></div><h3 class="tpn" dir="auto"></h3><div class="tpd"></div><p class="tpw" dir="auto"></p><p class="tpp" dir="auto"></p><p class="tpa" dir="auto"></p></div></div><p class="tpf"></p><div class="tpb"></div></div>';
  document.body.appendChild(d);XT.el=d;
+}
+function tipCut(s,n){s=String(s||"").replace(/\s+/g," ").trim();if(s.length<=n)return s;const c=s.slice(0,n),k=Math.max(c.lastIndexOf(". "),c.lastIndexOf("، "),c.lastIndexOf(" "));return c.slice(0,k>n*.5?k:n).replace(/[\s,.\u060C]+$/,"")+"…"}
+function tipFill(it,fk,f){
+ const d=XT.el;if(!d||XT.it!==it)return;const g=x=>d.querySelector(x),ri=(()=>{try{return rcInfo(it)}catch(e){return null}})();
+ f=f||{};
+ const rt=+f.rating>0?+f.rating:(ri&&ri.r)||+it.rt||0,yr=f.year||(ri&&ri.y)||"";
+ let gk=[];try{gk=rcGenres(String(f.genre||""))}catch(e){}if(!gk.length&&ri&&ri.g)gk=ri.g;
+ g(".tpd").textContent=[rt>0?"⭐ "+rt.toFixed(1)+"/10":"",yr,f.genre&&String(f.genre).trim()].filter(Boolean).join("  ·  ");
+ const hk=gk.find(k=>TPG[k]),hook=hk?TPG[hk][S.lang=="ar"?0:1]:HX("اختيار بيستاهل وقتك وبيناسب سهرة مريحة.","A pick that is worth your time and suits a relaxed evening.");
+ const rk=rt>=8?HX("تقييمه من الأعلى بين الأعمال، وكتير ناس بيعتبروه من الأفضل بنوعه. ","Its rating is among the very highest, and many viewers count it among the best of its kind. "):rt>=7?HX("تقييمه قوي ("+rt.toFixed(1)+"/10)، يعني الجمهور أحبه فعلاً. ","It is rated strongly ("+rt.toFixed(1)+"/10), which means audiences genuinely liked it. "):"";
+ g(".tpw").textContent=HX("ليش تحضره؟ ","Why watch? ")+rk+hook;
+ const pl=tipCut(f.plot,230);g(".tpp").textContent=pl?HX("القصة: ","Story: ")+pl:"";
+ const ca=(f.castL&&f.castL.length?f.castL.map(x=>x.name):String(f.cast||"").split(/[,\u060C]/).map(x=>x.trim())).filter(Boolean).slice(0,3);
+ g(".tpa").textContent=ca.length?HX("بطولة: ","Starring: ")+ca.join(HX("، ",", ")):"";
 }
 function tipShow(force){
  const p=tipPick();if(!p){if(force)osd(HX("ما في أفلام بالمكتبة لسا","No movies in the library yet"));return false}
  tipBuild();XT.last=Date.now();XT.it=p.it;XT.fk=p.fk;
- const L=S.lang=="ar"?TPA:TPE,q=L[Math.random()*L.length|0],d=XT.el,g=x=>d.querySelector(x);
- g(".tpk").textContent=q.k;g(".tpq").textContent=q.x;
- g(".tph").textContent=HX("🎬 نصيحة من القلب","🎬 A friendly tip");
- g(".tps").textContent=tipReason(p.it);
+ const d=XT.el,g=x=>d.querySelector(x),hl=tipHealth(),ar=S.lang=="ar";
+ const cc=TPC[hl.c];g(".tpk").textContent=(hl.c=="h"?hl.i:cc[0])+" "+cc[ar?1:2];
+ g(".tpq").textContent=hl[ar?"a":"e"][0];g(".tps").textContent=hl[ar?"a":"e"][1];
+ g(".tpl").textContent=HX("🎬 لسهرتك · ","🎬 For tonight · ")+HX(p.fk=="sr"?"مسلسل":"فيلم",p.fk=="sr"?"Series":"Movie");
+ g(".tpn").textContent=cleanTitle(p.it.name)||p.it.name;
  const im=g(".tpi");im.style.display="";im.onerror=()=>{im.style.display="none"};im.src=p.it.logo;
- g(".tpf").textContent=HX("إذا ما حبيت نصيحتي، بتقدر توقفها من الإعدادات ← النصائح.","If you do not like my advice, you can turn it off from Settings, then Tips.");
+ g(".tpf").textContent=(hl.c=="h"?HX("معلومات صحية عامة للتوعية، ما بتغني عن استشارة الطبيب. ","General wellness information, not a substitute for medical advice. "):"")+HX("بتقدر توقف النصائح من الإعدادات.","You can turn tips off in Settings.");
+ const c=XT.c[p.it.id];tipFill(p.it,p.fk,c||null);
+ if(!c)Promise.all([tmdb(p.it,p.fk).catch(()=>null),xinfo(p.it,p.fk).catch(()=>null)]).then(r=>{const a=r[0]||{},x=r[1]||{},f={...x};Object.keys(a).forEach(k=>{if(a[k])f[k]=a[k]});XT.c[p.it.id]=f;tipFill(p.it,p.fk,f)});
  const b=g(".tpb");b.innerHTML="";
- const w=waBtn(HX("▶ شوف الفيلم","▶ See the movie"),()=>{const it=XT.it,fk=XT.fk;tipClose(true);showDet(it,fk)},1);
+ const w=waBtn(HX(p.fk=="sr"?"▶ شوف المسلسل":"▶ شوف الفيلم",p.fk=="sr"?"▶ See the series":"▶ See the movie"),()=>{const it=XT.it,fk=XT.fk;tipClose(true);showDet(it,fk)},1);
  b.append(w,waBtn(HX("شكراً، لاحقاً","Thanks, later"),()=>tipClose()),waBtn(HX("إيقاف النصائح","Turn tips off"),()=>{store.set("tips",0);tipClose();osd(HX("تم إيقاف النصائح، بتقدر ترجعها من الإعدادات","Tips are off. You can turn them back on in Settings"))}));
  XT.on=1;S.tipBack=document.activeElement;d.classList.add("on");focusEl(w);
  clearTimeout(XT.tm);XT.tm=setTimeout(()=>{if(XT.on)tipClose()},60000);
  return true;
 }
 function tipBusy(){const dl=$("#dlg"),pw=$("#pwd");return XT.on||waOn()||(dl&&dl.classList.contains("on"))||(pw&&pw.classList.contains("on"))||(RV&&RV.on)||(CW&&CW.on)||(VQ&&VQ.on)||kbOpen()||document.hidden}
-function tipTry(){try{const v=V();if((v!="home"&&v!="page")||!tipOn()||tipBusy()||Date.now()-(XT.last||0)<45000)return;tipShow()}catch(e){}}
+function tipTry(){try{const v=V();if((v!="home"&&v!="page")||!tipOn()||tipBusy()||Date.now()-(XT.last||0)<1200000)return;tipShow()}catch(e){}}
 function tipHome(){if(!S.tipFirst){S.tipFirst=1;setTimeout(tipTry,3000)}}
 function tipPage(k,keep){if(keep||!(k=="__all"||k=="__mv"||k=="__sr"))return;setTimeout(tipTry,1500)}
 function tipClose(noFocus){
@@ -3498,7 +3746,8 @@ R('H','.sbx','البحث الشامل والصوت','البحث في كل الق
 R('H','.tw','الساعة والطقس والشبكة','الوقت والتاريخ والطقس واسم الشبكة وحالة الاشتراك.|معلومات للعرض فقط.|تتحدث تلقائياً.','Clock, weather, network','Time, date, weather, network and account info.|Display only.|Updates automatically.'),
 R('H','#wg','الويدجتس','بطاقات اختيارية: أوقات الصلاة، أسعار العملات، راديو، ملاحظة وويدجت خاص.|فعّلها من الإعدادات.|تظهر هنا مرتبة.','Widgets','Optional cards: prayer times, FX rates, radio, note, custom.|Enable them in Settings.|They appear here.'),
 R('H','#tiles','القنوات والأفلام والمسلسلات','ثلاث بلاطات للأقسام الرئيسية مع عدد العناصر.|اضغط البلاطة (OK على الريموت).|ينفتح القسم بقائمته.','Channels, Movies, Series','Three tiles for main sections with counts.|Press a tile (OK on remote).|The section opens.'),
-R('H','#sug .hero','اقتراح اليوم','بطاقة واحدة تبدّل بين فيلم ومسلسل مقترح في كل مرة، وتعرض معاينة عند التحديد.|اضغطها لفتح التفاصيل، أو زر الاقتراحات لتبديلها.|تظهر تفاصيل العمل وتقدر تشغّله.','Today\u2019s pick','One card that alternates between a suggested movie and series, with a preview on focus.|Press it for details, or use the refresh button to swap it.|Details open and you can play it.'),
+R('H','#sug .rctile','مقترحات','بطاقة تعرض لك اقتراحات مرتبة حسب ذوقك وما شاهدته.|اضغط البطاقة لفتح شاشة المقترحات.|تقدر تخصص الأنواع واللغة والسنة، وتشغّل أي عمل منها.','Suggestions','A card with picks ranked by your taste and viewing.|Press it to open the Suggestions screen.|Customize genres, language and year, and play anything from it.'),
+R('H','#sug .hero','فيلم أو مسلسل لك','بطاقة بالنص تبدّل بين فيلم ومسلسل كل 10 دقايق، وتعرض معاينة عند التحديد.|اضغطها لفتح التفاصيل، أو زر الاقتراحات لتبديلها فوراً.|تظهر تفاصيل العمل وتقدر تشغّله.','A movie or series for you','The middle card alternates between a movie and a series every 10 minutes, with a preview on focus.|Press it for details, or use the refresh button to swap it now.|Details open and you can play it.'),
 R('H','#sug .cwtile','مواصلة المشاهدة','تجمع كل ما بدأت مشاهدته مع حلقة التقدم، مقسّمة إلى أفلام ومسلسلات.|اضغط البطاقة ثم اختر مربع «أفلام» أو «مسلسلات».|تظهر أعمالك غير المكتملة، اختر واحداً ليكمل من آخر موضع، أو أزِله من القائمة.','Continue watching','Everything you started, with a progress ring, split into Movies and Series.|Press the card, then pick the Movies or Series square.|Your unfinished titles appear; choose one to resume, or remove it from the list.'),
 R('H','#b-fav','المفضلة','اختصار لقائمة ما أضفته بالقلب ♥.|اضغط الزر.|تنفتح صفحة المفضلة.','Favorites','Shortcut to items you hearted ♥.|Press it.|Favorites page opens.'),
 R('H','#b-new','اقتراحات جديدة','تبديل الاقتراحات بمجموعة أخرى.|اضغط الزر.|تتجدد البطاقات.','New suggestions','Reshuffles the suggestions.|Press it.|New cards appear.'),
