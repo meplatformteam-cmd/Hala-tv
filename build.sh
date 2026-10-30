@@ -2829,8 +2829,8 @@ def make(w, h, path, scale):
 make(320, 180, 'android/app/src/main/res/drawable/banner.png', 0.78)
 make(192, 192, 'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png', 0.62)
 os.makedirs('android/app/src/main/res/drawable-nodpi', exist_ok=True)
-k = 324.0 / logo.height
-sl = logo.resize((max(1, int(logo.width * k)), 324), Image.LANCZOS)
+k = 440.0 / logo.height
+sl = logo.resize((max(1, int(logo.width * k)), 440), Image.LANCZOS)
 sl.save('android/app/src/main/res/drawable-nodpi/splash_logo.png')
 EOF
 python3 -c 'import PIL' 2>/dev/null || pip install pillow || pip install --break-system-packages pillow
