@@ -434,6 +434,16 @@ public class MainActivity extends Activity {
     }
 
     @JavascriptInterface
+    public boolean openUrl(final String url) {
+      try {
+        Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        return true;
+      } catch (Exception e) { return false; }
+    }
+
+    @JavascriptInterface
     public void install(final String url) {
       new Thread(new Runnable() {
         public void run() {
