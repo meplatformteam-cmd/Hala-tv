@@ -180,6 +180,449 @@ public class NetWatch {
   }
 }
 EOF
+cat > android/app/src/main/java/com/hala/tv/Perf.java <<'EOF'
+package com.hala.tv;
+
+import android.app.ActivityManager;
+import android.app.UiModeManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.view.InputDevice;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.DefaultLoadControl;
+import org.json.JSONObject;
+
+/** Device detection + adaptive buffering. One place, used by the WebView bridge and both players. */
+public final class Perf {
+  private Perf() {}
+
+  private static int tierCache = -1;
+
+  public static long ramMb(Context c) {
+    try {
+      ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);
+      ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+      am.getMemoryInfo(mi);
+      return mi.totalMem / (1024L * 1024L);
+    } catch (Throwable e) { return 0; }
+  }
+
+  /** 0 = weak, 1 = middle, 2 = strong. Decided from RAM, cores and Android version. */
+  public static int tier(Context c) {
+    if (tierCache >= 0) return tierCache;
+    int t = 1;
+    try {
+      long ram = ramMb(c);
+      int cores = Runtime.getRuntime().availableProcessors();
+      boolean lowRam = false;
+      try { lowRam = ((ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE)).isLowRamDevice(); } catch (Throwable e) {}
+      if (lowRam || (ram > 0 && ram <= 1800) || Build.VERSION.SDK_INT <= 22 || cores <= 2) t = 0;
+      else if (ram >= 3500 && cores >= 6 && Build.VERSION.SDK_INT >= 28) t = 2;
+      else t = 1;
+    } catch (Throwable e) {}
+    tierCache = t;
+    return t;
+  }
+
+  private static String netType(Context c) {
+    try {
+      ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+      if (Build.VERSION.SDK_INT >= 23) {
+        NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        if (nc == null) return "none";
+        if (nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) return "eth";
+        if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return "wifi";
+        if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return "cell";
+        return "other";
+      }
+      android.net.NetworkInfo ni = cm.getActiveNetworkInfo();
+      if (ni == null || !ni.isConnected()) return "none";
+      int ty = ni.getType();
+      return ty == ConnectivityManager.TYPE_WIFI ? "wifi" : ty == ConnectivityManager.TYPE_ETHERNET ? "eth" : ty == ConnectivityManager.TYPE_MOBILE ? "cell" : "other";
+    } catch (Throwable e) { return "?"; }
+  }
+
+  private static boolean hasDpad() {
+    try {
+      for (int id : InputDevice.getDeviceIds()) {
+        InputDevice d = InputDevice.getDevice(id);
+        if (d != null && (d.getSources() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD && !d.isVirtual()) return true;
+      }
+    } catch (Throwable e) {}
+    return false;
+  }
+
+  /** Everything the web layer needs to pick its UI. Cheap, safe to call at startup. */
+  public static String deviceJson(Context c) {
+    JSONObject o = new JSONObject();
+    try {
+      DisplayMetrics dm = c.getResources().getDisplayMetrics();
+      float dens = dm.density > 0 ? dm.density : 1f;
+      float wdp = dm.widthPixels / dens, hdp = dm.heightPixels / dens;
+      float swdp = Math.min(wdp, hdp), lwdp = Math.max(wdp, hdp);
+      PackageManager pm = c.getPackageManager();
+      boolean leanback = pm.hasSystemFeature("android.software.leanback") || pm.hasSystemFeature("android.hardware.type.television");
+      boolean touch = pm.hasSystemFeature("android.hardware.touchscreen");
+      int ui = Configuration.UI_MODE_TYPE_NORMAL;
+      try { ui = ((UiModeManager) c.getSystemService(Context.UI_MODE_SERVICE)).getCurrentModeType(); } catch (Throwable e) {}
+      String uis = ui == Configuration.UI_MODE_TYPE_TELEVISION ? "tv" : ui == Configuration.UI_MODE_TYPE_WATCH ? "watch" : ui == Configuration.UI_MODE_TYPE_CAR ? "car" : ui == Configuration.UI_MODE_TYPE_DESK ? "desk" : "normal";
+      boolean dpad = hasDpad();
+      String cls;
+      if ("tv".equals(uis) || leanback) cls = "tv";
+      else if (!touch && lwdp >= 900f) cls = "tv";
+      else if (swdp >= 600f) cls = "tablet";
+      else cls = "phone";
+      o.put("cls", cls);
+      o.put("model", Build.MODEL == null ? "" : Build.MODEL);
+      o.put("brand", Build.MANUFACTURER == null ? "" : Build.MANUFACTURER);
+      o.put("device", Build.DEVICE == null ? "" : Build.DEVICE);
+      o.put("sdk", Build.VERSION.SDK_INT);
+      o.put("rel", Build.VERSION.RELEASE == null ? "" : Build.VERSION.RELEASE);
+      o.put("ui", uis);
+      o.put("leanback", leanback);
+      o.put("touch", touch);
+      o.put("dpad", dpad);
+      o.put("wdp", Math.round(wdp));
+      o.put("hdp", Math.round(hdp));
+      o.put("dpi", dm.densityDpi);
+      o.put("ram", ramMb(c));
+      o.put("cores", Runtime.getRuntime().availableProcessors());
+      o.put("tier", tier(c));
+      o.put("net", netType(c));
+      o.put("pen", penalty(c));
+    } catch (Throwable e) {}
+    return o.toString();
+  }
+
+  // ---------- adaptive buffering ----------
+  private static SharedPreferences sp(Context c) { return c.getSharedPreferences("h", 0); }
+
+  /** 0..3: raised when playback stalled a lot on this connection, lowered after clean sessions. */
+  public static int penalty(Context c) {
+    try { return Math.max(0, Math.min(3, sp(c).getInt("net_pen", 0))); } catch (Throwable e) { return 0; }
+  }
+  public static void bump(Context c) { try { sp(c).edit().putInt("net_pen", Math.min(3, penalty(c) + 1)).apply(); } catch (Throwable e) {} }
+  public static void relax(Context c) { try { int p = penalty(c); if (p > 0) sp(c).edit().putInt("net_pen", p - 1).apply(); } catch (Throwable e) {} }
+  public static long savedBps(Context c) { try { return sp(c).getLong("net_bps", 0L); } catch (Throwable e) { return 0L; } }
+  public static void saveBps(Context c, long bps) { try { if (bps > 200000L) sp(c).edit().putLong("net_bps", bps).apply(); } catch (Throwable e) {} }
+
+  public static boolean looksLive(String url) {
+    if (url == null) return true;
+    String u = url.toLowerCase();
+    if (u.contains("/movie/") || u.contains("/series/")) return false;
+    if (u.matches(".*\\.(mp4|mkv|avi|mov|wmv|webm|m4v|flv)(\\?.*)?$")) return false;
+    return true;
+  }
+
+  public static DefaultLoadControl loadControl(Context c, boolean live) {
+    int t = tier(c), p = penalty(c);
+    int min, max, start, after, bytes;
+    if (live) {
+      min = t == 0 ? 12000 : t == 1 ? 20000 : 30000;
+      max = t == 0 ? 25000 : t == 1 ? 40000 : 60000;
+      start = 1500;
+      after = 4000;
+    } else {
+      min = t == 0 ? 20000 : t == 1 ? 30000 : 45000;
+      max = t == 0 ? 45000 : t == 1 ? 90000 : 150000;
+      start = 2000;
+      after = 6000;
+    }
+    min += p * 8000;
+    max += p * 20000;
+    after += p * 3000;
+    bytes = t == 0 ? 24 * 1024 * 1024 : t == 1 ? 64 * 1024 * 1024 : 120 * 1024 * 1024;
+    if (max < min) max = min;
+    return new DefaultLoadControl.Builder()
+      .setBufferDurationsMs(min, max, start, after)
+      .setTargetBufferBytes(bytes)
+      .setPrioritizeTimeOverSizeThresholds(t != 0)
+      .setBackBuffer(t == 0 ? 0 : 20000, false)
+      .build();
+  }
+
+  /** Live items sit a little behind the edge. A bigger cushion on shaky connections means fewer stalls. */
+  public static MediaItem item(Context c, String url, boolean live) {
+    MediaItem.Builder b = new MediaItem.Builder().setUri(url);
+    if (live) {
+      long target = 6000L + penalty(c) * 4000L;
+      b.setLiveConfiguration(new MediaItem.LiveConfiguration.Builder()
+        .setTargetOffsetMs(target)
+        .setMinOffsetMs(3000L)
+        .setMaxOffsetMs(target + 25000L)
+        .build());
+    }
+    return b.build();
+  }
+}
+EOF
+cat > android/app/src/main/java/com/hala/tv/ImgCache.java <<'EOF'
+package com.hala.tv;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * Poster / logo cache for the WebView.
+ * - Serves every http(s) image request from a disk cache (survives restarts, ignores the provider's no-cache headers).
+ * - Downloads at most a few images at a time, so a weak line is not saturated and the stream is not starved.
+ * - Shrinks oversized provider posters (often 1500+ px) before they reach the WebView: faster download of the next
+ *   screen, much less decode time and memory on weak boxes.
+ * - Any failure returns null so the WebView falls back to its own normal request. Nothing here can block playback.
+ */
+public final class ImgCache {
+  private ImgCache() {}
+
+  private static File dir;
+  private static Semaphore gate;
+  private static int maxPx = 900;
+  private static final long MAX_BYTES = 220L * 1024 * 1024;
+  private static final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<String, Object>();
+  private static final ConcurrentHashMap<String, long[]> fails = new ConcurrentHashMap<String, long[]>();
+  private static final AtomicInteger writes = new AtomicInteger();
+  private static volatile int hits, misses, bad;
+
+  public static void init(Context c) {
+    try {
+      dir = new File(c.getCacheDir(), "img");
+      dir.mkdirs();
+      int tier = Perf.tier(c);
+      gate = new Semaphore(tier == 0 ? 3 : 6, true);
+      maxPx = tier == 0 ? 640 : 900;
+      new Thread(new Runnable() { public void run() { trim(); } }).start();
+    } catch (Throwable e) { dir = null; }
+  }
+
+  public static String stats() { return "hit=" + hits + " miss=" + misses + " bad=" + bad; }
+
+  public static void clear() {
+    try {
+      File[] fs = dir == null ? null : dir.listFiles();
+      if (fs != null) for (File f : fs) f.delete();
+    } catch (Throwable e) {}
+  }
+
+  public static WebResourceResponse handle(WebResourceRequest r) {
+    try {
+      if (dir == null || r == null || !"GET".equalsIgnoreCase(r.getMethod())) return null;
+      String url = r.getUrl().toString();
+      if (!(url.startsWith("http://") || url.startsWith("https://"))) return null;
+      Map<String, String> h = r.getRequestHeaders();
+      if (h == null) return null;
+      String acc = h.get("Accept");
+      if (acc == null || acc.indexOf("image/") < 0 || h.get("Range") != null) return null;
+      String key = sha1(url);
+      File f = new File(dir, key);
+      WebResourceResponse cached = fromDisk(f);
+      if (cached != null) { hits++; return cached; }
+      Object lock = new Object();
+      Object old = locks.putIfAbsent(key, lock);
+      if (old != null) lock = old;
+      synchronized (lock) {
+        try {
+          cached = fromDisk(f);
+          if (cached != null) { hits++; return cached; }
+          long[] fl = fails.get(key);
+          if (fl != null && fl[0] >= 2 && System.currentTimeMillis() - fl[1] < 30000) return quick404();
+          gate.acquire();
+          try {
+            misses++;
+            byte[] body = null;
+            String[] mime = new String[1];
+            try { body = download(url, h.get("User-Agent"), mime); } catch (Throwable e) { body = null; }
+            if (body == null || body.length < 16) { markFail(key); return null; }
+            fails.remove(key);
+            String origMime = mime[0];
+            try {
+              byte[] sm = shrink(url, body, origMime, mime);
+              if (sm != null) body = sm; else mime[0] = origMime;
+            } catch (Throwable e) { mime[0] = origMime; }
+            save(f, mime[0], body);
+            return resp(mime[0], new ByteArrayInputStream(body));
+          } finally { gate.release(); }
+        } finally { locks.remove(key); }
+      }
+    } catch (Throwable e) { return null; }
+  }
+
+  private static void markFail(String key) {
+    bad++;
+    long[] fl = fails.get(key);
+    if (fl == null) fl = new long[2];
+    fl[0]++;
+    fl[1] = System.currentTimeMillis();
+    fails.put(key, fl);
+    if (fails.size() > 2000) fails.clear();
+  }
+
+  private static WebResourceResponse quick404() {
+    Map<String, String> hd = new HashMap<String, String>();
+    hd.put("Access-Control-Allow-Origin", "*");
+    return new WebResourceResponse("text/plain", "utf-8", 404, "Not Found", hd, new ByteArrayInputStream(new byte[0]));
+  }
+
+  private static WebResourceResponse resp(String mime, InputStream in) {
+    Map<String, String> hd = new HashMap<String, String>();
+    hd.put("Access-Control-Allow-Origin", "*");
+    hd.put("Cache-Control", "max-age=86400");
+    return new WebResourceResponse(mime, null, 200, "OK", hd, in);
+  }
+
+  private static WebResourceResponse fromDisk(File f) {
+    try {
+      if (!f.exists() || f.length() < 18) return null;
+      FileInputStream in = new FileInputStream(f);
+      int n = in.read();
+      if (n <= 0 || n > 60) { in.close(); f.delete(); return null; }
+      byte[] m = new byte[n];
+      int got = 0;
+      while (got < n) { int k = in.read(m, got, n - got); if (k < 0) break; got += k; }
+      if (got != n) { in.close(); f.delete(); return null; }
+      f.setLastModified(System.currentTimeMillis());
+      return resp(new String(m, "UTF-8"), in);
+    } catch (Throwable e) { return null; }
+  }
+
+  private static void save(File f, String mime, byte[] body) {
+    try {
+      byte[] m = mime.getBytes("UTF-8");
+      File t = new File(dir, f.getName() + ".tmp");
+      FileOutputStream o = new FileOutputStream(t);
+      o.write(m.length);
+      o.write(m);
+      o.write(body);
+      o.close();
+      if (!t.renameTo(f)) t.delete();
+      if (writes.incrementAndGet() % 120 == 0) {
+        new Thread(new Runnable() { public void run() { trim(); } }).start();
+      }
+    } catch (Throwable e) {}
+  }
+
+  private static byte[] download(String url0, String ua, String[] mimeOut) throws Exception {
+    String url = url0;
+    for (int hop = 0; hop < 5; hop++) {
+      HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+      try {
+        c.setConnectTimeout(7000);
+        c.setReadTimeout(10000);
+        c.setInstanceFollowRedirects(false);
+        if (ua != null) c.setRequestProperty("User-Agent", ua);
+        c.setRequestProperty("Accept", "image/*,*/*;q=0.8");
+        int code = c.getResponseCode();
+        if (code == 301 || code == 302 || code == 303 || code == 307 || code == 308) {
+          String loc = c.getHeaderField("Location");
+          if (loc == null) return null;
+          url = new URL(new URL(url), loc).toString();
+          continue;
+        }
+        if (code != 200) return null;
+        String ct = c.getContentType();
+        if (ct != null) { int i = ct.indexOf(';'); if (i > 0) ct = ct.substring(0, i); ct = ct.trim().toLowerCase(); }
+        if (ct == null || !ct.startsWith("image/")) return null;
+        InputStream in = c.getInputStream();
+        ByteArrayOutputStream bo = new ByteArrayOutputStream(32768);
+        byte[] buf = new byte[16384];
+        int n;
+        while ((n = in.read(buf)) > 0) {
+          bo.write(buf, 0, n);
+          if (bo.size() > 12 * 1024 * 1024) return null;
+        }
+        mimeOut[0] = ct;
+        return bo.toByteArray();
+      } finally { c.disconnect(); }
+    }
+    return null;
+  }
+
+  /** Returns smaller bytes (and sets mime[0]) or null to keep the original. */
+  private static byte[] shrink(String url, byte[] data, String mime, String[] mimeOut) {
+    if (data.length < 45 * 1024) return null;
+    if (mime.indexOf("svg") >= 0 || mime.indexOf("gif") >= 0) return null;
+    if (url.indexOf("image.tmdb.org") >= 0) return null;   /* already sized by thumb() */
+    BitmapFactory.Options o = new BitmapFactory.Options();
+    o.inJustDecodeBounds = true;
+    BitmapFactory.decodeByteArray(data, 0, data.length, o);
+    int w = o.outWidth, hh = o.outHeight, mx = Math.max(w, hh);
+    if (w <= 0 || hh <= 0 || mx <= maxPx * 13 / 10) return null;
+    int ss = 1;
+    while (mx / (ss * 2) >= maxPx) ss *= 2;
+    BitmapFactory.Options o2 = new BitmapFactory.Options();
+    o2.inSampleSize = ss;
+    Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length, o2);
+    if (b == null) return null;
+    try {
+      int bw = b.getWidth(), bh = b.getHeight(), bm = Math.max(bw, bh);
+      if (bm > maxPx) {
+        float sc = (float) maxPx / bm;
+        Bitmap s = Bitmap.createScaledBitmap(b, Math.max(1, Math.round(bw * sc)), Math.max(1, Math.round(bh * sc)), true);
+        if (s != b) { b.recycle(); b = s; }
+      }
+      boolean png = b.hasAlpha() && (mime.indexOf("png") >= 0 || mime.indexOf("webp") >= 0);
+      ByteArrayOutputStream bo = new ByteArrayOutputStream(64 * 1024);
+      b.compress(png ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, png ? 100 : 82, bo);
+      if (bo.size() < data.length * 9 / 10) {
+        mimeOut[0] = png ? "image/png" : "image/jpeg";
+        return bo.toByteArray();
+      }
+      return null;
+    } finally { try { b.recycle(); } catch (Throwable e) {} }
+  }
+
+  private static void trim() {
+    try {
+      File[] fs = dir == null ? null : dir.listFiles();
+      if (fs == null) return;
+      long tot = 0;
+      for (File f : fs) {
+        if (f.getName().endsWith(".tmp")) { if (System.currentTimeMillis() - f.lastModified() > 600000) f.delete(); continue; }
+        tot += f.length();
+      }
+      if (tot <= MAX_BYTES) return;
+      java.util.Arrays.sort(fs, new java.util.Comparator<File>() {
+        public int compare(File a, File b) { return Long.compare(a.lastModified(), b.lastModified()); }
+      });
+      long target = MAX_BYTES * 80 / 100;
+      for (File f : fs) {
+        if (tot <= target) break;
+        long l = f.length();
+        if (f.delete()) tot -= l;
+      }
+    } catch (Throwable e) {}
+  }
+
+  private static String sha1(String s) throws Exception {
+    byte[] d = MessageDigest.getInstance("SHA-1").digest(s.getBytes("UTF-8"));
+    StringBuilder sb = new StringBuilder(40);
+    for (byte b : d) { sb.append(Character.forDigit((b >> 4) & 15, 16)); sb.append(Character.forDigit(b & 15, 16)); }
+    return sb.toString();
+  }
+}
+EOF
+
 cat > android/app/src/main/java/com/hala/tv/MainActivity.java <<'EOF'
 package com.hala.tv;
 
@@ -235,6 +678,8 @@ import androidx.media3.common.text.CueGroup;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
+import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy;
 import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
@@ -329,6 +774,29 @@ public class MainActivity extends Activity {
   private long exoPlayAt, exoMoveAt;
   private int exoLastN;
   private boolean exoVerified, exoErrSent, exoTrKnown, exoVid = true, vlcFrameSent;
+  // ---- adaptive stall handling (shared idea with PlayerActivity) ----
+  private boolean exoLive = false, exoReady = false, exoBoosted = false, exoBoostRun = false;
+  private String exoUrl = "";
+  private long exoT0 = 0;
+  private DefaultBandwidthMeter exoMeter;
+  private final java.util.ArrayList<Long> exoStalls = new java.util.ArrayList<Long>();
+
+  private void exoStallMark() {
+    if (!exoReady || exo == null) return;
+    long now = SystemClock.uptimeMillis();
+    exoStalls.add(now);
+    while (!exoStalls.isEmpty() && now - exoStalls.get(0) > 90000L) exoStalls.remove(0);
+    js("stall", "{\"n\":" + exoStalls.size() + ",\"pen\":" + Perf.penalty(this) + "}");
+    if (exoStalls.size() >= 3 && !exoBoosted) {
+      exoBoosted = true;
+      Perf.bump(this);
+      final String u = exoUrl;
+      final long pos = exoLive ? 0 : Math.max(0, exo.getCurrentPosition() - 2000);
+      final int ss = sid;
+      hnd.post(new Runnable() { public void run() { exoBoostRun = true; exoStart(u, pos, ss); } });
+    }
+  }
+
   private void exoResetWatch() { exoPlayAt = 0; exoMoveAt = SystemClock.uptimeMillis(); exoLastN = -1; exoVerified = false; exoErrSent = false; exoTrKnown = false; exoVid = true; }
   private void exoBad(String code) { if (exoErrSent) return; exoErrSent = true; js("err", JSONObject.quote(code)); }
   private void exoWatch() {
@@ -361,6 +829,9 @@ public class MainActivity extends Activity {
   public class Bridge {
     @JavascriptInterface
     public void setSttKey(String k) { sttKey = k == null ? "" : k.trim(); }
+
+    @JavascriptInterface
+    public String deviceInfo() { return Perf.deviceJson(MainActivity.this); }
 
     @JavascriptInterface
     public void voiceStop() {
@@ -725,7 +1196,14 @@ public class MainActivity extends Activity {
         return true;
       }
     });
+    ImgCache.init(this);
     web.setWebViewClient(new WebViewClient() {
+      @Override
+      public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, android.webkit.WebResourceRequest req) {
+        android.webkit.WebResourceResponse x = ImgCache.handle(req);
+        return x != null ? x : super.shouldInterceptRequest(view, req);
+      }
+
       @Override
       public boolean onRenderProcessGone(WebView view, android.webkit.RenderProcessGoneDetail detail) {
         getSharedPreferences("h", 0).edit().putString("crash", detail.didCrash() ? "renderer crashed" : "renderer killed (memory)").apply();
@@ -1179,22 +1657,26 @@ public class MainActivity extends Activity {
 
   private void exoEnsure() {
     if (exo != null) return;
-    DefaultLoadControl lc = new DefaultLoadControl.Builder().setBufferDurationsMs(15000, 60000, 2500, 5000).build();
+    DefaultLoadControl lc = Perf.loadControl(this, exoLive);
     DefaultHttpDataSource.Factory hf = new DefaultHttpDataSource.Factory()
       .setAllowCrossProtocolRedirects(true)
-      .setConnectTimeoutMs(15000)
-      .setReadTimeoutMs(30000)
+      .setConnectTimeoutMs(12000)
+      .setReadTimeoutMs(25000)
       .setUserAgent(web.getSettings().getUserAgentString());
+    long sbps = Perf.savedBps(this);
+    exoMeter = new DefaultBandwidthMeter.Builder(this).setInitialBitrateEstimate(sbps > 0 ? sbps : 3000000L).build();
     exo = new ExoPlayer.Builder(this, new DefaultRenderersFactory(this).setEnableDecoderFallback(true))
-      .setMediaSourceFactory(new DefaultMediaSourceFactory(new DefaultDataSource.Factory(this, hf)))
+      .setMediaSourceFactory(new DefaultMediaSourceFactory(new DefaultDataSource.Factory(this, hf)).setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(6)))
       .setLoadControl(lc)
+      .setBandwidthMeter(exoMeter)
       .build();
     exo.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true);
     exo.setVideoTextureView(exoSurface);
     exoListener = new Player.Listener() {
       @Override public void onPlaybackStateChanged(int st) {
-        if (st == Player.STATE_BUFFERING) js("buf", "1");
+        if (st == Player.STATE_BUFFERING) { js("buf", "1"); exoStallMark(); }
         else if (st == Player.STATE_READY) {
+          exoReady = true;
           long d = exo.getDuration();
           js("ready", "{\"d\":" + ((d == C.TIME_UNSET || exo.isCurrentMediaItemLive()) ? -1 : d) + "}");
         } else if (st == Player.STATE_ENDED) js("end", "1");
@@ -1277,7 +1759,7 @@ public class MainActivity extends Activity {
     Media m = new Media(vlcLib, Uri.parse(vlcUrl));
     m.setHWDecoderEnabled(vlcHw, false);
     boolean vod = vlcUrl.matches("(?i).*\\.(mp4|mkv|avi|mov|wmv|webm|m4v)(\\?.*)?$") || vlcUrl.contains("/movie/") || vlcUrl.contains("/series/");
-    m.addOption(":network-caching=" + (vod ? 3000 : 1500));
+    m.addOption(":network-caching=" + ((vod ? 3000 : 1500) + Perf.penalty(this) * 1500 + (Perf.tier(this) == 0 ? 1000 : 0)));
     m.addOption(":sub-language=ara,ar,en");
     m.addOption(":subsdec-encoding=UTF-8");
     m.addOption(":http-user-agent=" + web.getSettings().getUserAgentString());
@@ -1408,6 +1890,8 @@ public class MainActivity extends Activity {
   private void exoRelease() {
     hnd.removeCallbacks(tick);
     if (exo != null) {
+      try { if (exoMeter != null) Perf.saveBps(this, exoMeter.getBitrateEstimate()); } catch (Throwable e) {}
+      try { if (exoT0 > 0 && exoStalls.isEmpty() && !exoBoosted && SystemClock.uptimeMillis() - exoT0 > 600000L) Perf.relax(this); } catch (Throwable e) {}
       try { if (exoListener != null) exo.removeListener(exoListener); } catch (Exception e) {}
       try { exo.clearVideoSurface(); } catch (Exception e) {}
       try { exo.stop(); exo.clearMediaItems(); } catch (Exception e) {}
@@ -1427,6 +1911,13 @@ public class MainActivity extends Activity {
     vlcRelease();
     exoRelease();
     sid = session;
+    if (!exoBoostRun) exoBoosted = false;
+    exoBoostRun = false;
+    exoUrl = url;
+    exoLive = Perf.looksLive(url);
+    exoReady = false;
+    exoStalls.clear();
+    exoT0 = SystemClock.uptimeMillis();
     exoEnsure();
     exoVw = 0; exoVh = 0; exoPar = 1f;
     exoApplyFit();
@@ -1434,7 +1925,7 @@ public class MainActivity extends Activity {
     exo.setTrackSelectionParameters(exo.getTrackSelectionParameters().buildUpon().clearOverrides().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).setPreferredTextLanguage("ar").build());
     exoRoot.setVisibility(View.VISIBLE);
     web.setBackgroundColor(Color.TRANSPARENT);
-    exo.setMediaItem(MediaItem.fromUri(url), startMs > 0 ? startMs : C.TIME_UNSET);
+    exo.setMediaItem(Perf.item(this, url, exoLive), startMs > 0 ? startMs : C.TIME_UNSET);
     exo.prepare();
     exo.setPlayWhenReady(true);
     hnd.removeCallbacks(tick);
@@ -1679,6 +2170,8 @@ import androidx.media3.common.text.CueGroup;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
+import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy;
 import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
@@ -2109,15 +2602,22 @@ public class PlayerActivity extends Activity {
     frame.setVisibility(View.VISIBLE);
     subs.setVisibility(View.VISIBLE);
     vlcLayout.setVisibility(View.GONE);
-    DefaultLoadControl lc = new DefaultLoadControl.Builder().setBufferDurationsMs(15000, 60000, 2500, 5000).build();
+    boolean lv = live || Perf.looksLive(url);
+    DefaultLoadControl lc = Perf.loadControl(this, lv);
     DefaultHttpDataSource.Factory hf = new DefaultHttpDataSource.Factory()
       .setAllowCrossProtocolRedirects(true)
-      .setConnectTimeoutMs(15000)
-      .setReadTimeoutMs(30000);
+      .setConnectTimeoutMs(12000)
+      .setReadTimeoutMs(25000);
     if (ua != null && ua.length() > 0) hf.setUserAgent(ua);
+    long sbps = Perf.savedBps(this);
+    pMeter = new DefaultBandwidthMeter.Builder(this).setInitialBitrateEstimate(sbps > 0 ? sbps : 3000000L).build();
+    pLive = lv;
+    pReady = false;
+    pT0 = SystemClock.uptimeMillis();
     exo = new ExoPlayer.Builder(this, new DefaultRenderersFactory(this).setEnableDecoderFallback(true))
-      .setMediaSourceFactory(new DefaultMediaSourceFactory(new DefaultDataSource.Factory(this, hf)))
+      .setMediaSourceFactory(new DefaultMediaSourceFactory(new DefaultDataSource.Factory(this, hf)).setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(6)))
       .setLoadControl(lc)
+      .setBandwidthMeter(pMeter)
       .build();
     exo.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true);
     exo.setVideoSurfaceView(surface);
@@ -2126,8 +2626,8 @@ public class PlayerActivity extends Activity {
     exoL = new Player.Listener() {
       @Override public void onPlaybackStateChanged(int st) {
         if (exo == null) return;
-        if (st == Player.STATE_BUFFERING) setSpin(true);
-        else if (st == Player.STATE_READY) { setSpin(false); playing = true; }
+        if (st == Player.STATE_BUFFERING) { setSpin(true); stallMark(); }
+        else if (st == Player.STATE_READY) { setSpin(false); playing = true; pReady = true; }
         else if (st == Player.STATE_ENDED) {
           if (live) { postFail("ENDED"); return; }
           sample();
@@ -2166,9 +2666,27 @@ public class PlayerActivity extends Activity {
       }
     };
     exo.addListener(exoL);
-    exo.setMediaItem(MediaItem.fromUri(url), pos > 0 ? pos : C.TIME_UNSET);
+    exo.setMediaItem(Perf.item(this, url, pLive), pos > 0 ? pos : C.TIME_UNSET);
     exo.prepare();
     exo.setPlayWhenReady(true);
+  }
+
+  private boolean pLive = false, pReady = false, pBoosted = false;
+  private long pT0 = 0;
+  private DefaultBandwidthMeter pMeter;
+  private final java.util.ArrayList<Long> pStalls = new java.util.ArrayList<Long>();
+
+  private void stallMark() {
+    if (!pReady || exo == null) return;
+    long now = SystemClock.uptimeMillis();
+    pStalls.add(now);
+    while (!pStalls.isEmpty() && now - pStalls.get(0) > 90000L) pStalls.remove(0);
+    if (pStalls.size() >= 3 && !pBoosted) {
+      pBoosted = true;
+      Perf.bump(this);
+      final long p = pLive ? 0 : Math.max(0, exo.getCurrentPosition() - 2000);
+      hnd.post(new Runnable() { public void run() { pStalls.clear(); begin(p); } });
+    }
   }
 
   private final MediaPlayer.EventListener vlcEv = new MediaPlayer.EventListener() {
@@ -2227,7 +2745,7 @@ public class PlayerActivity extends Activity {
     vlc.setEventListener(vlcEv);
     Media m = new Media(vlcLib, Uri.parse(url));
     m.setHWDecoderEnabled(vlcHw, false);
-    m.addOption(":network-caching=" + (live ? 1500 : 3000));
+    m.addOption(":network-caching=" + ((live ? 1500 : 3000) + Perf.penalty(this) * 1500 + (Perf.tier(this) == 0 ? 1000 : 0)));
     if (ua != null && ua.length() > 0) m.addOption(":http-user-agent=" + ua);
     if (pos > 0) m.addOption(":start-time=" + (pos / 1000));
     vlc.setMedia(m);
@@ -2251,6 +2769,8 @@ public class PlayerActivity extends Activity {
   private void releaseAll() {
     hnd.removeCallbacks(wd);
     if (exo != null) {
+      try { if (pMeter != null) Perf.saveBps(this, pMeter.getBitrateEstimate()); } catch (Throwable e) {}
+      try { if (pT0 > 0 && pStalls.isEmpty() && !pBoosted && SystemClock.uptimeMillis() - pT0 > 600000L) Perf.relax(this); } catch (Throwable e) {}
       try { if (exoL != null) exo.removeListener(exoL); } catch (Throwable e) {}
       try { exo.clearVideoSurface(); } catch (Throwable e) {}
       try { exo.stop(); exo.clearMediaItems(); } catch (Throwable e) {}

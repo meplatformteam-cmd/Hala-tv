@@ -8,11 +8,19 @@
 (function(){var P='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==',c=document.createElement;document.createElement=function(n){var e=c.apply(this,arguments);try{if(String(n).toLowerCase()=='video'){e.setAttribute('poster',P);e.setAttribute('playsinline','')}}catch(_){}return e};window.__POSTER=P;function fix(v){try{if(!v.getAttribute('poster'))v.setAttribute('poster',P)}catch(_){}}try{new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes&&m.addedNodes.forEach(function(n){if(n.nodeType==1){if(n.tagName=='VIDEO')fix(n);else if(n.querySelectorAll)n.querySelectorAll('video').forEach(fix)}})})}).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('video').forEach(fix)});})();
 function elog(m){try{var a=JSON.parse(localStorage.getItem('elog')||'[]');a.unshift(new Date().toLocaleString('en-GB')+' '+String(m).slice(0,300));localStorage.setItem('elog',JSON.stringify(a.slice(0,40)))}catch(e){}}
 window.addEventListener('error',function(e){elog('JS: '+e.message+' @'+(e.lineno||''))});window.addEventListener('unhandledrejection',function(e){elog('Promise: '+(e.reason&&e.reason.message||e.reason))});</script>
-<script>(function(){var c=document.createElement.bind(document);document.createElement=function(t,o){var e=c(t,o);if(t==="img")e.decoding="async";return e}})();(function(){var h=document.documentElement,m=document.querySelector("meta[name=viewport]"),dev=null;try{dev=JSON.parse(localStorage.getItem("dev"))}catch(e){}
-var ua=navigator.userAgent||"",phoneUA=/Mobile/i.test(ua)&&!/TV|Tizen|Web0?S|BRAVIA|AFT|AppleTV|Large Screen/i.test(ua);
-var mob=dev=="phone"?true:dev=="tv"?false:phoneUA;window.__mob=mob;
-if(mob){h.className="mob";m.setAttribute("content","width=device-width,initial-scale=1,viewport-fit=cover")}
+<script>(function(){var c=document.createElement.bind(document);document.createElement=function(t,o){var e=c(t,o);if(t==="img")e.decoding="async";return e}})();(function(){var h=document.documentElement,m=document.querySelector("meta[name=viewport]"),dev=null,di=null;try{dev=JSON.parse(localStorage.getItem("dev"))}catch(e){}
+try{if(window.HalaNative&&HalaNative.deviceInfo)di=JSON.parse(HalaNative.deviceInfo())}catch(e){}
+var ua=navigator.userAgent||"",tvUA=/TV|Tizen|Web0?S|BRAVIA|AFT|AppleTV|Large Screen|SmartTV|CrKey|MiBOX|Chromecast/i.test(ua),phoneUA=/Mobile/i.test(ua)&&!tvUA;
+var sw=Math.min(screen.width||innerWidth,screen.height||innerHeight),touch=("ontouchstart" in window)||(navigator.maxTouchPoints>0),cls;
+/* الأولوية: اختيار المستخدم، بعدها أندرويد نفسه (HalaNative.deviceInfo)، وبعدها تخمين من المتصفح */
+if(dev=="phone")cls=(di&&di.cls=="tablet")?"tablet":"phone";else if(dev=="tv")cls="tv";
+else if(di&&di.cls)cls=di.cls;
+else cls=tvUA?"tv":phoneUA?"phone":(touch&&sw<600)?"phone":(touch&&sw<1000)?"tablet":"tv";
+var mob=cls!="tv";window.__mob=mob;window.__cls=cls;window.__di=di;
+var tier=di&&typeof di.tier=="number"?di.tier:((navigator.deviceMemory&&navigator.deviceMemory<=2)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=2)?0:(navigator.deviceMemory>=4&&navigator.hardwareConcurrency>=6?2:1));window.__tier=tier;
+if(mob){h.className="mob "+(cls=="tablet"?"tab":"phone");m.setAttribute("content","width=device-width,initial-scale=1,viewport-fit=cover")}
 else{h.className="tv";m.setAttribute("content","width=1920")}
+if(tier==0)h.classList.add("lowp");else if(tier==2)h.classList.add("hip");
 var raf=0;function adapt(){raf=0;var w=innerWidth,v=innerHeight;h.classList.toggle("land",w>v);h.setAttribute("data-sz",w<600?"s":w<900?"m":w<1280?"l":"xl")}
 if(mob){adapt();addEventListener("resize",function(){if(!raf)raf=requestAnimationFrame(adapt)},{passive:true});addEventListener("orientationchange",function(){if(!raf)raf=requestAnimationFrame(adapt)},{passive:true})}})()</script>
 <title>هلا TV</title>
@@ -898,6 +906,183 @@ html.mob #home .tile.cwtile{flex:1;height:auto;min-height:96px;max-height:130px;
 .cwi:focus{transform:scale(1.08);z-index:3}.cwi:focus .cwp{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.3),0 18px 50px rgba(0,0,0,.6)}
 html.ph .cwv-sq{flex-direction:column}html.ph .cwk{width:min(70vw,34vh);height:min(70vw,34vh)}html.ph .cwv-info{max-width:90vw}
 </style>
+<style id="phone-css">
+/* ===================================================================
+   HALA — واجهة الهاتف/التابلت (تتفعّل بس لما html.mob). التلفزيون ما بتأثر.
+   =================================================================== */
+html.mob{--bn:58px;--sab:env(safe-area-inset-bottom,0px);--sat:env(safe-area-inset-top,0px)}
+html.mob,html.mob body{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html.mob *{-webkit-touch-callout:none}
+html.mob input,html.mob textarea{-webkit-user-select:text;user-select:text}
+html.mob ::-webkit-scrollbar{width:0;height:0}
+/* ---- شريط التنقل السفلي ---- */
+#bnav{display:none}
+html.mob #bnav{display:flex;position:fixed;inset-inline:0;bottom:0;z-index:25;height:calc(var(--bn) + var(--sab));padding-bottom:var(--sab);background:rgba(12,12,14,.97);border-top:1px solid var(--ln)}
+html.mob body:not([data-v=home]):not([data-v=page]):not([data-v=set]) #bnav{display:none}
+#bnav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;color:var(--mu);font:inherit;font-size:11px;font-weight:700;padding:4px 0;cursor:pointer}
+#bnav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#bnav button.on{color:var(--tx)}#bnav button.on svg{stroke-width:2.4}
+#bnav button.on span{border-bottom:2px solid var(--hi);padding-bottom:1px}
+html[data-th=light] #bnav{background:rgba(255,255,255,.97)}
+/* ---- الرئيسية ---- */
+html.mob #home{padding-bottom:calc(var(--bn) + var(--sab) + 22px)!important}
+html.mob #home .tile{backdrop-filter:none;-webkit-backdrop-filter:none}
+html.mob #sub{display:none}
+html.mob header{gap:6px}
+html.mob .tw{padding:0;background:none;border:0;flex-direction:row;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+html.mob #clk{font-size:22px}html.mob #dt,html.mob #wx,html.mob #nt,html.mob #ac{font-size:13px}
+html.mob .sh{flex-wrap:wrap;gap:8px;justify-content:center}
+/* ---- صفحات القوائم (قنوات/أفلام/مسلسلات) ---- */
+html.mob body[data-v=page] #page{display:flex!important;flex-direction:column;overflow:hidden!important;height:100%;padding:calc(var(--sat) + 10px) 0 calc(var(--bn) + var(--sab))!important}
+html.mob #page .ph{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:0 14px;margin:0 0 6px}
+html.mob #page .ph h2{order:2;flex:1;min-width:0;font-size:22px;margin:0}
+html.mob #page .ph h2 small{font-size:13px;margin-inline-start:8px;color:var(--mu)}
+html.mob #p-back{order:1;min-height:40px;padding:0 14px;font-size:14px}
+html.mob #page .ph input#p-q{order:5;flex:1 1 calc(100% - 56px);min-height:44px;font-size:16px;border-radius:14px;padding:0 14px}
+html.mob #page .ph #mic2{order:6;width:44px;min-width:44px;height:44px;padding:0}
+html.mob #p-vm,html.mob #p-sort,html.mob #p-lock,html.mob #p-sch{order:7;min-height:34px;padding:0 12px;font-size:13px}
+html.mob #p-cin{display:none!important}
+html.mob #page .pg{display:flex!important;flex-direction:column;flex:1 1 auto;min-height:0;gap:0!important;grid-template-columns:none!important;padding:0}
+html.mob #page .pg>div{border:0!important;border-radius:0!important;background:none!important;padding:0!important;max-height:none!important;margin:0!important;overflow:visible}
+html.mob #p-a,html.mob #p-pv,html.mob #cin-info,html.mob #p-cin{display:none!important}
+html.mob #p-g{flex:none!important;display:flex!important;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important;gap:8px;padding:4px 14px 10px!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+html.mob #p-g>.gl-strip{display:none!important}
+html.mob #p-g .gl-list{display:contents}
+html.mob #p-g .gi{flex:none;min-height:38px!important;padding:6px 16px!important;font-size:14px!important;font-weight:700;border-radius:999px;background:rgba(128,128,128,.18);border:1.5px solid transparent;white-space:nowrap;max-width:70vw;gap:6px}
+html.mob #p-g .gi.on{background:var(--hi);color:var(--ov);border-color:var(--hi)}
+html.mob #p-g .gi.hot{box-shadow:none}
+html.mob #page .pg.ng #p-g{display:none!important}
+html.mob #page #p-l{flex:1 1 auto!important;min-height:0;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;padding:2px 14px 18px!important;display:block}
+/* قنوات: صفوف */
+html.mob #p-l:not(.gv)>.li{height:auto!important;min-height:64px;padding:8px 12px;gap:12px;border-radius:16px;margin-bottom:8px;background:rgba(128,128,128,.12);font-size:16px}
+html.mob #p-l:not(.gv)>.li img{height:46px;width:46px;aspect-ratio:1}
+html.mob #p-l:not(.gv)>.li .cn{font-size:12px;opacity:.7;order:3;min-width:34px;text-align:center}
+html.mob #p-l:not(.gv)>.li .cg{display:none}
+html.mob #p-l:not(.gv)>.li span:not(.fvb){font-size:16px;font-weight:700;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* أفلام/مسلسلات: بوسترات */
+html.mob body[data-v=page] #page .pg #p-l.gv{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:auto!important;gap:10px!important;justify-content:stretch!important;align-content:start;padding:4px 14px 18px!important;width:auto!important;max-width:none!important}
+html.mob.tab body[data-v=page] #page .pg #p-l.gv{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}
+html.mob body[data-v=page] #page .pg #p-l.gv .li{width:auto!important;margin:0!important;height:auto!important;aspect-ratio:2/3;min-height:0;padding:0;border-radius:12px;overflow:hidden;position:relative;background:#1b1b1f;border:2px solid transparent}
+html.mob #p-l.gv .li img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;border-radius:0}
+html.mob #p-l.gv .li span:not(.fvb){position:absolute;inset-inline:0;bottom:0;padding:18px 6px 6px;font-size:12px;font-weight:700;line-height:1.25;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.85));white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-align:center}
+html.mob #p-l.gv .li.nl span:not(.fvb){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;height:100%;max-height:none!important;background:linear-gradient(160deg,#2a2a2f,#121214);font-size:14px;line-height:1.3;overflow:hidden}
+html.mob #p-l.gv .li.nl::before,html.mob #p-l.gv .li.nl::after{display:none!important}
+html.mob #p-l.gv .li .fvb{position:absolute;top:6px;inset-inline-end:6px}
+html.mob #p-l.gv.lvg .li,html.mob #page.lvg #p-l.gv .li{aspect-ratio:16/10}
+html.mob .li:focus,html.mob .gi:focus{transform:none!important}
+html.mob #page .cin-row,html.mob #page .cin-t{display:none!important}
+/* ---- إعدادات ---- */
+html.mob body[data-v=set] #set{padding:calc(var(--sat) + 12px) 14px calc(var(--bn) + var(--sab) + 24px)!important;gap:10px}
+html.mob #set .btn{min-height:52px;font-size:16px}
+html.mob #st-di{font-size:13px;color:var(--mu);line-height:1.6;padding:2px 6px 8px}
+/* ---- إشعارات ورسائل ---- */
+html.mob #osd{max-width:calc(100vw - 24px);width:max-content;font-size:15px;padding:10px 16px;border-radius:16px;top:calc(var(--sat) + 10px)}
+html.mob #osd b{font-size:16px}
+
+html.mob #ntoff{inset-inline:12px;width:auto;max-width:none;top:calc(var(--sat) + 10px);padding:10px 14px;border-radius:16px;font-size:14px}
+html.mob #ntoff b{font-size:16px}
+
+/* ===== جدول المباريات على الهاتف: بطاقة عمودية مرتبة ===== */
+html.mob #mtv{padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0}
+html.mob #mtv .mt-top{gap:8px;margin-bottom:8px}
+html.mob #mtv .mt-top h2{font-size:20px;line-height:1.25}
+html.mob #mtv .mt-top .pill{padding:7px 14px;font-size:14px;white-space:nowrap;display:flex;flex-direction:row;align-items:center;gap:6px;min-height:38px}
+html.mob #mt-fl{gap:8px;margin-bottom:6px}
+html.mob #mt-fl .pill{padding:7px 16px;font-size:14px;min-height:36px}
+html.mob #mt-st{font-size:12px;margin-bottom:4px}
+html.mob #mt-b{width:100%;padding:2px 0 calc(78px + env(safe-area-inset-bottom,0px));gap:8px}
+html.mob #mt-b h4{font-size:16px;margin:12px 2px 2px}
+html.mob .mc{flex-wrap:wrap;align-items:center;gap:6px 10px;padding:10px 12px;border-radius:16px;font-size:15px}
+html.mob .mc:focus{transform:none}
+html.mob .mc-w{order:1;width:auto;flex-direction:row;gap:8px}
+html.mob .mc-w b{font-size:14px}html.mob .mc-w small{font-size:12px}
+html.mob .mc-go{order:2;margin-inline-start:auto;font-size:13px;padding:4px 12px;border-radius:999px;background:rgba(128,128,128,.22)}
+html.mob .mc-m{order:3;flex:1 0 100%;gap:6px}
+html.mob .mc-lg{font-size:12px;text-align:center}
+html.mob .mc-t{gap:6px;align-items:flex-start}
+html.mob .mc-tm{flex-direction:column;text-align:center;gap:4px;font-size:14px}
+html.mob .mc-tm img{width:34px;height:34px}
+html.mob .mc-tm b{line-height:1.25;white-space:normal;overflow:visible}
+html.mob .mc-tm i{font-size:11px}
+html.mob .mc-sc{font-size:20px;min-width:3.2em;align-self:center}
+html.mob .mc-c{font-size:12px;padding:2px 10px}
+
+/* ===== صفحة التفاصيل على الهاتف ===== */
+html.mob #det,html.mob #det.srs{flex-direction:row;flex-wrap:wrap;align-content:flex-start;align-items:flex-start;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(84px + env(safe-area-inset-bottom,0px));row-gap:12px}
+html.mob #det .dp,html.mob #det.srs .dp{width:34vw;max-width:34vw;height:auto;aspect-ratio:2/3;border-radius:12px}
+html.mob #det .di,html.mob #det.srs .di{flex:1 1 50vw;min-width:0;justify-content:flex-start;gap:8px}
+html.mob #det h2,html.mob #det.srs h2{font-size:21px;line-height:1.3;overflow-wrap:anywhere}
+html.mob #det .dm{font-size:14px}
+html.mob #det .dx,html.mob #det.srs .dx{font-size:14px;line-height:1.55;max-height:none;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+html.mob #det .dc,html.mob #det.srs .dc{font-size:13px;max-height:none}
+html.mob #det .ac{font-size:13px;padding:3px 12px}html.mob #det .ac img{width:34px;height:34px}
+html.mob #det .db{display:flex;flex-wrap:wrap;gap:8px}
+html.mob #det .db .btn{font-size:15px;padding:10px 18px;min-height:42px}
+html.mob #det .ss .pill{font-size:14px;padding:7px 14px;min-height:36px}
+html.mob #det .ee .eg{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html.mob #det .ep .nm{font-size:13px}
+</style>
+
+<style id="tvnav-css">
+/* ===== أحرف التصنيفات: عمودية جنب القائمة بدل ما تكون صف فوق ===== */
+#p-g.hasl{display:flex;gap:6px;align-items:flex-start;padding:8px 4px!important}
+#p-g .gl-strip{flex:none;width:2.1em;position:sticky;top:0;display:flex;flex-direction:column;gap:2px;align-items:stretch;font-size:clamp(15px,1.25vw,22px)}
+#p-g .gl-strip .ai{min-width:0;padding:5px 0;text-align:center;border-radius:10px;font-weight:700}
+#p-g .gl-list{flex:1;min-width:0}
+/* ===== وضوح التركيز: المحدّد (on) غير المُركَّز (focus) ===== */
+html.tv .gi,html.tv .ai{transition:none}
+html.tv .gi:focus,html.tv .ai:focus,html.tv .gi.on:focus{background:var(--hi)!important;color:var(--ov)!important;border-color:var(--hi)!important;font-weight:900;box-shadow:0 0 0 4px rgba(128,128,128,.45),0 6px 22px rgba(0,0,0,.5);position:relative;z-index:3}
+html.tv .gi.on:not(:focus){background:rgba(128,128,128,.26);border-inline-end:7px solid var(--hi);font-weight:800}
+html.tv .gi.on:not(:focus)::before{content:"✓";margin-inline-end:6px;opacity:.9}
+html.tv .ai.on:not(:focus){background:rgba(128,128,128,.3);box-shadow:inset 0 0 0 2px var(--hi);font-weight:900}
+html.tv .ai:focus{transform:scale(1.12)}
+html.tv .pill:focus,html.tv .btn:focus,html.tv .tab:focus{box-shadow:0 0 0 4px rgba(128,128,128,.5)}
+</style>
+
+<style id="srp-css">
+/* ===== نتائج البحث بستايل OSN/شاهد: بوسترات بأقسام، التركيز واضح ===== */
+#page.srp .pg>#p-l.srw,#page.srp .pg>#p-l.srg{display:block!important;overflow-y:auto;width:min(1760px,100%);padding:1vh 1vw 6vh!important;contain:none}
+#page.srp .pg>#p-l.srg{display:grid!important;align-content:start}
+.srs{margin:0 0 3.4vh}
+.srs>h3{display:flex;align-items:baseline;gap:12px;margin:0 0 1.2vh;padding:0 .8vw;font-size:clamp(22px,2vw,36px);font-weight:900}
+.srs>h3 small{font-size:.62em;opacity:.6;font-weight:700}
+.srg{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(120px,10.2vw,210px),1fr));gap:3vh 1.6vw;padding:2.2vh 1vw 2vh}
+.srg.k-lv{grid-template-columns:repeat(auto-fill,minmax(clamp(170px,14vw,280px),1fr))}
+#page.srp .srg .li.srr{display:flex;flex-direction:column;align-items:stretch;gap:1.1vh;padding:0;border:0!important;background:none!important;box-shadow:none;border-radius:14px;height:auto!important;font-size:clamp(14px,1.15vw,21px)}
+#page.srp .srg .li.srr:focus{transform:none;background:none!important}
+.srg .li.srr .sr-th{width:100%!important;aspect-ratio:2/3;border-radius:14px;box-shadow:0 .8vh 2vh rgba(0,0,0,.4);outline:3px solid transparent;outline-offset:2px;transition:transform .12s ease-out}
+.srg.k-lv .li.srr .sr-th{aspect-ratio:16/10;background:linear-gradient(145deg,rgba(128,128,128,.35),rgba(128,128,128,.12))}
+.srg .li.srr .sr-bd{gap:2px;padding:0 4px;text-align:center}
+.srg .li.srr .sr-t{text-align:center!important;font-size:1em;-webkit-line-clamp:2;font-weight:700}
+.srg .li.srr .sr-m{justify-content:center;font-size:.78em;gap:2px 8px}
+.srg .li.srr .sr-k,.srg .li.srr .sr-go{display:none}
+.srg .li.srr:focus .sr-th{transform:scale(1.07);transform-origin:50% 35%;outline-color:var(--hi);box-shadow:0 0 0 .5vh var(--hi);position:relative;z-index:3}
+.srg .li.srr:focus .sr-bd{position:relative;z-index:4;padding-top:.6vh}
+.srg .li.srr:focus .sr-t{font-weight:900}
+.srg .li.srr:focus .sr-t,.srg .li.srr:focus .sr-m,.srg .li.srr:focus .sr-m em{color:var(--hi)!important;opacity:1}
+#page.srp .srg .li,#page.srp .srg .li.srr{content-visibility:visible!important;contain:none!important;overflow:visible}
+#page.srp .srg .li::after,#page.srp .srg .li::before{display:none!important}
+#page.srp #p-l.srw,#page.srp #p-l.srg{scroll-padding:6vh}
+.srg .li.srm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;aspect-ratio:2/3;border:2px dashed rgba(128,128,128,.55);border-radius:14px;font-size:clamp(15px,1.3vw,24px);text-align:center;padding:10px;cursor:pointer}
+.srg.k-lv .li.srm{aspect-ratio:16/10}
+.srg .li.srm small{font-size:1.5em;font-weight:900}
+.srg .li.srm:focus{background:var(--hi);color:var(--ov);border-style:solid;border-color:var(--hi);transform:scale(1.06)}
+#p-sc .pill:focus{background:var(--hi);color:var(--ov);box-shadow:0 0 0 4px rgba(128,128,128,.5)}
+/* هاتف */
+html.mob #page.srp .pg>#p-l.srw,html.mob #page.srp .pg>#p-l.srg{padding:4px 14px 20px!important;width:100%}
+html.mob #page.srp #p-sc{display:flex!important;overflow-x:auto;flex-wrap:nowrap!important;gap:8px;padding:2px 14px 8px!important;width:100%!important;flex:none}
+html.mob #p-sc .pill{flex:none;padding:6px 16px;font-size:14px;min-height:38px}
+html.mob .srs>h3{font-size:18px;padding:0}
+html.mob .srg{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px 10px;padding:8px 0 4px}
+html.mob .srg.k-lv{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html.mob.tab .srg{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}
+html.mob #page.srp .srg .li.srr{min-height:0;padding:0;margin:0;font-size:12px}
+html.mob .srg .li.srr .sr-th{width:100%!important}
+html.mob .srg .li.srm{font-size:13px}
+/* diag */
+.mt-dg{margin:3vh auto;max-width:900px;padding:18px 24px;border-radius:18px;background:rgba(128,128,128,.16);display:flex;flex-direction:column;gap:8px;font-size:clamp(16px,1.5vw,24px);line-height:1.6;text-align:center}
+.mt-dg small{opacity:.7;font-size:.75em}
+</style>
 </head>
 <style id="gt-css">
 #gt{display:none;position:fixed;inset:0;z-index:2147483000}#gt-w{position:fixed;inset:0;z-index:2147483000}
@@ -972,7 +1157,7 @@ html.ph .cwv-sq{flex-direction:column}html.ph .cwk{width:min(70vw,34vh);height:m
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><button class="pill sx" tabindex="0" id="sp-m1">− 0.1</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-p1">+ 0.1</button><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button></div>
 </div></div>
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
-<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><button class="btn" tabindex="0" id="st-guide"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-net"></button><button class="btn" tabindex="0" id="st-ntw"></button><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt" tabindex="0"></pre><button class="btn" tabindex="0" id="st-logs"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="ntv"><div id="nt-gl"></div><div class="ntc"><div class="nth"><button class="btn" id="nt-bk" tabindex="0"></button><h2 id="nt-t"></h2></div><div class="ntmain"><div class="nt-g2"><div class="nt-big"><b id="nt-pc">–</b><span id="nt-u"></span></div><div id="nt-st" aria-live="polite"></div><div class="nt-sp"><svg viewBox="0 0 300 80" preserveAspectRatio="none"><path id="nt-sp-a"/><path id="nt-sp-l"/></svg></div><ul class="nt-steps" id="nt-steps"></ul></div><div class="nt-r"><div class="nt-m" id="nt-m"></div><div class="nt-v" id="nt-v"><h4></h4><p></p></div><div class="nt-a" id="nt-a"><h4></h4><p></p></div><div class="nt-b"><button class="btn" id="nt-again" tabindex="0"></button><button class="btn sec" id="nt-done" tabindex="0"></button></div></div></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
+<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-eco"></button><div class="sgi" id="st-di"></div><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><button class="btn" tabindex="0" id="st-guide"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-net"></button><button class="btn" tabindex="0" id="st-ntw"></button><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt" tabindex="0"></pre><button class="btn" tabindex="0" id="st-logs"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="ntv"><div id="nt-gl"></div><div class="ntc"><div class="nth"><button class="btn" id="nt-bk" tabindex="0"></button><h2 id="nt-t"></h2></div><div class="ntmain"><div class="nt-g2"><div class="nt-big"><b id="nt-pc">–</b><span id="nt-u"></span></div><div id="nt-st" aria-live="polite"></div><div class="nt-sp"><svg viewBox="0 0 300 80" preserveAspectRatio="none"><path id="nt-sp-a"/><path id="nt-sp-l"/></svg></div><ul class="nt-steps" id="nt-steps"></ul></div><div class="nt-r"><div class="nt-m" id="nt-m"></div><div class="nt-v" id="nt-v"><h4></h4><p></p></div><div class="nt-a" id="nt-a"><h4></h4><p></p></div><div class="nt-b"><button class="btn" id="nt-again" tabindex="0"></button><button class="btn sec" id="nt-done" tabindex="0"></button></div></div></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
 <style id="tc-css">
 html{--u:2}
@@ -1703,7 +1888,7 @@ function setPv(it,fk){
  if($('#page').classList.contains('cinp')){killPv();if(!it)window.CIN&&CIN.hide();return}
  const b=$('#p-pv');killPv();b.innerHTML='';if(!it)return;
  if(it.logo){const i=document.createElement('img');i.src=it.logo;i.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(fk=='lv'?'contain;padding:12%':'cover');i.onerror=()=>i.remove();b.append(i)}
- if(fk=='lv'&&it.url){const v=document.createElement('video');v.muted=false;v.volume=1;v.playsInline=true;b.append(v);pvT=prevPlay(v,it.url,500)}
+ if(fk=='lv'&&it.url&&BGOK){const v=document.createElement('video');v.muted=false;v.volume=1;v.playsInline=true;b.append(v);pvT=prevPlay(v,it.url,700)}
  else if(fk=='mv'&&!(window.CIN&&CIN.active()))bgPrev('#pbg',it,fk);
 }
 var spT;$('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(!r||!r._it||$('#page').classList.contains('cinp')||$('#page').classList.contains('srp'))return;clearTimeout(spT);if(r._fk=='mv'||r._fk=='sr')killPv();spT=setTimeout(()=>{if(document.activeElement===r)setPv(r._it,r._fk)},450)});
@@ -1728,7 +1913,7 @@ function renderPage(){
  const kd=KD(k),canLk=!!kd&&!fv&&k!='__s';S.lo=S.lo||{};
  $('#p-lock').style.display=canLk?'':'none';$('#p-lock').textContent=t(S.manage?'lockdone':'lockmgr');$('#p-lock').classList.toggle('on',!!S.manage);
  if(!ng&&!_CRW(vod,q,gs)){const gsF=gs.filter(g=>!S.gl||first(strip(g))==S.gl),lt=[...new Set(gs.map(g=>first(strip(g))).filter(Boolean))].sort();
-  if(lt.length>1){const r=document.createElement('div');r.style.cssText='display:flex;flex-wrap:wrap;gap:2px;padding:4px';[['','•'],...lt.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.gl||'')===v?' on':'');e.tabIndex=0;e.style.cssText='flex:none;min-width:1.6em;padding:2px 6px';e.textContent=n;e.onclick=()=>{S.gl=v;renderPage();focusEl($$('#p-g .ai').find(x=>x.textContent==n))};r.append(e)});G.append(r)}
+  if(lt.length>1){const r=document.createElement('div');r.className='gl-strip';[['','•'],...lt.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.gl||'')===v?' on':'');e.tabIndex=0;e.textContent=n;e.onclick=()=>{S.gl=v;renderPage();focusEl($$('#p-g .ai').find(x=>x.textContent==n))};r.append(e)});G.append(r)}
   const lgs={};gsF.forEach(g=>{const l=langOf(g);(lgs[l]=lgs[l]||[]).push(g)});
   const lc2=Object.keys(lgs).filter(Boolean).sort((a,b)=>a=='AR'?-1:b=='AR'?1:a=='EN'?-1:b=='EN'?1:a.localeCompare(b)),ent=[],srt=a=>a.map(g=>[g,strip(g),'g']).sort((x,y)=>COL.compare(x[1],y[1]));
   if(cl.length)ent.push(['__c',t('cont'),'c']);if(vod)ent.push(['__rc','✨ '+t('rc_t'),'c'],['__rcc','⚙ '+t('rc_cu'),'c']);if(k=='__all')ent.push(['__sp','⚽ '+t('p_sp'),'c'],['__nw','📰 '+t('p_nw'),'c']);if(k=='__kids')ent.push(['__kl','📺 '+t('p_ch'),'c'],['__km','🎬 '+t('p_mv'),'c'],['__ks','📼 '+t('p_sr'),'c']);if(k=='__sports')ent.push(['__xl','📺 '+t('p_ch'),'c'],['__xm','🎬 '+t('p_mv'),'c'],['__xs','📼 '+t('p_sr'),'c']);ent.push(['',t('allg'),'c']);
@@ -1739,7 +1924,7 @@ function renderPage(){
    e.onclick=()=>{if(v=='__rc'){rcvOpen(k=='__mv'?'mv':'sr');return}if(v=='__rcc'){rcMenu();return}if(ty=='l')S.lo[v.slice(1)]=!(S.lo[v.slice(1)]&&S.grp==v);S.grp=v;S.limit=100;renderPage();focusEl($('#p-g .gi.on'))};
    if(canLk&&S.manage&&ty=='g'){const b=document.createElement('span');b.className='lk';b.tabIndex=0;b.innerHTML=IC[hd?'lock':'unlock'];
     b.onclick=ev=>{ev.stopPropagation();const h=hidK(),key=kd+'|'+v;if(h[key]){delete h[key];osd(t('lockoff'))}else{h[key]=1;if(S.grp===v)S.grp='';osd(t('lockon'))}store.set('hid',h);const i=$$('#p-g .gi').indexOf(e);renderPage();const r=$$('#p-g .gi');focusEl((r[i]&&r[i].querySelector('.lk'))||r[Math.max(0,i-1)]||$('#p-lock'))};e.append(b)}
-   G.append(e)})}
+   G.append(e)});if(G.firstChild&&G.firstChild.className=='gl-strip'){const L=document.createElement('div');L.className='gl-list';[...G.children].slice(1).forEach(n=>L.append(n));G.append(L);G.classList.add('hasl')}else G.classList.remove('hasl')}else G.classList.remove('hasl');
  const A=$('#p-a');A.innerHTML='';let _hv=_HV.get(all);if(!_hv){_hv={};_HV.set(all,_hv)}const _hn=k+'|'+S.grp+'|'+q;let have=_hv[_hn];if(!have){have=new Set();for(const c of all)if(gm(c)&&(!qm||qm(c)))have.add(first(c.name));_hv[_hn]=have}
  [['','•'],...LET.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.let||'')===v?' on':'')+(v&&!have.has(v)?' dim':'');e.tabIndex=0;e.textContent=n;e.onclick=()=>{S.let=v;S.limit=100;renderPage();focusEl($('#p-a .ai.on'))};A.append(e)});
  const Li=$('#p-l');Li.innerHTML='';const vmo=VM(),gv=vod?vmo!='list':vmo=='grid';Li.classList.toggle('gv',gv);const LVP=!vod&&!fv&&(k=='__all'||k=='__sp'||k=='__nw');$('#page').classList.toggle('lvg',LVP&&gv);{const _cp=vmo=='modern'&&!LVP&&!document.documentElement.classList.contains('mob');$('#page').classList.toggle('cinp',_cp);if(!_cp&&window.CIN)try{CIN.hide()}catch(e){}}$('#page').classList.toggle('cinr',_CRW(vod,q,gs));window.CIN&&CIN.pill();$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=({list:'☰ ',grid:'▦ ',modern:'🎬 '})[vmo]+t({list:'vml',grid:'vmg',modern:'vmm'}[vmo]);
@@ -2438,19 +2623,27 @@ function focusEl(e){if(e){try{e.focus({preventScroll:true})}catch(x){e.focus()}i
 function spatial(k,sel){
  const a=document.activeElement;
  if(V()=='set'&&typeof sel=='string'&&sel.indexOf('#set')===0&&setNav(k))return;
- {const L=$('#p-l');if(a&&a.parentNode===L&&a.classList&&a.classList.contains('li')&&$('#page').classList.contains('cinp')&&V()=='page'){
+ {const L=$('#p-l');if(a&&a.parentNode===L&&a.classList&&a.classList.contains('li')&&L.classList.contains('gv')&&$('#page').classList.contains('cinp')&&V()=='page'){
   const ls=()=>[...L.children].filter(x=>x.classList&&x.classList.contains('li'));let kids=ls(),i=kids.indexOf(a);const rtl=getComputedStyle(L).direction=='rtl';
-  if(k==40){if(i+4>=kids.length){lazyMore();kids=ls()}if(Math.floor(i/4)<Math.floor((kids.length-1)/4))focusEl(kids[Math.min(i+4,kids.length-1)]);return}
-  if(k==38){if(i>=4){focusEl(kids[i-4]);return}}
-  else if(k==37||k==39){const d=((k==39)!==rtl)?1:-1,j=i+d;if(Math.floor(j/4)==Math.floor(i/4)&&kids[j])focusEl(kids[j]);return}}}
+  const one=kids.length>1&&Math.abs(kids[kids.length-1].offsetTop-kids[0].offsetTop)<6;/* صف أفقي واحد: لا نقسمه لمجموعات من 4 */
+  if(one&&k==40)return;
+  if(one&&k==38){}else if(k==40){if(i+4>=kids.length){lazyMore();kids=ls()}if(Math.floor(i/4)<Math.floor((kids.length-1)/4))focusEl(kids[Math.min(i+4,kids.length-1)]);return}
+  if(one&&k==38){}else if(k==38){if(i>=4){focusEl(kids[i-4]);return}}
+  if(k==37||k==39){const d=((k==39)!==rtl)?1:-1,j=i+d;if(j>=kids.length-2&&one)lazyMore();kids=ls();if((one||Math.floor(j/4)==Math.floor(i/4))&&kids[j]){focusEl(kids[j]);return}
+   /* طرف الصف: لو بهالاتجاه في شريط أحرف جانبي ننتقل إليه (الأقرب عمودياً)، غير هيك نبقى */
+   const gs=$('#p-a')&&$('#p-a').getClientRects().length?$('#p-a'):$('#p-g .gl-strip');if(gs){const ar=a.getBoundingClientRect(),sr=gs.getBoundingClientRect(),toward=k==39?sr.left>=ar.right-5:sr.right<=ar.left+5;if(toward){const it=[...gs.querySelectorAll('.gi,.ai')].filter(x=>x.getClientRects().length);let bt=null,bd=1e9;it.forEach(x=>{const q=x.getBoundingClientRect(),dd=Math.abs(q.top+q.height/2-(ar.top+ar.height/2));if(dd<bd){bd=dd;bt=x}});if(bt)focusEl(bt)}}return}}}
  if((k==38||k==40)&&a&&a.parentNode&&a.classList){const pid=a.parentNode.id,c=a.classList,cn=false,cl=pid=='p-l'&&!a.parentNode.classList.contains('gv')&&c.contains('li')?'li':pid=='p-g'&&c.contains('gi')&&!cn?'gi':pid=='p-a'&&c.contains('ai')&&!cn?'ai':'';
   if(cl){const n=k==40?a.nextElementSibling:a.previousElementSibling;if(n&&n.classList.contains(cl)){focusEl(n);return}}}
  const els=$$(sel).filter(e=>e.getClientRects().length);if(!els.includes(a)){focusEl(els[0]);return}
- const r=a.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bs=1e9;
+ const r=a.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,H=k==37||k==39;let best=null,bs=1e9,bo=null,bos=1e9;
  els.forEach(e=>{if(e===a)return;const q=e.getBoundingClientRect(),dx=q.left+q.width/2-cx,dy=q.top+q.height/2-cy;
   if(!(k==37?dx<-5:k==39?dx>5:k==38?dy<-5:dy>5))return;
-  const s=(k==37||k==39)?Math.abs(dx)+Math.abs(dy)*2.5:Math.abs(dy)+Math.abs(dx)*2.5;if(s<bs){bs=s;best=e}});
- if(best)focusEl(best);
+  /* الأفضلية للعناصر اللي بنفس الصف/العمود (تداخل بالمحور الثاني)، وبعدها الأقرب بالمسافة الفعلية بين الحواف. الحساب القديم كان يختار أحياناً زر فوق-يسار بدل المجاور. */
+  const ov=H?Math.min(r.bottom,q.bottom)-Math.max(r.top,q.top):Math.min(r.right,q.right)-Math.max(r.left,q.left),mn=H?Math.min(r.height,q.height):Math.min(r.width,q.width),
+   gap=H?(k==39?q.left-r.right:r.left-q.right):(k==40?q.top-r.bottom:r.top-q.bottom);
+  if(ov>=mn*.3){const o=Math.max(0,gap)+Math.abs(H?dy:dx)*.25;if(o<bos){bos=o;bo=e}}
+  const s=H?Math.abs(dx)+Math.abs(dy)*2.5:Math.abs(dy)+Math.abs(dx)*2.5;if(s<bs){bs=s;best=e}});
+ const tg=bo||best;if(tg)focusEl(tg);
 }
 const BACK=[27,8,10009,461,4,166];
 document.addEventListener('keydown',e=>{if(e.repeat&&e.keyCode>=37&&e.keyCode<=40&&V()!='app'&&!(e.target&&e.target.tagName=='INPUT')){const n=performance.now();if(n-(S.nvT||0)<55){e.preventDefault();e.stopImmediatePropagation();return}S.nvT=n}},true);
@@ -2504,8 +2697,8 @@ document.addEventListener('keydown',e=>{
  const k=e.keyCode,a=document.activeElement,typing=a&&a.tagName=='INPUT',v=V();
  if(v=='login'){
   const f=$$('#login .lg,#login .tab,#login input,#login .btn').filter(x=>x.offsetParent),i=f.indexOf(a);
-  if(k==40||(k==L&&!typing)){e.preventDefault();focusEl(f[Math.min(i+1,f.length-1)])}
-  else if(k==38||(k==R&&!typing)){e.preventDefault();focusEl(f[Math.max(i-1,0)])}
+  if(k==40||(k==L&&(!typing||useKb()))){e.preventDefault();focusEl(f[Math.min(i+1,f.length-1)])}
+  else if(k==38||(k==R&&(!typing||useKb()))){e.preventDefault();focusEl(f[Math.max(i-1,0)])}
   else if(k==13&&typing){e.preventDefault();$('#go').click()}
   else if(k==13&&a&&a.click){e.preventDefault();a.click()}
   return;
@@ -2525,7 +2718,7 @@ document.addEventListener('keydown',e=>{
  if(v=='home'||v=='page'||v=='set'||v=='about'){
   const sel=v=='about'?'#about .pill,#about .abp':v=='set'?'#set .btn,#set .pill,#set input':v=='home'?'#home .hero:not(.empty),#home .tile,#home .circ,#home input,#home .wd[tabindex],#home .cwc,#home .rcc,#home .rcb':'#page .gi,#page .lk,#page .ai,#page .li,#page .pill,#page input';
   if(BACK.includes(k)&&!typing){e.preventDefault();if(e.repeat)return;if(v=='page'||v=='set'||v=='about')showHome();else if(v=='home')exitAsk('app');return}
-  if(typing&&(k==37||k==39))return;
+  if(typing&&(k==37||k==39)&&!useKb())return;
   if((k==405||k==70)&&!typing&&a&&a._it){e.preventDefault();toggleFavEl(a);return}
   if(k>=37&&k<=40){e.preventDefault();spatial(k,sel)}else if(k==13&&a&&a.click&&!typing){e.preventDefault();a.click()}
   return;
@@ -2534,7 +2727,7 @@ document.addEventListener('keydown',e=>{
  if(spOpen()){
   const ty=a&&a.tagName=='INPUT';
   if(BACK.includes(k)&&!(ty&&k==8)){e.preventDefault();closeSubs();return}
-  if(ty&&(k==37||k==39))return;
+  if(ty&&(k==37||k==39)&&!useKb())return;
   if(ty&&k==13){e.preventDefault();a.id=='sp-q'?osSearch():$('#sp-save').click();return}
   if(k>=37&&k<=40){e.preventDefault();spatial(k,'#sp .sx')}else if(k==13&&a&&a.click&&!ty){e.preventDefault();a.click()}
   return;
@@ -2565,7 +2758,16 @@ try{if(window.tizen&&tizen.tvinputdevice){['MediaPlayPause','MediaRewind','Media
 window.halaBack=()=>{if(kbOpen()){kbClose();return true}if(Date.now()-kbBT<600)return true;if(Date.now()-(S.kdBackT||0)<350)return true;if($('#dlg').classList.contains('on')){dlgClose();return true}if(waOn()){waBackKey();return true}if(XT.on){tipClose();return true}const v=V();if(v=='app'){if(pmOpen()){pmHide();return true}if(spOpen()){closeSubs();return true}exitAsk('play');return true}if(store.get('kid')&&v=='app')return true;if(pwdOpen()){pwClose();return true}if(v=='page'||v=='set'||v=='about'){showHome();return true}if(v=='det'){detBack();return true}if(v=='home'||v=='login'||v=='pair'){exitAsk('app');return true}return false};
 function accUI(){const a=document.createElement('div'),b=document.createElement('div'),l=S.lv?'…':'';a.textContent=S.acc||'';b.textContent=`${t('p_ch')} ${S.live.length} · ${t('p_mv')} ${l||S.mv.length} · ${t('p_sr')} ${l||S.sr.length}`;$('#ac').replaceChildren(a,b)}
 /* معاينة بالخلفية (الرئيسية + قوائم الأفلام والمسلسلات): فيديو واحد بس بنفس الوقت، بدون blur/فلاتر، بجودة منخفضة، وبعد تأخير بسيط */
-var BGOK=!(navigator.deviceMemory&&navigator.deviceMemory<=1)&&!(navigator.connection&&navigator.connection.saveData),SPU={};
+var SPU={};
+/* توفير السيرفر: كل معاينة فيديو = اتصال إضافي بالسيرفر. بالوضع التلقائي تشتغل فقط على تلفزيون/جهاز قوي وإنترنت جيد، وتتوقف تلقائياً مع الهاتف والجهاز الضعيف والإنترنت البطيء أو التقطيع. */
+function ecoMode(){const m=store.get('eco');return m==1?'on':m==2?'off':'auto'}
+function pvAllowed(){const m=ecoMode();if(m=='on')return false;if(m=='off')return true;
+ try{const c=navigator.connection;if(navigator.deviceMemory&&navigator.deviceMemory<=1)return false;
+  if(c&&(c.saveData||/^(slow-)?2g$|^3g$/.test(c.effectiveType||'')||(c.downlink&&c.downlink<5)))return false}catch(e){}
+ if(window.__mob||window.__tier===0)return false;
+ try{if(window.NT&&NT.bw&&NT.bw.filter(x=>Date.now()-x<90000).length>=2)return false}catch(e){}
+ return true}
+Object.defineProperty(window,'BGOK',{get:pvAllowed,configurable:true});
 async function bgUrl(it){let u=it.url;
  if(!u&&it.sid){if(SPU[it.sid])return SPU[it.sid];
   try{const j=await (await jget(xapi('get_series_info','&series_id='+it.sid))).json(),s=Object.keys(j.episodes||{}).sort((a,b)=>a-b)[0],ep=j.episodes[s][0];u=`${S.conf.server}/series/${enc(S.conf.user)}/${enc(S.conf.pass)}/${ep.id}.${ep.container_extension||'mp4'}`;SPU[it.sid]=u}catch(e){}}
@@ -2809,11 +3011,21 @@ function srpPage(){
   if(q){const n=document.createElement('b'),v=k=='all'?res.cnt.mv+res.cnt.sr+res.cnt.lv:res.cnt[k];n.textContent=String(v);b.append(n)}
   b.onclick=()=>{S.ssc=k;try{store.set('ssc',k)}catch(e){}S.gsig='';renderPage();focusEl($('#p-sc .pill[data-k="'+k+'"]'))};sb.append(b)});
  if(hadFocus)focusEl($('#p-sc .pill[data-k="'+hadFocus+'"]'));
- Li.innerHTML='';S.rows=null;S.mkT=null;
+ Li.innerHTML='';S.rows=null;S.mkT=null;Li.classList.remove('srg','srw','k-mv','k-sr','k-lv','k-all');
  if(!q){Li.innerHTML='<div class="none">'+(ar?'اكتب أو قل اسم الفيلم أو المسلسل أو القناة':'Type or say a movie, series or channel name')+'</div>';S.mk=null;return}
  if(!res.list.length){const o=['mv','sr','lv'].filter(k=>k!=sc&&res.cnt[k]>0).map(k=>N[k]+' ('+res.cnt[k]+')');
   Li.innerHTML='<div class="none"></div>';Li.firstChild.textContent=(ar?'ما لقينا شي بـ «'+N[sc]+'»':'Nothing found in '+N[sc])+(o.length?(ar?' — بس في نتائج بـ: ':' — but there are results in: ')+o.join(ar?'، ':', '):'');S.mk=null;return}
- const STEP=24,sig='s|'+sc+'|'+q;if(S.gsig!==sig){S.gsig=sig;S.gn=STEP}
+ if(sc=='all'){/* أقسام: أفلام / مسلسلات / قنوات، لكل قسم صف بوسترات */
+  Li.classList.add('srw');S.mk=null;S.gn=0;const CAP=S.cls=='tv'||window.__cls=='tv'?12:9;let firstDone=0;
+  ['mv','sr','lv'].forEach(k=>{const arr=res.list.filter(c=>SRK.get(c)==k);if(!arr.length)return;
+   const sec=document.createElement('section'),h=document.createElement('h3'),g=document.createElement('div');sec.className='srs';g.className='srg k-'+k;
+   h.append(document.createTextNode(SSC_I[k]+' '+N[k]));const sm=document.createElement('small');sm.textContent=String(arr.length);h.append(sm);sec.append(h,g);
+   arr.slice(0,CAP).forEach(c=>g.append(srRow(c,q)));
+   if(arr.length>CAP){const m=document.createElement('div');m.className='li srm';m.tabIndex=0;const tx=document.createElement('b');tx.textContent=(ar?'عرض كل ':'View all ')+N[k];const ct=document.createElement('small');ct.textContent=(ar?'+':'+')+(arr.length-CAP);m.append(tx,ct);
+    m.onclick=()=>{S.ssc=k;try{store.set('ssc',k)}catch(e){}S.gsig='';renderPage();focusEl($('#p-l .li')||$('#p-sc .pill.on'))};g.append(m)}
+   Li.append(sec)});return}
+ Li.classList.add('srg','k-'+sc);
+ const STEP=30,sig='s|'+sc+'|'+q;if(S.gsig!==sig){S.gsig=sig;S.gn=STEP}
  if(S.lastId){const ix=S.view.findIndex(c=>c.id==S.lastId);if(ix>=0)S.gn=Math.max(S.gn,ix+STEP+1)}
  S.step=STEP;S.mk=c=>Li.append(srRow(c,q));S.view.slice(0,S.gn).forEach(S.mk)}
 
@@ -2876,11 +3088,11 @@ function chime(){try{const C=new (window.AudioContext||window.webkitAudioContext
  setTimeout(()=>{if(C.state=='running')cm=1;else{C.close();const h=()=>{if(!cm){cm=1;chime()}};document.addEventListener('keydown',h,{once:true});document.addEventListener('click',h,{once:true})}},150)}catch(e){}}
 chime();$('#fx').addEventListener('animationend',e=>{if(e.target.id=='fx')e.target.remove()});
 const thAuto=()=>store.get('thauto')!==0,autoTh=()=>{const h=new Date().getHours();return(h>=6&&h<18)?'light':'dark'};
-function applyTheme(){if(thAuto()){const a=autoTh();if(store.get('thlast')!==a){store.set('thlast',a);store.set('th',a)}}{const n=store.get('th')||'dark',d=document.documentElement;if(d.dataset.th===n)return;d.classList.add('nt');d.dataset.th=n;clearTimeout(applyTheme.t);applyTheme.t=setTimeout(()=>d.classList.remove('nt'),250)}}
+function applyTheme(){if(thAuto()){const a=autoTh();if(store.get('thlast')!==a){store.set('thlast',a);store.set('th',a)}}{const n=store.get('th')||'dark',d=document.documentElement;if(d.dataset.th===n)return;d.classList.add('nt');d.dataset.th=n;/* القفل بينشال بعد أول رسمة مباشرة (قبل كان 250ms وبيعمل إعادة حساب ثانية ثقيلة أثناء ما المستخدم عم يتنقل) */const rm=()=>d.classList.remove('nt');try{requestAnimationFrame(()=>requestAnimationFrame(rm))}catch(e){setTimeout(rm,60)}}}
 function adlTxt(){const b=$('#st-adl');if(b)b.textContent=(S.lang=='ar'?'🔞 قفل محتوى الكبار تلقائياً: ':'🔞 Auto-lock adult content: ')+(adOn()?(S.lang=='ar'?'شغّال':'On'):(S.lang=='ar'?'متوقف':'Off'))}
 function thaTxt(){const b=$('#st-tha');if(b)b.textContent=(S.lang=='ar'?'🌗 الوضع التلقائي (نهاري/ليلي حسب الوقت): ':'🌗 Auto day/night theme: ')+(thAuto()?(S.lang=='ar'?'شغّال':'On'):(S.lang=='ar'?'متوقف':'Off'))}
 function toggleTheme(){store.set('th',(store.get('th')||'dark')=='dark'?'light':'dark');applyTheme()}
-$('#b-th').onclick=()=>{toggleTheme();focusEl($('#b-th'))};$('#th-l').onclick=toggleTheme;applyTheme();
+$('#b-th').onclick=()=>{focusEl($('#b-th'));try{requestAnimationFrame(()=>toggleTheme())}catch(e){toggleTheme()}};$('#th-l').onclick=toggleTheme;applyTheme();
 {const b=$('#st-adl');if(b)b.onclick=()=>{const done=()=>{store.set('adlock',adOn()?0:1);_gAd.clear();adlTxt();focusEl($('#st-adl'));osd(S.lang=='ar'?(adOn()?'قفل محتوى الكبار شغّال':'قفل محتوى الكبار متوقف'):(adOn()?'Adult lock on':'Adult lock off'))};
  if(!adOn()){done();return}
  store.get('pw')?askPw(t('oldpw'),done,true):askPw(t('newpw'),v=>{store.set('pw',hsh(v));done()})}}
@@ -2900,8 +3112,9 @@ function pwdKey(e){if(!$('#pwd').classList.contains('on'))return false;const k=e
  if(k==13){e.preventDefault();ty?$('#pw-ok').click():a&&a.click&&a.click();return true}
  if(k>=37&&k<=40){if(ty&&(k==37||k==39))return true;e.preventDefault();spatial(k,'#pwd input,#pwd .btn')}return true}
 function kidKey(e){if(!(store.get('kid')&&V()=='app'))return false;e.preventDefault();S.kq=(S.kq||[]).concat(e.keyCode).slice(-4);if(S.kq.join()=='38,38,40,40'){store.set('kid',false);S.kq=[];osd(t('kidoff'))}return true}
-const DV=()=>{const d=store.get('dev');return d=='tv'||d=='phone'?d:(window.__mob?'phone':'tv')},vmTxt=()=>t('vm')+': '+t({list:'vml',grid:'vmg',modern:'vmm'}[VM()]),dvTxt=()=>t('dev')+': '+t({tv:'devt',phone:'devp'}[DV()]);
-function showSet(){setView('set');thaTxt();adlTxt();ntTxt();buildSetW();$('#st-vm').textContent=vmTxt();$('#st-eng').textContent=engTxt();$('#st-dev').textContent=dvTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'')+(S.updN?'  🔔 v'+S.updN:'');setLogUI();setHistUI();focusEl($('#st-vm'))}
+const ecoTxt=()=>{const a=S.lang=='ar',m=ecoMode();return (a?'توفير السيرفر (معاينة الفيديو): ':'Server saver (video previews): ')+(m=='on'?(a?'مفعّل – بدون معاينة':'On – no previews'):m=='off'?(a?'متوقف – معاينة دائماً':'Off – always preview'):(a?'تلقائي':'Auto'))},DV=()=>{const d=store.get('dev');return d=='tv'||d=='phone'?d:'auto'},vmTxt=()=>t('vm')+': '+t({list:'vml',grid:'vmg',modern:'vmm'}[VM()]),dvTxt=()=>{const a=S.lang=='ar',v=DV(),n={tv:a?'تلفزيون':'TV',phone:a?'هاتف/تابلت':'Phone/Tablet',auto:(a?'تلقائي':'Auto')+' ('+(window.__cls=='tv'?(a?'تلفزيون':'TV'):window.__cls=='tablet'?(a?'تابلت':'Tablet'):(a?'هاتف':'Phone'))+')'};return t('dev')+': '+n[v]};
+function devLine(){const d=window.__di,a=S.lang=='ar',e=document.getElementById('st-di');if(!e)return;if(!d){e.textContent=a?'🔎 الجهاز: تم التعرف عليه من المتصفح فقط (مش من نظام أندرويد). النوع: '+(window.__cls=='tv'?'تلفزيون':window.__cls=='tablet'?'تابلت':'هاتف'):'🔎 Device detected from the browser only.';return}const cl={tv:a?'تلفزيون':'TV',tablet:a?'تابلت':'Tablet',phone:a?'هاتف':'Phone'}[d.cls]||d.cls,nt={wifi:a?'واي فاي':'Wi-Fi',eth:a?'كيبل':'Ethernet',cell:a?'بيانات الجوال':'Mobile data',none:a?'غير متصل':'Offline'}[d.net]||d.net,tr=[a?'محدود':'Limited',a?'متوسط':'Medium',a?'قوي':'Strong'][d.tier]||'';e.textContent='🔎 '+(a?'تعرّف التطبيق على جهازك: ':'Detected: ')+(d.brand?d.brand+' ':'')+d.model+' · '+cl+' · '+(a?'أندرويد ':'Android ')+d.rel+' · '+(a?'رام ':'RAM ')+(d.ram>0?(d.ram/1024).toFixed(1)+'GB':'?')+' · '+d.cores+(a?' أنوية':' cores')+' · '+(a?'الشبكة: ':'Network: ')+nt+' · '+(a?'مستوى الأداء: ':'Performance tier: ')+tr+(d.pen>0?(a?' · وضع حماية من التقطيع: مفعّل':' · anti-stutter boost on'):'')}
+function showSet(){setView('set');try{devLine()}catch(e){}thaTxt();adlTxt();ntTxt();buildSetW();$('#st-vm').textContent=vmTxt();$('#st-eng').textContent=engTxt();$('#st-dev').textContent=dvTxt();$('#st-eco').textContent=ecoTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'')+(S.updN?'  🔔 v'+S.updN:'');setLogUI();setHistUI();focusEl($('#st-vm'))}
 $('#b-set').onclick=showSet;{const w=$('#b-wa');if(w)w.onclick=()=>waOpenUI()}
 function setLogUI(){const ar=S.lang=='ar';$('#st-logh').textContent=ar?'سجل الأخطاء':'Error log';$('#st-log').textContent=ar?'📋 عرض آخر الأخطاء':'📋 Show recent errors';$('#st-logc').textContent=ar?'🗑 مسح السجل':'🗑 Clear log';{const e=$('#st-logs');if(e)e.textContent=ar?'📤 إرسال سجل الأخطاء':'📤 Send error log'}$('#st-logt').classList.remove('on')}
 $('#st-log').onclick=()=>{const p=$('#st-logt'),a=logRead();if(p.classList.contains('on')){p.classList.remove('on');return}p.textContent=a.length?a.slice(0,30).join('\n'):(S.lang=='ar'?'ما في أخطاء مسجلة ✓':'No errors logged ✓');p.classList.add('on');p.scrollTop=0;requestAnimationFrame(()=>{try{p.scrollIntoView({block:'nearest'})}catch(e){}})};
@@ -2919,7 +3132,8 @@ $('#st-logc').onclick=()=>{try{localStorage.removeItem('elog')}catch(e){}try{sto
 $('#p-vm').onclick=()=>{store.set('vm',VM()=='list'?'grid':VM()=='grid'?'modern':'list');renderPage();focusEl($('#p-vm'))};
 $('#st-vm').onclick=()=>{store.set('vm',VM()=='list'?'grid':VM()=='grid'?'modern':'list');$('#st-vm').textContent=vmTxt()};
 $('#st-eng').onclick=()=>engPick(()=>{$('#st-eng').textContent=engTxt();focusEl($('#st-eng'))});
-$('#st-dev').onclick=()=>{store.set('dev',DV()=='tv'?'phone':'tv');location.reload()};
+$('#st-eco').onclick=()=>{const o={auto:1,on:2,off:null}[ecoMode()];if(o)store.set('eco',o);else store.del('eco');try{killPv();window.CIN&&CIN.hide()}catch(e){}$('#st-eco').textContent=ecoTxt()};
+$('#st-dev').onclick=()=>{const o={auto:'tv',tv:'phone',phone:null}[DV()];if(o)store.set('dev',o);else store.del('dev');try{localStorage.removeItem('dev')}catch(e){}location.reload()};
 $('#st-back').onclick=showHome;
 
 
@@ -4060,7 +4274,7 @@ $('#rc-all').onclick=()=>rcvOpen('all');
 
 /* ===== جدول المباريات (قسم الرياضة): الجارية الآن + القادمة + الفرق + القناة الناقلة =====
    المباريات والنتائج: ESPN (مجاني بدون مفتاح). القنوات الناقلة: TheSportsDB (مجاني). وبنربط اسم القناة بقنواتك الفعلية بالقائمة. */
-const MT={on:0,from:null,list:null,ts:0,busy:0,f:'all',rt:0,ok:0,tv:null,tvts:0};
+const MT={on:0,from:null,list:null,ts:0,busy:0,f:'all',rt:0,ok:0,tv:null,tvts:0,dg:{}};
 const MT_LG=[['eng.1','الدوري الإنجليزي','Premier League'],['esp.1','الدوري الإسباني','LaLiga'],['ita.1','الدوري الإيطالي','Serie A'],['ger.1','الدوري الألماني','Bundesliga'],['fra.1','الدوري الفرنسي','Ligue 1'],['uefa.champions','دوري أبطال أوروبا','Champions League'],['uefa.europa','الدوري الأوروبي','Europa League'],['uefa.europa.conf','دوري المؤتمر الأوروبي','Conference League'],['ksa.1','دوري روشن السعودي','Saudi Pro League'],['afc.champions','دوري أبطال آسيا','AFC Champions League'],['caf.champions','دوري أبطال أفريقيا','CAF Champions League'],['fifa.world','كأس العالم','World Cup'],['fifa.friendly','مباريات ودية','Friendlies'],['uefa.nations','دوري الأمم الأوروبية','Nations League'],['eng.fa','كأس الاتحاد الإنجليزي','FA Cup'],['eng.league_cup','كأس الرابطة','League Cup'],['esp.copa_del_rey','كأس ملك إسبانيا','Copa del Rey'],['ita.coppa_italia','كأس إيطاليا','Coppa Italia'],['ger.dfb_pokal','كأس ألمانيا','DFB Pokal'],['ned.1','الدوري الهولندي','Eredivisie'],['por.1','الدوري البرتغالي','Liga Portugal'],['tur.1','الدوري التركي','Super Lig'],['egy.1','الدوري المصري','Egyptian League'],['uae.1','دوري أدنوك','UAE Pro League'],['qat.1','دوري نجوم قطر','Stars League'],['jor.1','الدوري الأردني','Jordan League']];
 /* أسماء عربية لأشهر الفرق (المفتاح = الاسم الإنجليزي بعد التطبيع) */
 const MT_AR={'real madrid':'ريال مدريد','barcelona':'برشلونة','atletico madrid':'أتلتيكو مدريد','sevilla':'إشبيلية','valencia':'فالنسيا','villarreal':'فياريال','real sociedad':'ريال سوسييداد','athletic club':'أتلتيك بلباو','real betis':'ريال بيتيس','girona':'جيرونا',
@@ -4081,14 +4295,29 @@ function mtParse(ev,lg,j){try{const c=(ev.competitions||[])[0];if(!c)return null
  const st=ev.status||c.status||{},ty=st.type||{},tm=Date.parse(ev.date||c.date);if(!tm)return null;
  return{id:lg[0]+':'+ev.id,lg:(j.leagues&&j.leagues[0]&&j.leagues[0].name)||lg[2],lga:lg[1],t:tm,state:ty.state||'pre',nm:ty.name||'',clock:st.displayClock||'',det:ty.shortDetail||ty.detail||'',
   hs:h.score!=null?String(h.score):'',as:a.score!=null?String(a.score):'',h:{n:h.team.displayName||h.team.name||'',l:h.team.logo||''},a:{n:a.team.displayName||a.team.name||'',l:a.team.logo||''},bc:[],ch:[]}}catch(e){return null}}
-async function mtFetch(){const base='https://site.api.espn.com/apis/site/v2/sports/soccer/',dd=n=>{const x=new Date(Date.now()+n*864e5);return x.getFullYear()+String(x.getMonth()+1).padStart(2,'0')+String(x.getDate()).padStart(2,'0')},rng=dd(-1)+'-'+dd(1),out=[],seen=new Set(),q=MT_LG.slice();let ok=0;
- const W=async()=>{while(q.length){const lg=q.shift();try{const r=await ntTo(jget(base+lg[0]+'/scoreboard?dates='+rng+'&limit=300'),9000);if(!r.ok)continue;const j=await r.json();ok++;
+/* جلب JSON: بنجرّب الاتصال الأصلي (جافا) أول لأنه ما بيتأثر بحجب CORS تبع المتصفح، وبعدين المتصفح. وبنسجّل سبب الفشل لنعرضه للمستخدم. */
+async function mtGet(src,u,ms){const d=MT.dg[src]=MT.dg[src]||{ok:0,fail:0,last:''};ms=ms||12000;let j=null;
+ if(window.HalaNative&&HalaNative.http){try{const x=await ntTo(xhttp('GET',u,{'User-Agent':'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36','Accept':'application/json'}),ms+3000);
+  if(x&&x.status>=200&&x.status<300){try{j=JSON.parse(x.body)}catch(e){d.last='JSON '+x.status}}else d.last='HTTP '+((x&&x.status)||0)+((x&&x.error)?' '+String(x.error).slice(0,40):'')}catch(e){d.last=String(e&&e.message||e).slice(0,50)}}
+ if(j==null){try{const r=await ntTo(fetch(u),ms);if(r.ok)j=await r.json();else d.last='HTTP '+r.status}catch(e){if(!d.last)d.last=String(e&&e.message||e).slice(0,50)}}
+ if(j==null)d.fail++;else{d.ok++;d.last=''}return j}
+const mtDs=n=>{const x=new Date(Date.now()+n*864e5);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+/* مصدر احتياطي: TheSportsDB (أحداث اليوم) إذا ESPN ما رد */
+function mtTsdb(x){try{const ts=x.strTimestamp?Date.parse(String(x.strTimestamp).replace(' ','T')+(/[zZ+]/.test(String(x.strTimestamp))?'':'Z')):Date.parse((x.dateEvent||'')+'T'+(x.strTime||'00:00:00')+'Z');if(!ts||!x.strHomeTeam||!x.strAwayTeam)return null;
+ const st=String(x.strStatus||'').toLowerCase(),hs=x.intHomeScore!=null&&x.intHomeScore!==''?String(x.intHomeScore):'',as=x.intAwayScore!=null&&x.intAwayScore!==''?String(x.intAwayScore):'',now=Date.now();
+ let state='pre';if(/finish|ft|aet|pen|after/.test(st))state='post';else if(/1h|2h|ht|half|live|in play|et\b/.test(st)||(hs!==''&&as!==''&&ts<=now&&now-ts<3*36e5&&!/not started|ns/.test(st)))state='in';
+ return{id:'t:'+x.idEvent,lg:x.strLeague||'',lga:x.strLeague||'',t:ts,state,nm:state=='in'&&/ht|half/.test(st)?'STATUS_HALFTIME':'',clock:'',det:x.strProgress||'',hs,as,h:{n:x.strHomeTeam,l:x.strHomeTeamBadge?x.strHomeTeamBadge+'/tiny':''},a:{n:x.strAwayTeam,l:x.strAwayTeamBadge?x.strAwayTeamBadge+'/tiny':''},bc:[],ch:[]}}catch(e){return null}}
+async function mtFetch(){const base='https://site.api.espn.com/apis/site/v2/sports/soccer/',dd=n=>{const x=new Date(Date.now()+n*864e5);return x.getFullYear()+String(x.getMonth()+1).padStart(2,'0')+String(x.getDate()).padStart(2,'0')},rng=dd(-1)+'-'+dd(1),out=[],seen=new Set(),q=MT_LG.slice();let ok=0;MT.dg={};MT.src='';
+ const W=async()=>{while(q.length){const lg=q.shift();try{const j=await mtGet('ESPN',base+lg[0]+'/scoreboard?dates='+rng+'&limit=300',10000);if(!j)continue;ok++;
   (j.events||[]).forEach(ev=>{const m=mtParse(ev,lg,j);if(m&&!seen.has(m.id)){seen.add(m.id);out.push(m)}})}catch(e){}}};
- await Promise.all([W(),W(),W(),W(),W(),W()]);MT.ok=ok;
+ await Promise.all([W(),W(),W(),W(),W(),W()]);MT.ok=ok;MT.src='ESPN';
+ if(ok<2||!out.length){/* ESPN ما ردّ كفاية: نجرّب المصدر الاحتياطي */
+  const fb=[];await Promise.all([-1,0,1].map(async n=>{const j=await mtGet('TheSportsDB','https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+mtDs(n)+'&s=Soccer',12000);if(j){(j.events||[]).forEach(x=>{const m=mtTsdb(x);if(m&&!seen.has(m.id)){seen.add(m.id);fb.push(m)}})}}));
+  if(fb.length){out.push(...fb);MT.ok=Math.max(ok,1);MT.src=ok?'ESPN+TheSportsDB':'TheSportsDB'}}
  const now=Date.now();return out.filter(m=>m.state=='in'||(m.state=='pre'&&(mtDay(m.t,0)||mtDay(m.t,1)))||(m.state=='post'&&now-m.t<10*36e5&&now-m.t>=0))}
 /* القنوات الناقلة (المنطقة العربية فقط) من TheSportsDB، وبنربطها بالمباراة بالاسم */
 async function mtTv(){if(MT.tv&&Date.now()-MT.tvts<30*6e4)return MT.tv;const rows=[],iso=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
- await Promise.all([-1,0,1].map(async n=>{try{const r=await ntTo(jget('https://www.thesportsdb.com/api/v1/json/3/eventstv.php?d='+iso(n)+'&s=Soccer'),9000);if(!r.ok)return;const j=await r.json();(j.tvevents||[]).forEach(x=>rows.push(x))}catch(e){}}));
+ await Promise.all([-1,0,1].map(async n=>{try{const j=await mtGet('TheSportsDB-TV','https://www.thesportsdb.com/api/v1/json/3/eventstv.php?d='+iso(n)+'&s=Soccer',9000);if(j)(j.tvevents||[]).forEach(x=>rows.push(x))}catch(e){}}));
  const AR=/bein|ssc|sharjah|abu ?dhabi|dubai sport|al ?kass|on ?time|nile sport|mbc|roya|thmanyah|arryadia|الكأس|الرياضية|الكاس|jordan|saudi|qatar|kuwait|oman|bahrain|egypt|emirates|iraq|morocco|algeria|tunisia|libya|lebanon|syria|middle east|mena|arab/i;
  MT.tv=rows.filter(x=>x.strChannel&&AR.test(x.strChannel+' '+(x.strCountry||'')));MT.tvts=Date.now();return MT.tv}
 const _MTT=new WeakMap(),MT_GEN=new Set(['hd','fhd','uhd','sd','4k','tv','channel','live','ar','arabic','en','premium','plus','max','extra','ᴴᴰ']);
@@ -4151,13 +4380,23 @@ function mtPlay(m){const ar=S.lang=='ar';
  const names=m.bc.map(b=>b.n);
  dlgOpen(ar?'القناة الناقلة':'Broadcaster',names.length?(ar?'بتنعرض على: ':'Shown on: ')+names.join(' · ')+(ar?' — بس مش لاقيها بقائمتك':' — but it is not in your list'):(ar?'ما لقينا قناة ناقلة معلنة لهالمباراة':'No broadcaster is announced for this match'),
   [{t:'\u{1F4FA} '+(ar?'افتح قنوات الرياضة':'Open sports channels'),fn:()=>{mtClose(1);try{rcvClose(1)}catch(e){}showPage('__sports')}},{t:ar?'رجوع':'Back',fn:()=>{}}])}
+/* شرح سبب العطل بلغة مفهومة */
+function mtDiag(b){const ar=S.lang=='ar',d=MT.dg||{},e=document.createElement('div');e.className='mt-dg';const rows=Object.keys(d).filter(k=>k!='TheSportsDB-TV').map(k=>{const x=d[k];return k+': '+(x.ok?(ar?'رد':'ok'):(ar?'ما رد — ':'no answer — ')+(x.last||'?'))});
+ let why;const net=(window.__di&&window.__di.net)||'';const all=Object.values(d).map(x=>x.last||'').join(' ');
+ if(net=='none'||navigator.onLine===false)why=ar?'الجهاز مش متصل بالإنترنت. اتصل بالواي فاي وجرّب تحديث.':'The device is offline.';
+ else if(/HTTP (403|451)/.test(all))why=ar?'موقع المباريات رفض الطلب من شبكتك (ممكن حجب من مزوّد الإنترنت أو VPN). جرّب شبكة ثانية.':'The sports API refused the request from your network.';
+ else if(/HTTP (429)/.test(all))why=ar?'الخدمة مشغولة وحدّت الطلبات مؤقتاً. استنى دقيقة وجرّب تحديث.':'Rate limited. Wait a minute and refresh.';
+ else if(/timeout/i.test(all))why=ar?'الإنترنت بطيء أو الاتصال بالموقع علّق. جرّب تحديث.':'Slow connection. Refresh.';
+ else if(/Failed to fetch|NetworkError|Unable to resolve|UnknownHost|0 /i.test(all))why=ar?'ما قدر يوصل لموقع المباريات (DNS أو حجب أو الإنترنت). لو بتستخدم DNS خاص أو VPN جرّب تطفيه.':'Could not reach the sports site (DNS/blocking/network).';
+ else why=ar?'الموقع رد بشي غير متوقع. جرّب تحديث بعد شوي.':'Unexpected reply. Try again later.';
+ const h=document.createElement('b');h.textContent=(ar?'السبب: ':'Why: ')+why;const sm=document.createElement('small');sm.dir='ltr';sm.textContent=rows.join('  |  ');e.append(h,sm);b.append(e)}
 function mtRender(upd){if(!MT.on)return;const ar=S.lang=='ar',b=$('#mt-b'),st=$('#mt-st'),fl=$('#mt-fl'),act=document.activeElement,keep=act&&act._m?act._m.id:null,hadF=fl.contains(act)?act.dataset.f:null;
  fl.innerHTML='';[['all',ar?'الكل':'All'],['live',ar?'جارية الآن':'Live'],['today',ar?'اليوم':'Today'],['tomorrow',ar?'غداً':'Tomorrow']].forEach(([k,n])=>{const x=document.createElement('button');x.className='pill'+(MT.f==k?' on':'');x.tabIndex=0;x.dataset.f=k;x.textContent=n;
   x.onclick=()=>{MT.f=k;mtRender();focusEl($('#mt-fl .pill[data-f="'+k+'"]'))};fl.append(x)});
  if(hadF)focusEl($('#mt-fl .pill[data-f="'+hadF+'"]'));
  b.innerHTML='';const G=MT.list?mtGroups():[];
  if(!MT.list){st.textContent=MT.busy?(ar?'عم نجيب المباريات…':'Loading matches…'):'';return}
- if(!G.length){st.textContent=MT.ok?(ar?'ما في مباريات ظاهرة بهالفترة':'No matches in this period'):(ar?'ما قدرنا نجيب جدول المباريات — تأكد من الإنترنت وجرّب تحديث':'Could not load the schedule — check your internet and refresh');if(!hadF)focusEl($('#mt-rf'));return}
+ if(!G.length){st.textContent=MT.ok?(ar?'ما في مباريات ظاهرة بهالفترة':'No matches in this period'):(ar?'ما قدرنا نجيب جدول المباريات':'Could not load the schedule');if(!MT.ok)mtDiag(b);if(!hadF)focusEl($('#mt-rf'));return}
  st.textContent=(ar?'آخر تحديث ':'Updated ')+mtHM(MT.ts);let first=null,kept=null;
  G.forEach(([h,l])=>{const sec=document.createElement('section'),hd=document.createElement('h4');hd.textContent=h+' ('+l.length+')';sec.append(hd);l.forEach(m=>{const c=mtCard(m);if(!first)first=c;if(m.id===keep)kept=c;sec.append(c)});b.append(sec)});
  if(MT.fresh){MT.fresh=0;focusEl(first)}
@@ -4245,7 +4484,7 @@ $('#p-sort').onclick=()=>{const all=src(S.page),cur=sortMode(all);
 function thumb(u,w){return(typeof u=='string'&&u.indexOf('image.tmdb.org/t/p/')>0)?u.replace(/(image\.tmdb\.org\/t\/p\/)(original|w\d+)\//,'$1'+w+'/'):u}
 window.CIN=(function(){
  const A=[$('#cin-a'),$('#cin-b')],vd=$('#cin-v'),tt=$('#ci-t'),mm=$('#ci-m'),pp=$('#ci-p'),pc=$('#p-cin'),pg=$('#page');
- const CLIP=22,DWELL=140,VDELAY=1200,MC=new Map(),INF=new Map();
+ const CLIP=22,DWELL=(window.__mob||window.__tier===0)?320:180,VDELAY=1200,MC=new Map(),INF=new Map();
  let gen=0,dw=0,qt=0,ii=0,shown='',cur=null,ck=0,t0=0,loops=0,strikes=0,ft=0,curEl=null,bdT=0;
  /* ===== صورة خلفية واضحة (HD): TMDB أول شي، بعدين backdrop السيرفر، وآخر شي البوستر ===== */
  const BD=new Map(),BDP=new Map(),BDL=store.get('cinbd')||{},TI='https://image.tmdb.org/t/p/',HI=(screen.width*(window.devicePixelRatio||1))>=1600;
@@ -4304,23 +4543,25 @@ window.CIN=(function(){
   try{vd.pause()}catch(e){}if(vd.getAttribute('src')){vd.removeAttribute('src');vd.load()}}
  function stop(){gen++;clearTimeout(dw);halt()}
  function evict(){while(MC.size>80)MC.delete(MC.keys().next().value)}
+ const LIM={n:0,q:[]};/* سقف طلبين معلومات متزامنين للسيرفر؛ الطلبات القديمة المنتظرة (تجاوزها المستخدم بالتمرير) تُلغى */
+ function lim(fn){return new Promise((res,rej)=>{const run=()=>{LIM.n++;fn().then(res,rej).finally(()=>{LIM.n--;const x=LIM.q.shift();if(x)x.run()})};if(LIM.n<2)run();else{LIM.q.push({run,rej});while(LIM.q.length>2)LIM.q.shift().rej(new Error('drop'))}})}
  async function fetchMeta(it,fk){
   const m={u:it.url||'',bd:'',plot:'',year:'',genre:'',rate:0};
   if(S.conf&&S.conf.mode=='xt'){
    try{
     const id=it.sid||String(it.id).slice(1),sr=fk=='sr'||!!it.sid;
-    const r=await Promise.race([jget(sr?xapi('get_series_info','&series_id='+id):xapi('get_vod_info','&vod_id='+id)),new Promise((_,j)=>setTimeout(j,7000))]);
+    const r=await lim(()=>Promise.race([jget(sr?xapi('get_series_info','&series_id='+id):xapi('get_vod_info','&vod_id='+id)),new Promise((_,j)=>setTimeout(j,7000))]));
     const j=await r.json(),i=j.info||{},b=i.backdrop_path||i.backdrop;
     m.bd=(Array.isArray(b)?b[0]:b)||'';m.plot=String(i.plot||i.description||'');
     m.year=String(i.releasedate||i.releaseDate||i.release_date||'').slice(0,4);m.genre=String(i.genre||'').split(/[,،\/]/).slice(0,3).join(' • ').trim();
     m.rate=Math.round((parseFloat(i.rating)||0)*10)/10;
     if(sr&&!m.u){if(SPU[id])m.u=SPU[id];else{const ks=Object.keys(j.episodes||{}).sort((x,y)=>x-y),ep=ks.length&&j.episodes[ks[0]]&&j.episodes[ks[0]][0];
      if(ep){m.u=`${S.conf.server}/series/${enc(S.conf.user)}/${enc(S.conf.pass)}/${ep.id}.${ep.container_extension||'mp4'}`;SPU[id]=m.u}}}
-   }catch(e){}
+   }catch(e){if(e&&e.message=='drop')m.skip=true}
   }
   return m}
  function meta(it,fk){const k=key(it),c=MC.get(k);if(c)return Promise.resolve(c);
-  let p=INF.get(k);if(!p){p=fetchMeta(it,fk).then(m=>{MC.set(k,m);evict();INF.delete(k);return m});INF.set(k,p)}return p}
+  let p=INF.get(k);if(!p){p=fetchMeta(it,fk).then(m=>{if(!m.skip){MC.set(k,m);evict()}INF.delete(k);return m});INF.set(k,p)}return p}
  function play(u,it,g){
   loops=0;vd.defaultMuted=false;vd.muted=false;vd.volume=1;vd.preload='auto';vd.src=u;
   vd.onloadedmetadata=()=>{if(g!==gen)return;const d=vd.duration;let s=0;
@@ -4356,7 +4597,7 @@ window.CIN=(function(){
   dw=setTimeout(()=>settle(it,fk,g),DWELL)}
  function pill(){if(!pc)return;const o=user();pc.textContent=ar()?('🎬 الفيديو: '+(o?'شغّال':'متوقف')):('🎬 Video: '+(o?'On':'Off'))}
  if(pc)pc.onclick=()=>{const o=user();store.set('cinv',o?0:1);strikes=0;pill();if(o){halt();if(!cinp())bgc(0)}else if(cur&&on())focus(cur,ck);const b=$('#p-cin');b&&b.focus({preventScroll:true})};
- $('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(r&&r._it&&on()){curEl=r;focus(r._it,r._fk)}});
+ $('#p-l').addEventListener('focusin',e=>{const r=e.target.closest('.li');if(r&&r._it&&on()&&!pg.classList.contains('srp')){curEl=r;focus(r._it,r._fk)}});
  $('#home').addEventListener('focusin',e=>{const r=e.target.closest('.cd,.hero');if(!r||!r._it||!on())return;if(r._fk=='mv'||r._fk=='sr'){curEl=r;focus(r._it,r._fk)}else hide()});
  $('#home').addEventListener('click',stop,true);
  $('#p-l').addEventListener('click',stop,true);   /* قبل ما يبدأ المشغّل: حرّر الاتصال والـ decoder */
@@ -4423,6 +4664,7 @@ R('U','#sp-o','ضبط توقيت الترجمة','تقديم أو تأخير ا�
 R('A','#xb','قائمة المشغّل والريموت','قائمة بالتشغيل، المفضلة، حجم الصورة (الأصلي، مناسب، ملء، تكبير، 16:9، 4:3) ومحرك التشغيل. أرقام الريموت تقفز لرقم قناة، ↑↓ تبدّل القناة.|اضغط OK أو القائمة.|تتغير الإعدادات بلا إيقاف البث.','Player menu & remote','Play, favorite, aspect ratio and engine. Number keys jump to channel, ↑↓ zap.|Press OK/Menu.|Applies without stopping.'),
 R('S','#st-vm','طريقة العرض الافتراضية','قائمة أو مربعات أو سينمائي.|اضغط للتبديل.|يُطبّق على كل الصفحات.','Default view mode','List, grid or cinematic.|Press to cycle.|Applies to all pages.'),
 R('S','#st-eng','محرك التشغيل','اختيار المشغّل (الويب، ExoPlayer، VLC).|اضغط واختر.|يُستخدم في كل التشغيل، مع تبديل تلقائي عند الفشل.','Playback engine','Choose web player, ExoPlayer or VLC.|Press and pick.|Used everywhere; auto-falls back on failure.'),
+R('S','#st-eco','توفير السيرفر','يتحكم بمعاينات الفيديو اللي بتفتح اتصال إضافي بالسيرفر.|تلقائي: تعمل فقط على جهاز قوي وإنترنت جيد.|مفعّل: بدون معاينة (أخف على السيرفر والإنترنت).','Server saver','Controls video previews that open an extra server connection.|Auto: only on strong devices and good internet.|On: no previews (lighter).'),
 R('S','#st-dev','نوع الجهاز','تلفزيون أو هاتف/تابلت أو تلقائي، لتناسب التحكم.|اضغط للتبديل.|تتغير الواجهة حسب الجهاز.','Device type','TV, phone/tablet or auto.|Press to toggle.|UI adapts to the device.'),
 R('S','#st-kb','الكيبورد','كيبورد التطبيق أو كيبورد الجهاز أو تلقائي.|اضغط للتبديل.|يُستخدم عند الكتابة.','Keyboard','App keyboard, system keyboard or auto.|Press to cycle.|Used when typing.'),
 R('S','#st-tha','الوضع التلقائي نهاري/ليلي','تبديل الثيم حسب الوقت.|اضغط للتشغيل أو الإيقاف.|يتبدل الثيم تلقائياً.','Auto theme','Theme follows time of day.|Toggle on/off.|Theme switches automatically.'),
@@ -4495,6 +4737,45 @@ addEventListener('resize',()=>{if(on)draw()});
 const tt=window.tipTry;if(typeof tt=='function')window.tipTry=function(){if(!on&&!wel)return tt.apply(this,arguments)};
 labels();setTimeout(()=>{labels();welcome()},4500);
 window.HalaGuide={start,end,steps:ST.length};
+})();
+</script>
+
+<script id="img-js">
+/* صور البوسترات: إعادة محاولة تلقائية قبل ما نتخلى عن الصورة، وإذا فشلت نهائياً البطاقة تعرض اسمها بشكل مرتب بدل فراغ */
+(function(){
+ const MAXR=2,DL=[1500,5000];
+ document.addEventListener('error',function(e){
+  const i=e.target;if(!i||i.tagName!=='IMG')return;
+  const u=i.getAttribute('src');if(!u||/^(data|blob):/i.test(u))return;
+  const n=i._rx||0;
+  if(n<MAXR&&i.isConnected&&navigator.onLine!==false){
+   e.stopImmediatePropagation();i._rx=n+1;
+   setTimeout(function(){if(i.isConnected&&i.getAttribute('src')===u){i.removeAttribute('src');i.src=u}},DL[n]);
+   return}
+  /* فشل نهائي: الـ onerror الأصلي بيشيل الصورة (بيشتغل بعدنا)، ونحن نعلّم البطاقة */
+  const p=i.parentNode;
+  if(p&&p.classList&&p.classList.contains('li')){setTimeout(function(){p.classList.add('nl');if(!p.dataset.i){const sp=p.querySelector('span');const c=((sp&&sp.textContent)||'').replace(/^[^\p{L}\p{N}]+/u,'').charAt(0);if(c)p.dataset.i=c.toUpperCase()}},0)}
+ },true);
+ document.addEventListener('load',function(e){const i=e.target;if(i&&i.tagName==='IMG'&&!i.classList.contains('ld'))i.classList.add('ld')},true);
+ /* لو رجع الإنترنت: أعد تحميل الصور اللي فشلت */
+ window.addEventListener('online',function(){try{document.querySelectorAll('img').forEach(function(i){if(i.complete&&i.naturalWidth===0&&i.getAttribute('src')){i._rx=0;const u=i.getAttribute('src');i.removeAttribute('src');i.src=u}})}catch(x){}});
+})();
+</script>
+<style id="img-css">/* فقط على صور البطاقات (مش طبقات الخلفية اللي عندها تبديل خاص) */
+.li img.ld,.cd img.ld,.cwc img.ld,.rcz img.ld,.th img.ld{animation:imgin .3s ease-out}@keyframes imgin{from{opacity:0}to{opacity:1}}html.lowp img.ld{animation:none!important}</style>
+<script id="dev-js">
+/* شريط التنقل السفلي: بس للهاتف/التابلت. بيتبنى مرة وحدة وما بيأثر على التلفزيون. */
+(function(){if(!window.__mob)return;
+const IC={home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',live:'<circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/>',mv:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 11h18M7 7l-2-4M12 7l-2-4M17 7l-2-4"/>',sr:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',q:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',set:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
+const L={ar:{home:'الرئيسية',live:'قنوات',mv:'أفلام',sr:'مسلسلات',q:'بحث',set:'إعدادات'},en:{home:'Home',live:'Live',mv:'Movies',sr:'Series',q:'Search',set:'Settings'}};
+const nav=document.createElement('nav');nav.id='bnav';nav.setAttribute('aria-label','main');document.body.appendChild(nav);
+function build(){const l=L[S.lang=='ar'?'ar':'en'];nav.innerHTML='';['home','live','mv','sr','q','set'].forEach(k=>{const b=document.createElement('button');b.type='button';b.dataset.k=k;b.tabIndex=-1;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg><span>'+l[k]+'</span>';b.onclick=()=>go(k);nav.append(b)});mark()}
+function go(k){try{if(k=='home')showHome();else if(k=='live')showPage('__all');else if(k=='mv')showPage('__mv');else if(k=='sr')showPage('__sr');else if(k=='set')showSet();else if(k=='q'){const v=V();if(v=='home'){const i=$('#hq');i&&i.focus()}else if(v=='page'&&S.page!='__s'){const i=$('#p-q');i&&(i.scrollIntoView&&i.scrollIntoView({block:'center'}),i.focus())}else{showHome();setTimeout(()=>{const i=$('#hq');i&&i.focus()},60)}}}catch(e){elog('bnav '+e.message)}}
+function mark(){const v=V(),pg=S.page;let k=v=='home'?'home':v=='set'?'set':v=='page'?(pg=='__mv'?'mv':pg=='__sr'?'sr':pg=='__s'?'q':'live'):'';[...nav.children].forEach(b=>b.classList.toggle('on',b.dataset.k==k))}
+build();
+new MutationObserver(mark).observe(document.body,{attributes:true,attributeFilter:['data-v']});
+['showPage','renderPage'].forEach(n=>{const f=window[n];if(typeof f!='function')return;window[n]=function(){const r=f.apply(this,arguments);try{mark()}catch(e){}return r}});
+new MutationObserver(build).observe(document.documentElement,{attributes:true,attributeFilter:['lang','dir']});
 })();
 </script>
 </body>
