@@ -98,6 +98,88 @@ cat > android/app/src/main/AndroidManifest.xml <<'EOF'
   </application>
 </manifest>
 EOF
+cat > android/app/src/main/java/com/hala/tv/NetWatch.java <<'EOF'
+package com.hala.tv;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import java.util.HashMap;
+
+/* Instant "internet lost / back" signal straight from Android (validated networks), debounced.
+   It is only a trigger: the web layer confirms with a real multi-host probe before showing anything. */
+public class NetWatch {
+  public interface Cb { void on(boolean up); }
+
+  private final ConnectivityManager cm;
+  private final Handler h = new Handler(Looper.getMainLooper());
+  private final HashMap<Network, Boolean> nets = new HashMap<Network, Boolean>();
+  private final Cb cb;
+  private ConnectivityManager.NetworkCallback cbk;
+  private int last = -1;
+  private final Runnable chk = new Runnable() { public void run() { push(); } };
+
+  public NetWatch(Context c, Cb cb) {
+    this.cb = cb;
+    ConnectivityManager m = null;
+    try { m = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE); } catch (Throwable e) {}
+    cm = m;
+  }
+
+  private boolean anyUp() {
+    synchronized (nets) {
+      for (Boolean b : nets.values()) if (b.booleanValue()) return true;
+    }
+    return false;
+  }
+
+  private void eval() {
+    h.removeCallbacks(chk);
+    if (anyUp()) h.post(chk); else h.postDelayed(chk, 1500);
+  }
+
+  private void push() {
+    int now = anyUp() ? 1 : 0;
+    if (now == last) return;
+    last = now;
+    if (cb != null) { try { cb.on(now == 1); } catch (Throwable e) {} }
+  }
+
+  public void start() {
+    if (cm == null || cbk != null) return;
+    try {
+      cbk = new ConnectivityManager.NetworkCallback() {
+        @Override public void onAvailable(Network n) {
+          synchronized (nets) { if (!nets.containsKey(n)) nets.put(n, Boolean.valueOf(Build.VERSION.SDK_INT < 23)); }
+          eval();
+        }
+        @Override public void onCapabilitiesChanged(Network n, NetworkCapabilities nc) {
+          boolean ok = Build.VERSION.SDK_INT < 23 || nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+          synchronized (nets) { nets.put(n, Boolean.valueOf(ok)); }
+          eval();
+        }
+        @Override public void onLost(Network n) {
+          synchronized (nets) { nets.remove(n); }
+          eval();
+        }
+      };
+      NetworkRequest rq = new NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
+      cm.registerNetworkCallback(rq, cbk);
+    } catch (Throwable e) { cbk = null; }
+  }
+
+  public void stop() {
+    h.removeCallbacksAndMessages(null);
+    try { if (cm != null && cbk != null) cm.unregisterNetworkCallback(cbk); } catch (Throwable e) {}
+    cbk = null;
+  }
+}
+EOF
 cat > android/app/src/main/java/com/hala/tv/MainActivity.java <<'EOF'
 package com.hala.tv;
 
@@ -168,6 +250,7 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 
 public class MainActivity extends Activity {
   private WebView web;
+  private NetWatch nw;
   private ValueCallback<Uri[]> fcb;
   private FrameLayout exoRoot;
   private AspectRatioFrameLayout exoFrame;
@@ -653,6 +736,8 @@ public class MainActivity extends Activity {
     web.addJavascriptInterface(new Bridge(), "HalaNative");
     web.loadUrl("file:///android_asset/index.html");
     web.requestFocus();
+    nw = new NetWatch(this, new NetWatch.Cb() { public void on(boolean up) { if (web != null) web.evaluateJavascript("window.__net&&window.__net(" + up + ")", null); } });
+    nw.start();
   }
 
 
@@ -1524,6 +1609,7 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onDestroy() {
+    if (nw != null) { nw.stop(); nw = null; }
     voiceKill();
     exoRelease();
     vlcRelease();
@@ -1725,7 +1811,8 @@ public class PlayerActivity extends Activity {
   private boolean vlcHw = true, vlcRetried, vlcPlayed, vlcBuf;
   private long vlcMoveAt, vlcLastT = -1;
 
-  private boolean playing, paused, ended, failing, triedOther, done;
+  private boolean playing, paused, ended, failing, triedOther, done, netDown;
+  private NetWatch nw;
   private int dlgs = 0;
   private boolean switchInternal = false;
   private String errCode = "";
@@ -1790,6 +1877,12 @@ public class PlayerActivity extends Activity {
     epN = in.getIntExtra("epN", 0);
     startMs = in.getLongExtra("start", 0);
     build();
+    nw = new NetWatch(this, new NetWatch.Cb() { public void on(boolean up) {
+      if (done || tvMsg == null) return;
+      if (up) { if (netDown) toast(ar ? "\u2713 \u0631\u062c\u0639 \u0627\u0644\u0625\u0646\u062a\u0631\u0646\u062a" : "\u2713 Internet is back", 2500); netDown = false; }
+      else { netDown = true; toast(ar ? "\u26a0 \u0627\u0646\u0641\u0635\u0644 \u0627\u0644\u0625\u0646\u062a\u0631\u0646\u062a" : "\u26a0 Internet disconnected", 3600000); }
+    } });
+    nw.start();
     begin(startMs);
   }
 
@@ -2697,6 +2790,7 @@ public class PlayerActivity extends Activity {
 
   @Override
   protected void onDestroy() {
+    if (nw != null) { nw.stop(); nw = null; }
     hnd.removeCallbacksAndMessages(null);
     done = true;
     releaseAll();

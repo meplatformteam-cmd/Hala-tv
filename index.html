@@ -816,21 +816,31 @@ body[data-v=set] #set{padding-top:calc(7vh + 18px)!important;padding-bottom:28vh
 #ntv .btn{width:auto;margin:0;padding:clamp(10px,1.6vh,16px) clamp(20px,2.4vw,34px);border-radius:999px;background:rgba(255,255,255,.1);color:#fff;border:2px solid transparent;font-size:clamp(17px,2.4vh,24px);font-weight:800;cursor:pointer;text-align:center}
 #ntv .btn:focus{background:#fff;color:#000;transform:scale(1.05);box-shadow:0 0 0 4px rgba(255,255,255,.3)}
 .ntmain{flex:1;display:flex;align-items:center;gap:clamp(22px,4vw,64px)}
-.nt-g{position:relative;flex:none;width:clamp(190px,46vh,400px);height:clamp(190px,46vh,400px)}
-.nt-g svg{width:100%;height:100%;transform:rotate(-90deg)}
-.nt-g circle{fill:none;stroke-width:12}
-.ntt{stroke:rgba(255,255,255,.09)}
-.ntvv{stroke:var(--nc);stroke-linecap:round;stroke-dasharray:0 553;transition:stroke-dasharray .9s cubic-bezier(.2,.8,.2,1),stroke .4s;filter:drop-shadow(0 0 10px var(--nc))}
-#ntv.run .ntvv{stroke-dasharray:140 553;-webkit-animation:ntspin 1.1s linear infinite;animation:ntspin 1.1s linear infinite;transform-origin:100px 100px}
-@-webkit-keyframes ntspin{to{-webkit-transform:rotate(360deg)}}@keyframes ntspin{to{transform:rotate(360deg)}}
-.nt-c{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.nt-n{display:flex;align-items:baseline;gap:4px;direction:ltr}
-.nt-n b{font-size:clamp(56px,15vh,128px);font-weight:900;line-height:1;color:var(--nc);font-variant-numeric:tabular-nums}
-.nt-n span{font-size:clamp(22px,5vh,40px);font-weight:800;color:var(--nc);opacity:.85}
-#nt-st{margin-top:6px;font-size:clamp(17px,3vh,28px);font-weight:800;opacity:.92;padding:0 14px}
+.nt-g2{flex:none;width:clamp(280px,38vw,520px);display:flex;flex-direction:column;gap:clamp(8px,1.6vh,16px)}
+.nt-big{display:flex;align-items:baseline;justify-content:center;gap:10px;direction:ltr}
+.nt-big b{font-size:clamp(64px,17vh,150px);font-weight:900;line-height:1;color:var(--nc);font-variant-numeric:tabular-nums;transition:color .4s}
+.nt-big span{font-size:clamp(20px,4vh,36px);font-weight:800;color:var(--nc);opacity:.8}
+#nt-st{text-align:center;font-size:clamp(16px,2.8vh,26px);font-weight:800;opacity:.92;min-height:1.5em}
 #ntv.done #nt-st{color:var(--nc)}
+.nt-sp{direction:ltr;height:clamp(54px,11vh,100px);border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);overflow:hidden}
+.nt-sp svg{width:100%;height:100%;display:block}
+#nt-sp-l{fill:none;stroke:var(--nc);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#nt-sp-a{fill:var(--nc);opacity:.14;stroke:none}
+.nt-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(4px,.9vh,8px)}
+.nt-steps li{display:flex;align-items:center;gap:12px;padding:clamp(7px,1.3vh,12px) clamp(12px,1.3vw,18px);border-radius:14px;background:rgba(255,255,255,.04);font-size:clamp(15px,2.2vh,21px);color:rgba(255,255,255,.5);transition:background .3s,color .3s}
+.nt-steps li i{flex:none;width:1.5em;height:1.5em;border-radius:50%;border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.72em;font-weight:900;line-height:1}
+.nt-steps li span{flex:1}
+.nt-steps li small{direction:ltr;font-size:.85em;opacity:.85}
+.nt-steps li.r{color:#fff;background:rgba(255,255,255,.09)}
+.nt-steps li.r i{border-color:#fff;border-top-color:transparent;-webkit-animation:ntspin .9s linear infinite;animation:ntspin .9s linear infinite}
+.nt-steps li.ok,.nt-steps li.w,.nt-steps li.x{color:#fff}
+.nt-steps li.ok i{background:#30d158;border-color:#30d158;color:#04210d}
+.nt-steps li.w i{background:#ffd60a;border-color:#ffd60a;color:#2b2300}
+.nt-steps li.x i{background:#ff453a;border-color:#ff453a;color:#fff}
+.nt-steps li.s{opacity:.45}
+@-webkit-keyframes ntspin{to{-webkit-transform:rotate(360deg)}}@keyframes ntspin{to{transform:rotate(360deg)}}
 .nt-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:clamp(10px,2vh,18px)}
-.nt-m{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(8px,1.4vh,14px)}
+.nt-m{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.4vh,14px)}
 .ntmc{display:flex;flex-direction:column;gap:2px;padding:clamp(10px,1.8vh,16px) clamp(12px,1.4vw,20px);border-radius:20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08)}
 .ntmc span{font-size:clamp(18px,2.6vh,26px)}.ntmc small{opacity:.65;font-size:clamp(13px,1.8vh,17px)}.ntmc b{font-size:clamp(19px,3vh,30px);font-weight:900;direction:ltr;text-align:start}
 .nt-v,.nt-a{padding:clamp(12px,2vh,18px) clamp(14px,1.6vw,22px);border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-inline-start:5px solid var(--nc)}
@@ -838,8 +848,8 @@ body[data-v=set] #set{padding-top:calc(7vh + 18px)!important;padding-bottom:28vh
 .nt-v h4,.nt-a h4{margin:0 0 4px;font-size:clamp(14px,2vh,19px);color:var(--nc);font-weight:800}.nt-a h4{color:#fff;opacity:.7}
 .nt-v p,.nt-a p{margin:0;font-size:clamp(16px,2.4vh,23px);line-height:1.6}
 .nt-b{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
-@media(max-width:820px){.ntmain{flex-direction:column;align-items:stretch}.nt-g{margin:0 auto}.nt-m{grid-template-columns:repeat(2,1fr)}}
-@media(prefers-reduced-motion:reduce){#ntv.run .ntvv{-webkit-animation:none;animation:none}}
+@media(max-width:820px){.ntmain{flex-direction:column;align-items:stretch}.nt-g2{width:auto}.nt-m{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){.nt-steps li.r i{-webkit-animation:none;animation:none}}
 @media(max-width:900px){#home .tile.cwtile{height:300px}}
 html.mob #home .tile.cwtile{flex:1;height:auto;min-height:96px;max-height:130px;aspect-ratio:auto}
 #cwv{position:fixed;top:0;right:0;bottom:0;left:0;width:100vw;height:100vh;z-index:60;display:none;background:#0b0b0f;overflow:hidden;color:#fff}
@@ -955,7 +965,7 @@ html.ph .cwv-sq{flex-direction:column}html.ph .cwk{width:min(70vw,34vh);height:m
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><button class="pill sx" tabindex="0" id="sp-m1">− 0.1</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-p1">+ 0.1</button><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button></div>
 </div></div>
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
-<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><button class="btn" tabindex="0" id="st-guide"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-net"></button><button class="btn" tabindex="0" id="st-ntw"></button><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt" tabindex="0"></pre><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="ntv"><div id="nt-gl"></div><div class="ntc"><div class="nth"><button class="btn" id="nt-bk" tabindex="0"></button><h2 id="nt-t"></h2></div><div class="ntmain"><div class="nt-g"><svg viewBox="0 0 200 200"><circle class="ntt" cx="100" cy="100" r="88"/><circle class="ntvv" id="nt-arc" cx="100" cy="100" r="88"/></svg><div class="nt-c"><div class="nt-n"><b id="nt-pc">–</b><span>%</span></div><small id="nt-st"></small></div></div><div class="nt-r"><div class="nt-m" id="nt-m"></div><div class="nt-v" id="nt-v"><h4></h4><p></p></div><div class="nt-a" id="nt-a"><h4></h4><p></p></div><div class="nt-b"><button class="btn" id="nt-again" tabindex="0"></button><button class="btn sec" id="nt-done" tabindex="0"></button></div></div></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
+<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><button class="btn" tabindex="0" id="st-guide"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-net"></button><button class="btn" tabindex="0" id="st-ntw"></button><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt" tabindex="0"></pre><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="ntv"><div id="nt-gl"></div><div class="ntc"><div class="nth"><button class="btn" id="nt-bk" tabindex="0"></button><h2 id="nt-t"></h2></div><div class="ntmain"><div class="nt-g2"><div class="nt-big"><b id="nt-pc">–</b><span id="nt-u"></span></div><div id="nt-st" aria-live="polite"></div><div class="nt-sp"><svg viewBox="0 0 300 80" preserveAspectRatio="none"><path id="nt-sp-a"/><path id="nt-sp-l"/></svg></div><ul class="nt-steps" id="nt-steps"></ul></div><div class="nt-r"><div class="nt-m" id="nt-m"></div><div class="nt-v" id="nt-v"><h4></h4><p></p></div><div class="nt-a" id="nt-a"><h4></h4><p></p></div><div class="nt-b"><button class="btn" id="nt-again" tabindex="0"></button><button class="btn sec" id="nt-done" tabindex="0"></button></div></div></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
 <style id="tc-css">
 html{--u:2}
@@ -1294,88 +1304,143 @@ $('#cwv-bk').onclick=()=>{if(CW.st==2)cwPick(CW.kind);else cwClose()};
 $('#cwk-mv').onclick=()=>cwList('mv');$('#cwk-sr').onclick=()=>cwList('sr');
 $('#cwv-pl').onclick=()=>cwPlay();$('#cwv-rm').onclick=()=>cwRemove();
 /* ===== فحص الإنترنت (من الإعدادات) + تنبيه الإنترنت الضعيف ===== */
-var NT={on:0,ab:[],from:null,warnT:0,bw:[],tk:0};
+var NT={on:0,ab:[],from:null,warnT:0,bw:[],tk:0,sp:[]};
 const NT_C={g:'#30d158',y:'#ffd60a',r:'#ff453a'};
 function ntTxt(){const a=$('#st-net'),b=$('#st-ntw');if(a)a.textContent=HX('📶 فحص الإنترنت','📶 Internet check');if(b)b.textContent=HX('🔔 تنبيه الإنترنت الضعيف: ','🔔 Weak-internet alert: ')+t(store.get('ntw')===0?'off':'on')}
 function ntFetch(u,o,ms){const c=typeof AbortController!='undefined'?new AbortController():null;if(c)NT.ab.push(c);let id;const p=fetch(u,Object.assign({cache:'no-store'},c?{signal:c.signal}:{},o||{}));
  return Promise.race([p,new Promise((_,j)=>{id=setTimeout(()=>{try{c&&c.abort()}catch(e){}j(new Error('timeout'))},ms)})]).then(r=>{clearTimeout(id);return r},e=>{clearTimeout(id);throw e})}
 const ntTo=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error('timeout')),ms))]);
-async function ntPing(){
- const U=['https://speed.cloudflare.com/__down?bytes=0','https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js'];
- for(const u of U){const s=[];let first=0;
-  for(let i=0;i<5&&NT.on;i++){const t0=performance.now();
-   try{const r=await ntFetch(u+(u.indexOf('?')<0?'?':'&')+'n='+Date.now()+i,{method:u.indexOf('cdnjs')>0?'HEAD':'GET'},i?2500:3500);try{await r.arrayBuffer()}catch(e){}}catch(e){if(!i)break;continue}
-   const d=performance.now()-t0;if(!i)first=d;else s.push(d)}
-  if(s.length>=2){const o=s.slice().sort((a,b)=>a-b);let j=0;for(let i=1;i<s.length;i++)j+=Math.abs(s[i]-s[i-1]);
-   return{ok:true,ping:Math.round(o[o.length>>1]),jit:Math.round(j/(s.length-1)),url:u,conn:Math.round(first)}}}
- return{ok:false}}
-async function ntSpeed(url){
- const CAP=2000000,MS=2000;let b=0,tf=0,tl=0;
- try{const r=await ntFetch(url,{},MS+3000);
-  if(r.body&&r.body.getReader){const rd=r.body.getReader();
-   for(;NT.on;){const x=await rd.read();if(x.done)break;const n=x.value?x.value.length:0,now=performance.now();if(!tf){tf=now;tl=now;continue}b+=n;tl=now;if(b>=CAP||now-tf>=MS){try{rd.cancel()}catch(e){}break}}}
-  else{const t0=performance.now(),bf=await r.arrayBuffer();tl=performance.now();tf=t0+(tl-t0)*.15;b=bf.byteLength}
- }catch(e){}
- const dt=(tl-tf)/1000;return b>0&&dt>.04?b*8/dt/1e6:0}
+/* مصادر القياس: كل واحد منها مستقل، وإذا واحد انحجب بنكمل بالباقي */
+const NT_H={ping:['https://cp.cloudflare.com/generate_204','https://connectivitycheck.gstatic.com/generate_204','https://www.google.com/generate_204'],dl:['https://speed.cloudflare.com/__down?bytes=25000000','https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js']};
+const ntSl=ms=>new Promise(r=>setTimeout(r,ms));
+async function ntOne(u,ms){const t0=performance.now();
+ try{const r=await ntFetch(u+(u.indexOf('?')<0?'?':'&')+'n='+Date.now()+Math.random().toString(36).slice(2,6),{method:'GET',mode:'no-cors'},ms);try{r.body&&r.body.cancel&&r.body.cancel()}catch(e){}return performance.now()-t0}catch(e){return -1}}
+/* الاستجابة والتذبذب وفقد البيانات: عينات متتالية على أسرع مصدر واصل */
+async function ntLat(tick){
+ const H=NT_H.ping,first=await Promise.all(H.map(u=>ntOne(u,3500)));if(!NT.on)return null;
+ const alive=[];H.forEach((u,i)=>{if(first[i]>=0)alive.push({u,t:first[i]})});
+ if(!alive.length)return{ok:false};
+ alive.sort((a,b)=>a.t-b.t);const u=alive[0].u,s=[],N=10;let lost=0;
+ for(let i=0;i<N&&NT.on;i++){const d=await ntOne(u,2500);if(d<0)lost++;else{s.push(d);tick&&tick(d)}await ntSl(60)}
+ if(!NT.on)return null;
+ const loss=Math.round(100*lost/N);
+ if(s.length<3)return{ok:true,ping:Math.round(alive[0].t),jit:0,loss};
+ const o=s.slice().sort((a,b)=>a-b);let j=0;for(let i=1;i<s.length;i++)j+=Math.abs(s[i]-s[i-1]);
+ return{ok:true,ping:Math.round(o[o.length>>1]),jit:Math.round(j/(s.length-1)),loss}}
+/* السرعة: 4 اتصالات بالتوازي، تسخين ثانية بنتجاهلها، وبنحسب المتوسط الفعلي بعدها */
+async function ntDownOne(base,tick){
+ const N=4,WARM=1000,MINT=3800,MAXT=7500,CAP=160e6;let bytes=0,run=true,bad=0;const rds=[],t0=performance.now();
+ const worker=async k=>{while(run&&NT.on&&bad<8){try{
+   const r=await ntFetch(base+(base.indexOf('?')<0?'?':'&')+'n='+Date.now()+'_'+k,{},12000);
+   if(!r.ok){bad++;await ntSl(250);continue}
+   if(r.body&&r.body.getReader){const rd=r.body.getReader();rds.push(rd);for(;run&&NT.on;){const x=await rd.read();if(x.done)break;bytes+=x.value?x.value.length:0}try{rd.cancel()}catch(e){}}
+   else{const b=await r.arrayBuffer();bytes+=b.byteLength}
+  }catch(e){if(!run)return;bad++;await ntSl(250)}}};
+ for(let k=0;k<N;k++)worker(k);
+ const S2=[];let lb=0,lt=t0,sm=0;
+ await new Promise(res=>{const iv=setInterval(()=>{
+  const now=performance.now(),el=now-t0;
+  if(!NT.on){clearInterval(iv);res();return}
+  const dt=(now-lt)/1000;if(dt<.05)return;
+  const inst=(bytes-lb)*8/dt/1e6;lb=bytes;lt=now;sm=sm?sm*.55+inst*.45:inst;
+  if(el>=WARM)S2.push({el:el,b:bytes,v:inst});
+  tick&&tick(sm,el<WARM);
+  let st=false;
+  if(S2.length>=8){const tl=S2.slice(-6),mean=tl.reduce((a,x)=>a+x.v,0)/tl.length,sd=Math.sqrt(tl.reduce((a,x)=>a+(x.v-mean)*(x.v-mean),0)/tl.length);st=mean>0&&sd/mean<.1}
+  if(el>=MAXT||(el>=MINT&&st)||bytes>=CAP||(bytes===0&&el>4500)||bad>=8){clearInterval(iv);res()}
+ },250)});
+ run=false;rds.forEach(r=>{try{r.cancel()}catch(e){}});
+ if(!NT.on)return null;
+ let mbps=0;
+ if(S2.length>=3&&S2[S2.length-1].el>S2[0].el){const a=S2[0],z=S2[S2.length-1];mbps=(z.b-a.b)*8/((z.el-a.el)/1000)/1e6}
+ else if(bytes>0)mbps=bytes*8/((performance.now()-t0)/1000)/1e6*.8;
+ const W=[];for(let i=3;i<S2.length;i++){const q=S2[i],p=S2[i-3];W.push((q.b-p.b)*8/((q.el-p.el)/1000)/1e6)}
+ const pk=W.length?Math.max.apply(null,W):mbps;let stab=100;
+ if(W.length>=3){const mean=W.reduce((x,y)=>x+y,0)/W.length,sd=Math.sqrt(W.reduce((x,y)=>x+(y-mean)*(y-mean),0)/W.length);stab=mean>0?Math.round(Math.max(0,100-sd/mean*160)):0}
+ return{ok:mbps>.05,mbps:mbps,peak:pk,stab:stab}}
+async function ntDown(tick){
+ for(const base of NT_H.dl){const R=await ntDownOne(base,tick);if(R===null)return null;if(R.ok)return R}
+ return{ok:false,mbps:0,peak:0,stab:0}}
+/* سيرفر القنوات: يتفحص لحاله بعد القياس عشان ما يخرّب نتيجة السرعة */
 async function ntProv(){
- const c=S.conf||{};if(!c.mode)return null;const t0=performance.now();
- try{
-  if(c.mode=='xt'&&c.server){await ntTo(jget(c.server.replace(/\/+$/,'')+'/player_api.php?username='+enc(c.user||'')+'&password='+enc(c.pass||'')),5000)}
-  else if(c.url){await ntFetch(c.url,{method:'HEAD',mode:'no-cors'},5000)}
-  else return null;
-  return{ok:true,ms:Math.round(performance.now()-t0)}
- }catch(e){return{ok:false,ms:Math.round(performance.now()-t0)}}}
-function ntScore(R){
- const sp=R.mbps>0?Math.min(100,100*Math.log(1+R.mbps)/Math.log(26)):0,
-  la=R.ping<=40?100:R.ping>=400?0:100*(400-R.ping)/360,
-  ji=R.jit<=15?100:R.jit>=150?0:100*(150-R.jit)/135,
-  pv=!R.prov?100:!R.prov.ok?0:R.prov.ms>2500?40:R.prov.ms>1200?70:100;
- let s=.6*sp+.2*la+.1*ji+.1*pv;if(R.mbps<1)s=Math.min(s,25);
- return{pc:Math.round(Math.max(0,Math.min(100,s))),stab:Math.round(ji)}}
-function ntQual(m){return m>=25?['4K','4K']:m>=10?['Full HD','Full HD']:m>=5?['HD','HD']:m>=2.5?['جودة عادية (SD)','standard quality (SD)']:['جودة منخفضة جداً','very low quality']}
+ const c=S.conf||{};if(!c.mode)return null;
+ const call=async()=>{const t0=performance.now();try{
+   if(c.mode=='xt'&&c.server)await ntTo(jget(c.server.replace(/\/+$/,'')+'/player_api.php?username='+enc(c.user||'')+'&password='+enc(c.pass||'')),5000);
+   else if(c.url)await ntFetch(c.url,{method:'HEAD',mode:'no-cors'},5000);
+   else return null;
+   return Math.round(performance.now()-t0)}catch(e){return -1}};
+ let a=await call();if(a===null)return null;if(!NT.on)return null;
+ if(a<0){a=await call();if(a===null||a<0)return{ok:false,ms:0}}
+ const b=NT.on?await call():-1;
+ return{ok:true,ms:b>=0?Math.min(a,b):a}}
+function ntQual(m){return m>=30?['4K','4K']:m>=12?['Full HD','Full HD']:m>=6?['HD','HD']:m>=3?['جودة عادية (SD)','standard quality (SD)']:['جودة منخفضة جداً','very low quality']}
+/* التشخيص: بيحدد وين المشكلة بالترتيب (الجهاز ← الراوتر ← الإنترنت ← سيرفر القنوات)، وإذا ما قدر يتأكد بيقول هيك */
 function ntDiag(R){
- const ok=R.mbps>=5,wifi=R.jit>60||R.ping>150;
+ const L=R.lat,D=R.dl,P=R.prov,m=D.ok?D.mbps:0,inet=L.ok||D.ok||(P&&P.ok);
  if(R.off)return{k:'r',a:'ما في اتصال بالشبكة أصلاً. تأكد إن كيبل الشبكة موصول أو إن التلفزيون متصل بالواي فاي.',e:'There is no network connection at all. Check that the network cable is plugged in or that the TV is connected to Wi-Fi.'};
- if(!R.pok)return{k:'r',a:'الجهاز متصل بالراوتر لكن ما في إنترنت واصل. المشكلة غالباً من الراوتر أو من خط الإنترنت عند الشركة.',e:'The device is connected to the router but no internet gets through. The fault is most likely the router or the line from your provider.'};
- if(R.prov&&!R.prov.ok&&R.mbps>=3)return{k:'r',a:'إنترنتك شغّال، لكن سيرفر القنوات ما بيرد. المشكلة عند مزوّد الاشتراك مش عندك.',e:'Your internet works, but the channel server is not responding. The problem is with your subscription provider, not you.'};
- if(R.mbps<5&&wifi)return{k:R.mbps<2?'r':'y',a:'الاتصال متذبذب والسرعة قليلة، وهاد غالباً من ضعف إشارة الواي فاي أو تشويش. قرّب الراوتر أو استعمل كيبل شبكة.',e:'The connection is unsteady and slow, which usually means a weak Wi-Fi signal or interference. Move the router closer or use a network cable.'};
- if(R.mbps<5)return{k:R.mbps<2?'r':'y',a:'الاتصال ثابت لكن السرعة قليلة. غالباً الباقة بطيئة أو الخط مزدحم أو في أجهزة تانية عم تستهلك الإنترنت.',e:'The connection is steady but the speed is low. Usually the plan is slow, the line is busy, or other devices are using the internet.'};
- if(R.prov&&R.prov.ok&&R.prov.ms>2500)return{k:'y',a:'إنترنتك كويس، لكن سيرفر القنوات بطيء بالرد. ممكن البث يتأخر من جهة المزوّد.',e:'Your internet is fine, but the channel server is slow to respond. Streams may start late because of the provider.'};
- if(R.ping>200)return{k:'y',a:'السرعة كويسة لكن الاستجابة بطيئة. ممكن في ازدحام على الشبكة أو الراوتر بعيد.',e:'Speed is good but response time is slow. The network may be congested or the router far away.'};
- if(R.jit>60)return{k:'y',a:'السرعة كويسة لكن الاتصال متذبذب. ممكن يتقطع البث أحياناً. جرّب كيبل شبكة أو قرّب الراوتر.',e:'Speed is good but the connection fluctuates, so streams may stutter at times. Try a network cable or move the router closer.'};
- return{k:'g',a:'كل شي سليم: الجهاز والراوتر وخط الإنترنت وسيرفر القنوات.',e:'Everything checks out: the device, router, internet line and channel server.'}}
+ if(!inet)return{k:'r',a:'الجهاز متصل بالراوتر لكن ما في إنترنت واصل. المشكلة غالباً من الراوتر أو من خط الإنترنت عند الشركة.',e:'The device is connected to the router but no internet gets through. The fault is most likely the router or the line from your provider.'};
+ if(!L.ok&&!D.ok)return{k:'y',inc:1,a:'سيرفر القنوات واصل، لكن مواقع الفحص ما قدرنا نوصلها (ممكن مزوّد الإنترنت بيحجبها). عشان هيك ما قدرنا نقيس السرعة بدقة. إذا البث شغال عادي فإنترنتك سليم.',e:'The channel server is reachable, but the test servers could not be reached (your provider may block them), so speed could not be measured accurately. If streaming works normally, your internet is fine.'};
+ if(P&&!P.ok&&m>=3)return{k:'r',a:'إنترنتك شغّال، لكن سيرفر القنوات ما بيرد. المشكلة عند مزوّد الاشتراك مش عندك.',e:'Your internet works, but the channel server is not responding. The problem is with your subscription provider, not you.'};
+ if(!D.ok)return{k:'y',inc:1,a:'الإنترنت واصل'+(L.ok?' (الاستجابة '+L.ping+' ms)':'')+' لكن ما قدرنا نقيس السرعة لأن موقع القياس ما رد. أعد الفحص، وإذا البث شغال عادي فما في مشكلة.',e:'The internet is reachable'+(L.ok?' (latency '+L.ping+' ms)':'')+' but speed could not be measured because the measurement site did not answer. Test again, and if streaming works normally there is no problem.'};
+ if(L.ok&&L.loss>=10)return{k:'r',a:'في فقد كبير بالبيانات ('+L.loss+'%) وهاد بيسبب تقطيع. غالباً ضعف واي فاي أو مشكلة بالراوتر. جرّب كيبل شبكة أو قرّب الراوتر.',e:'There is heavy data loss ('+L.loss+'%), which causes stuttering. Usually weak Wi-Fi or a router problem. Try a network cable or move the router closer.'};
+ const wifi=(L.ok&&(L.jit>60||L.ping>150))||(D.ok&&D.stab<55);
+ if(m<6&&wifi)return{k:m<3?'r':'y',a:'الاتصال متذبذب والسرعة قليلة، وهاد غالباً من ضعف إشارة الواي فاي أو تشويش. قرّب الراوتر أو استعمل كيبل شبكة.',e:'The connection is unsteady and slow, which usually means a weak Wi-Fi signal or interference. Move the router closer or use a network cable.'};
+ if(m<6)return{k:m<3?'r':'y',a:'الاتصال ثابت لكن السرعة قليلة. غالباً الباقة بطيئة أو الخط مزدحم أو في أجهزة تانية عم تستهلك الإنترنت.',e:'The connection is steady but the speed is low. Usually the plan is slow, the line is busy, or other devices are using the internet.'};
+ if(P&&P.ok&&P.ms>2500)return{k:'y',a:'إنترنتك كويس، لكن سيرفر القنوات بطيء بالرد. ممكن البث يتأخر من جهة المزوّد.',e:'Your internet is fine, but the channel server is slow to respond. Streams may start late because of the provider.'};
+ if(L.ok&&L.ping>200)return{k:'y',a:'السرعة كويسة لكن الاستجابة بطيئة. ممكن في ازدحام على الشبكة أو الراوتر بعيد.',e:'Speed is good but response time is slow. The network may be congested or the router far away.'};
+ if((L.ok&&L.jit>60)||(D.ok&&D.stab<55))return{k:'y',a:'السرعة كويسة لكن الاتصال متذبذب. ممكن يتقطع البث أحياناً. جرّب كيبل شبكة أو قرّب الراوتر.',e:'Speed is good but the connection fluctuates, so streams may stutter at times. Try a network cable or move the router closer.'};
+ if(m<12)return{k:'y',a:'سرعتك بتكفي لجودة HD، بس مش مريحة للقنوات الثقيلة (Full HD و4K). لو بتلاحظ تقطيع جرّب جودة أقل.',e:'Your speed handles HD, but it is tight for heavy channels (Full HD and 4K). If you see stuttering, try a lower quality.'};
+ if(L.ok&&L.loss>=3)return{k:'y',a:'في فقد بسيط بالبيانات ('+L.loss+'%). ممكن يتقطع البث أحياناً. كيبل الشبكة بيحل المشكلة غالباً.',e:'There is minor data loss ('+L.loss+'%). Streams may stutter now and then. A network cable usually fixes it.'};
+ return{k:'g',a:'كل شي سليم: الجهاز والراوتر وخط الإنترنت'+(P?' وسيرفر القنوات':'')+'.',e:'Everything checks out: the device, router, internet line'+(P?' and channel server':'')+'.'}}
 function ntAdvice(lv,R){
- const q=ntQual(R.mbps),ql=HX(q[0],q[1]);
+ const q=ntQual(R.dl.ok?R.dl.mbps:0),ql=HX(q[0],q[1]);
  if(R.off)return HX('شغّل الراوتر من جديد (اطفيه 30 ثانية ثم شغّله) وتأكد من الكيبل، وبعدها أعد الفحص.','Restart the router (switch it off for 30 seconds, then on), check the cable, then test again.');
+ if(!R.dl.ok&&!R.lat.ok&&!(R.prov&&R.prov.ok))return HX('شغّل الراوتر من جديد (اطفيه 30 ثانية ثم شغّله) وتأكد من الكيبل، وبعدها أعد الفحص. إذا ضل نفس الشي اتصل بشركة الإنترنت.','Restart the router (off for 30 seconds, then on), check the cable, then test again. If nothing changes, call your internet provider.');
+ if(!R.dl.ok)return HX('جرّب تشغّل قناة. إذا اشتغلت عادي ما في مشكلة عندك، والفحص بس ما قدر يوصل لمواقع القياس.','Try playing a channel. If it plays normally there is no problem on your side, the test just could not reach the measurement sites.');
  if(lv=='g')return HX('إنترنتك ممتاز وبيكفي لمشاهدة بجودة '+ql+'. للثبات الأفضل خلّي التلفزيون على كيبل شبكة إذا أمكن.','Your internet is excellent and enough for '+ql+' viewing. For the steadiest picture, connect the TV by network cable if you can.');
  if(lv=='y')return HX('سرعتك بتكفي لجودة '+ql+'. للحصول على أفضل تجربة: اطفي الأجهزة اللي عم تحمّل، وقرّب الراوتر، أو استعمل شبكة 5 جيجا.','Your speed suits '+ql+'. For the best experience pause other downloads, move closer to the router or use the 5 GHz network.');
  return HX('جرّب تعيد تشغيل الراوتر، وتبعد الأجهزة اللي بتستهلك الإنترنت، وتقرّب من الراوتر. وإذا ضل ضعيف اتصل بشركة الإنترنت.','Try restarting the router, pausing other devices and moving closer to it. If it stays poor, contact your internet provider.')}
-function ntArc(pc,col){const a=$('#nt-arc');a.style.strokeDasharray=(pc*5.529).toFixed(1)+' 553';const v=$('#ntv');v.style.setProperty('--nc',col)}
-function ntCount(to,tk){const el=$('#nt-pc'),t0=performance.now(),D=700;(function f(n){if(tk!==NT.tk||!NT.on)return;const p=Math.min(1,(n-t0)/D),e=1-Math.pow(1-p,3);el.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(f)})(t0)}
+function ntSteps(){const ul=$('#nt-steps');if(!ul)return;ul.innerHTML='';
+ [['link','الاتصال بالشبكة','Network link'],['inet','الوصول للإنترنت','Internet access'],['spd','سرعة التحميل','Download speed'],['prov','سيرفر القنوات','Channel server']].forEach(x=>{const li=document.createElement('li');li.id='nts-'+x[0];const i=document.createElement('i'),n=document.createElement('span'),v=document.createElement('small');n.textContent=HX(x[1],x[2]);li.append(i,n,v);ul.append(li)})}
+function ntStep(k,st,val){const li=$('#nts-'+k);if(!li)return;li.className=st||'';li.querySelector('i').textContent=st=='ok'?'✓':st=='w'?'!':st=='x'?'✕':st=='s'?'–':'';li.querySelector('small').textContent=val||''}
+function ntSpark(v){const p=$('#nt-sp-l'),f=$('#nt-sp-a');if(!p||!f)return;
+ if(v==null){NT.sp=[];p.setAttribute('d','');f.setAttribute('d','');return}
+ const a=NT.sp||(NT.sp=[]);a.push(v);if(a.length>80)a.shift();
+ const W=300,H=80,mx=Math.max.apply(null,a)*1.2||1,n=Math.max(a.length-1,27);let d='';
+ for(let i=0;i<a.length;i++)d+=(i?'L':'M')+(W*i/n).toFixed(1)+' '+(H-4-(H-8)*a[i]/mx).toFixed(1);
+ p.setAttribute('d',d);f.setAttribute('d',d+'L'+(W*(a.length-1)/n).toFixed(1)+' '+H+'L0 '+H+'Z')}
+const ntNum=m=>m>=10?String(Math.round(m)):m.toFixed(1);
 async function ntRun(){
- const tk=++NT.tk,v=$('#ntv'),ar=S.lang=='ar',set=(id,x)=>{$('#'+id).textContent=x};
- v.classList.remove('done');v.classList.add('run');v.style.setProperty('--nc','#8e8e93');$('#nt-arc').style.strokeDasharray='';
- set('nt-pc','–');set('nt-st',HX('عم نفحص الاتصال…','Checking connection…'));
- $('#nt-m').innerHTML='';$('#nt-v').style.display=$('#nt-a').style.display='none';
- $('#nt-again').style.display=$('#nt-done').style.display='none';
- const R={off:false,ping:{ok:false},mbps:0,jit:0,prov:null};
- if(navigator.onLine===false){R.off=true}
+ const tk=++NT.tk,v=$('#ntv'),ar=S.lang=='ar',set=(id,x)=>{const e=$('#'+id);if(e)e.textContent=x},live=()=>tk===NT.tk&&NT.on;
+ v.classList.remove('done');v.classList.add('run');v.style.setProperty('--nc','#fff');
+ ntSteps();ntSpark(null);set('nt-pc','–');set('nt-u','');set('nt-st',HX('عم نجهّز الفحص…','Getting ready…'));
+ $('#nt-m').innerHTML='';$('#nt-v').style.display=$('#nt-a').style.display='none';$('#nt-again').style.display=$('#nt-done').style.display='none';
+ const R={off:false,lat:{ok:false},dl:{ok:false,mbps:0,peak:0,stab:0},prov:null},c=S.conf||{},hasP=!!(c.mode&&(c.server||c.url));
+ await ntSl(300);if(!live())return;
+ ntStep('link','r');set('nt-st',HX('عم نفحص الاتصال بالشبكة…','Checking the network link…'));await ntSl(450);if(!live())return;
+ if(navigator.onLine===false){R.off=true;ntStep('link','x',HX('مفصول','Disconnected'));['inet','spd','prov'].forEach(k=>ntStep(k,'s'))}
  else{
-  const pp=ntProv(),pg=await ntPing();if(tk!==NT.tk||!NT.on)return;
-  R.ping=pg;
-  if(pg.ok){set('nt-st',HX('عم نقيس السرعة…','Measuring speed…'));R.mbps=await ntSpeed(pg.url.indexOf('cloudflare.com/__down')>0?'https://speed.cloudflare.com/__down?bytes=3000000&n='+Date.now():pg.url+'?n='+Date.now());if(tk!==NT.tk||!NT.on)return;R.jit=pg.jit}
-  set('nt-st',HX('عم نتأكد من سيرفر القنوات…','Checking the channel server…'));R.prov=await pp;if(tk!==NT.tk||!NT.on)return}
- const sc=R.off||!R.ping.ok?{pc:0,stab:0}:ntScore({mbps:R.mbps,ping:R.ping.ping,jit:R.jit,prov:R.prov});
- let lv=sc.pc>=75?'g':sc.pc>=40?'y':'r';
- const D=ntDiag({off:R.off,pok:R.ping.ok,ping:R.ping.ok?R.ping.ping:0,mbps:R.mbps,jit:R.jit,prov:R.prov});{const rk={g:0,y:1,r:2};if(rk[D.k]>rk[lv])lv=D.k}
- sc.pc=lv=='r'?Math.min(sc.pc,39):lv=='y'?Math.min(Math.max(sc.pc,40),74):sc.pc;
- const col=NT_C[lv];v.classList.remove('run');v.classList.add('done');ntArc(sc.pc,col);ntCount(sc.pc,tk);
- set('nt-st',HX(lv=='g'?'ممتاز':lv=='y'?'متوسط':'ضعيف',lv=='g'?'Excellent':lv=='y'?'Fair':'Poor'));
- const M=[['⚡',HX('السرعة','Speed'),R.off||!R.ping.ok?'–':(R.mbps>=10?Math.round(R.mbps):R.mbps.toFixed(1))+' Mbps'],
-  ['⏱',HX('الاستجابة','Latency'),R.ping.ok?R.ping.ping+' ms':'–'],
-  ['〰',HX('ثبات الاتصال','Stability'),R.ping.ok?sc.stab+'%':'–'],
-  ['🛰',HX('سيرفر القنوات','Channel server'),!R.prov?'–':R.prov.ok?R.prov.ms+' ms':HX('لا يرد','No reply')]];
- const mb=$('#nt-m');M.forEach(m=>{const d=document.createElement('div');d.className='ntmc';const i=document.createElement('span'),l=document.createElement('small'),b=document.createElement('b');i.textContent=m[0];l.textContent=m[1];b.textContent=m[2];d.append(i,l,b);mb.append(d)});
+  ntStep('link','ok',HX('متصل','Connected'));
+  ntStep('inet','r');set('nt-st',HX('عم نفحص الوصول للإنترنت…','Testing internet access…'));set('nt-u','ms');
+  R.lat=await ntLat(ms=>set('nt-pc',String(Math.round(ms))));if(!live())return;
+  ntStep('inet',!R.lat.ok?'x':(R.lat.loss>=10||R.lat.jit>60?'w':'ok'),R.lat.ok?R.lat.ping+' ms':HX('ما في وصول','No access'));
+  ntStep('spd','r');set('nt-u','Mbps');set('nt-pc','0');
+  R.dl=await ntDown((sm,warm)=>{set('nt-pc',ntNum(sm));ntSpark(sm);set('nt-st',warm?HX('عم نسخّن الاتصال…','Warming up the connection…'):HX('عم نقيس سرعة التحميل…','Measuring download speed…'))});if(!live())return;
+  ntStep('spd',!R.dl.ok?'x':(R.dl.mbps<6||R.dl.stab<55?'w':'ok'),R.dl.ok?ntNum(R.dl.mbps)+' Mbps':HX('فشل القياس','Failed'));
+  if(hasP){ntStep('prov','r');set('nt-st',HX('عم نتأكد من سيرفر القنوات…','Checking the channel server…'));R.prov=await ntProv();if(!live())return;
+   ntStep('prov',R.prov&&R.prov.ok?(R.prov.ms>2500?'w':'ok'):'x',R.prov&&R.prov.ok?R.prov.ms+' ms':HX('لا يرد','No reply'))}
+  else ntStep('prov','s',HX('غير مفعّل','Not set'))}
+ const D=ntDiag(R),lv=D.k,mb=R.dl.ok?R.dl.mbps:0,ok=R.dl.ok,q=ntQual(mb),col=NT_C[lv];
+ v.classList.remove('run');v.classList.add('done');v.style.setProperty('--nc',col);
+ set('nt-pc',ok?ntNum(mb):'–');set('nt-u',ok?'Mbps':'');
+ set('nt-st',D.inc?HX('نتيجة غير مؤكدة','Inconclusive'):HX(lv=='g'?'ممتاز':lv=='y'?'متوسط':'ضعيف',lv=='g'?'Excellent':lv=='y'?'Fair':'Poor'));
+ const M=[[HX('سرعة التحميل','Download'),ok?ntNum(mb)+' Mbps':'–'],
+  [HX('الاستجابة','Latency'),R.lat.ok?R.lat.ping+' ms':'–'],
+  [HX('تذبذب الاتصال','Jitter'),R.lat.ok?R.lat.jit+' ms':'–'],
+  [HX('فقد البيانات','Packet loss'),R.lat.ok?R.lat.loss+'%':'–'],
+  [HX('سيرفر القنوات','Channel server'),!R.prov?'–':R.prov.ok?R.prov.ms+' ms':HX('لا يرد','No reply')],
+  [HX('أعلى جودة مريحة','Comfortable quality'),ok?HX(q[0],q[1]):'–']];
+ const mbx=$('#nt-m');M.forEach(m=>{const d=document.createElement('div');d.className='ntmc';const l=document.createElement('small'),b=document.createElement('b');l.textContent=m[0];b.textContent=m[1];d.append(l,b);mbx.append(d)});
  const vb=$('#nt-v');vb.style.display='';vb.style.borderColor=col;vb.querySelector('h4').textContent=HX('وين المشكلة؟','Where is the problem?');vb.querySelector('p').textContent=ar?D.a:D.e;
  const ab=$('#nt-a');ab.style.display='';ab.querySelector('h4').textContent=HX('نصيحة','Advice');ab.querySelector('p').textContent=ntAdvice(lv,R);
  $('#nt-again').style.display=$('#nt-done').style.display='';focusEl($('#nt-again'))}
@@ -1388,15 +1453,37 @@ function ntvKey(e){if(!NT.on)return false;const k=e.keyCode,a=document.activeEle
  if(k>=37&&k<=40){e.preventDefault();spatial(k,'#ntv .btn')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}return true}
 $('#nt-bk').onclick=ntClose;$('#nt-done').onclick=ntClose;$('#nt-again').onclick=()=>ntRun();
 {const a=$('#st-net');if(a)a.onclick=ntOpen;const b=$('#st-ntw');if(b)b.onclick=()=>{store.set('ntw',store.get('ntw')===0?1:0);ntTxt();osd(HX(store.get('ntw')===0?'تم إيقاف التنبيه':'تم تشغيل التنبيه',store.get('ntw')===0?'Alert turned off':'Alert turned on'))}}
-/* رسالة فورية لما ينقطع الإنترنت فجأة، ورسالة لما يرجع */
+/* ===== مراقب الاتصال: رسالة فورية لما ينقطع الإنترنت، ورسالة لما يرجع =====
+   المصادر: إشارة أندرويد نفسها (__net) + أحداث المتصفح + فحص دوري خفيف + أخطاء الفيديو.
+   أي إشارة بتشغّل فحص حقيقي لعدة مواقع، والرسالة ما بتظهر إلا إذا الفحص فشل (عشان ما تطلع رسالة غلط). */
 function ntBan(kind){let b=$('#ntoff');if(!b){b=document.createElement('div');b.id='ntoff';b.setAttribute('role','alert');b.innerHTML='<b></b><small></small>';document.body.appendChild(b)}
  clearTimeout(b._t);b.className='on '+kind;
  b.querySelector('b').textContent=kind=='bad'?HX('⚠ انفصل الإنترنت','⚠ Internet disconnected'):HX('✓ رجع الإنترنت','✓ Internet is back');
  b.querySelector('small').textContent=kind=='bad'?HX('الاتصال انقطع فجأة. تأكد من الراوتر أو الكيبل.','The connection dropped suddenly. Check the router or cable.'):'';
  if(kind!='bad')b._t=setTimeout(()=>{b.className=''},3000)}
-window.addEventListener('offline',()=>ntBan('bad'));
-window.addEventListener('online',()=>{const b=$('#ntoff');if(b&&b.classList.contains('bad'))ntBan('ok')});
-if(navigator.onLine===false)setTimeout(()=>ntBan('bad'),1200);
+var NM={up:true,fails:0,busy:0,q:0,at:0,timer:0};
+function nmPing(u,ms){return new Promise(res=>{let c=null,id;try{c=typeof AbortController!='undefined'?new AbortController():null}catch(e){}
+ id=setTimeout(()=>{try{c&&c.abort()}catch(e){}res(false)},ms||4000);
+ try{fetch(u+(u.indexOf('?')<0?'?':'&')+'_='+Date.now(),{method:'GET',mode:'no-cors',cache:'no-store',signal:c?c.signal:undefined}).then(()=>{clearTimeout(id);res(true)},()=>{clearTimeout(id);res(false)})}catch(e){clearTimeout(id);res(false)}})}
+function nmProbe(){return new Promise(res=>{const T=NT_H.ping.slice(0,2);let n=T.length,done=0;
+ const fin=ok=>{if(done)return;if(ok){done=1;res(true)}else if(--n==0){done=1;const c=S.conf||{},u=c.server?c.server.replace(/\/+$/,'')+'/player_api.php':(c.url||'');if(u)nmPing(u,4000).then(res);else res(false)}};
+ T.forEach(u=>nmPing(u,4000).then(fin))})}
+function nmSet(up,why){if(up===NM.up)return;NM.up=up;try{elog('net '+(up?'back':'lost')+' ('+why+')')}catch(e){}ntBan(up?'ok':'bad');nmLoop()}
+async function nmCheck(why){
+ if(NT.on)return;
+ if(NM.busy){if(why=='native'||why=='offline'||why=='online'||why=='native-up')NM.q=why;return}
+ const n=Date.now();if((why=='media'||why=='poll')&&n-NM.at<2000)return;NM.at=n;NM.busy=1;
+ try{const ok=await nmProbe();
+  if(ok){NM.fails=0;nmSet(true,why)}
+  else{NM.fails++;if(NM.fails>=2||why=='native'||why=='offline'||!NM.up)nmSet(false,why);else setTimeout(()=>nmCheck('retry'),1200)}
+ }catch(e){}finally{NM.busy=0;if(NM.q){const w=NM.q;NM.q=0;setTimeout(()=>nmCheck(w),50)}}}
+function nmLoop(){clearTimeout(NM.timer);const iv=NM.up?(typeof V=='function'&&V()=='app'?5000:12000):2500;NM.timer=setTimeout(()=>{if(!document.hidden)nmCheck('poll');nmLoop()},iv)}
+window.__net=function(up){nmCheck(up?'native-up':'native')};
+window.addEventListener('offline',()=>nmCheck('offline'));
+window.addEventListener('online',()=>nmCheck('online'));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)nmCheck('vis')});
+(function(){const v=$('#v');if(v)['stalled','error'].forEach(e=>v.addEventListener(e,()=>{if(typeof V=='function'&&V()=='app')nmCheck('media')}))})();
+setTimeout(()=>nmCheck('boot'),2500);nmLoop();
 /* تنبيه: لو البث صار يتقطع أو انقطع الاتصال، اعرض رسالة بلطف وافتح الفحص */
 function ntWeak(why){try{
  if(store.get('ntw')===0||NT.on||document.hidden||Date.now()-NT.warnT<900000)return;
@@ -3264,7 +3351,10 @@ function engPick(after){const cur=EXO.pref(),ar=S.lang=='ar';
 function engBadge(){const e=$('#xb-e');if(!e)return;const i=EXO.info||{};
  e.textContent=!EXO.run?'':(EXO.eng=='vlc'?['LibVLC',i.v,i.sw?'SW':'HW']:['ExoPlayer']).concat(EXO.h?[EXO.h+'p']:[]).filter(Boolean).join(' \u00B7 ')}
 /* one failure = that engine is skipped for this URL (live gets 3 tries on ExoPlayer); chain ends at the Web player, so no loops */
-function engFail(why){const u=EXO.u,e=EXO.eng,k=u+'|'+e;elog(e+' '+why);EXO.er[k]=(EXO.er[k]||0)+1;EXO.forget(u,e);
+function engFail(why,chk){
+ /* تجمّد الصورة ممكن يكون سببه انقطاع الإنترنت مش المشغّل: افحص الاتصال أول، ولا تحرق المشغّل إلا إذا الإنترنت شغال */
+ if(!chk&&/FROZEN/i.test(String(why))&&typeof nmProbe=='function'){const u0=EXO.u;nmProbe().then(ok=>{if(EXO.u!==u0||!EXO.run)return;if(ok)engFail(why,1);else{try{elog('net-stall '+why)}catch(e){}EXO.fz=0;EXO.fw=performance.now();if(typeof nmCheck=='function')nmCheck('media')}});return}
+ const u=EXO.u,e=EXO.eng,k=u+'|'+e;elog(e+' '+why);EXO.er[k]=(EXO.er[k]||0)+1;EXO.forget(u,e);
  if(S.vod||e=='vlc'||EXO.er[k]>=3||/NOFRAME|VIDEO|DECOD|CODEC|FROZEN|FORMAT_UNSUPPORTED|STARTUP/i.test(String(why))){EXO.bad[k]=1;const nx=EXO.pick(u);window.exoStop&&exoStop();
   if(S.now&&V()=='app'){osd((S.lang=='ar'?'تغيير المشغّل ← ':'Switching player → ')+(nx?engName(nx):'Web'));start(S.now.it)}}else{const v=$('#v');v.dispatchEvent(new Event('error'))}}
 (function(){
