@@ -84,6 +84,9 @@ html.ph #rcv-art{display:none}html.ph .rcv-info{width:88vw;left:6vw;right:6vw}
 .rctile .rct{position:absolute;left:0;right:0;bottom:0;z-index:2;text-align:center;padding:0 8px 2.2vh;font-weight:900;font-size:clamp(22px,2vw,34px);color:var(--tx)}
 .rctile .rct::before{content:"\2726";display:block;font-size:.65em;opacity:.8;margin-bottom:.15em}
 @media(max-width:900px){#home .tile.rctile{height:300px}}
+.kidtile .rct::before{content:"\263A"}
+#rcv-art.lgo{object-fit:contain;padding:5%;box-sizing:border-box}
+.rcc.rcl img{object-fit:contain;padding:12% 10% 40%;box-sizing:border-box}.rcc.rcl .rcn{text-align:center}
 #home{overflow-y:auto;overflow-x:hidden;scrollbar-width:none}#home::-webkit-scrollbar{display:none}#home>*{flex-shrink:0}
 .rch{display:flex;align-items:center;gap:16px;margin-top:2.4vh}.rch h3{font-size:clamp(24px,2.2vw,36px);color:var(--gold);font-weight:700;margin-inline-end:14px}
 .rcb{font-size:clamp(17px,1.5vw,24px);font-weight:700;color:inherit;font-family:inherit}
@@ -934,7 +937,7 @@ html.ph .cwv-sq{flex-direction:column}html.ph .cwk{width:min(70vw,34vh);height:m
  </header><div id="wg"></div>
  <div class="nav" id="tiles"></div>
  <div class="sug" id="sug"></div>
- <div class="sh"><button class="circ" tabindex="0" id="b-fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" tabindex="0" id="b-kids"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.3a4.2 4.2 0 0 0 7 0M9 9.6v.1M15 9.6v.1"/></svg></button><button class="circ" tabindex="0" id="b-new"><svg viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.7 0 2.9-.9 3.9-2.2M13.1 9.2C14.1 7.9 15.3 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button><button class="circ" tabindex="0" id="b-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button><button class="circ" tabindex="0" id="b-guide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 1 1 3.8 2.3c-.9.5-1.3 1.1-1.3 2M12 16.8v.1"/></svg></button><button class="circ" tabindex="0" id="b-wa" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4L3 21z"/><path d="M9 8.5c.4 2.6 2.9 5.1 5.5 5.5l1.2-1.2-1.9-1-.9.8c-.8-.4-1.7-1.3-2.1-2.1l.8-.9-1-1.9L9 8.5z"/></svg></button><button class="circ" tabindex="0" id="b-set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button class="circ" tabindex="0" id="b-th"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button><button class="circ" tabindex="0" id="b-out"><svg viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/></svg></button><div id="cw"></div></div>
+ <div class="sh"><button class="circ" tabindex="0" id="b-fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" tabindex="0" id="b-new"><svg viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.7 0 2.9-.9 3.9-2.2M13.1 9.2C14.1 7.9 15.3 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button><button class="circ" tabindex="0" id="b-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button><button class="circ" tabindex="0" id="b-guide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 1 1 3.8 2.3c-.9.5-1.3 1.1-1.3 2M12 16.8v.1"/></svg></button><button class="circ" tabindex="0" id="b-wa" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4L3 21z"/><path d="M9 8.5c.4 2.6 2.9 5.1 5.5 5.5l1.2-1.2-1.9-1-.9.8c-.8-.4-1.7-1.3-2.1-2.1l.8-.9-1-1.9L9 8.5z"/></svg></button><button class="circ" tabindex="0" id="b-set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button class="circ" tabindex="0" id="b-th"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button><button class="circ" tabindex="0" id="b-out"><svg viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/></svg></button><div id="cw"></div></div>
  <div id="rc" style="display:none!important"><div class="rch"><h3 id="rc-t" data-i="rc_t"></h3><button class="pill rcb" tabindex="0" id="rc-all"></button><button class="pill rcb" tabindex="0" id="rc-cu"></button></div><div class="rcr" id="rc-r"></div></div>
 </div>
 
@@ -1105,7 +1108,7 @@ function applyLang(){
  const ar=S.lang=='ar'; document.documentElement.lang=S.lang; document.documentElement.dir=ar?'rtl':'ltr'; L=ar?37:39; R=ar?39:37;
  document.title=t('app'); $$('[data-i]').forEach(e=>e.textContent=t(e.dataset.i)); $$('[data-ip]').forEach(e=>e.placeholder=t(e.dataset.ip));
  $$('.lg').forEach(b=>b.classList.toggle('on',b.dataset.l==S.lang)); store.set('lang',S.lang);
- $('#b-fav').title=t('p_fav');$('#b-kids').title=t('p_kids');$('#b-new').title=t('newsug');$('#b-lang').title=t('lang');$('#b-out').title=t('out');
+ $('#b-fav').title=t('p_fav');$('#b-new').title=t('newsug');$('#b-lang').title=t('lang');$('#b-out').title=t('out');
  if(V()=='home'){renderHome();weather()} else if(V()=='page')renderPage();
  try{if(RV.on)rcvBuild()}catch(e){}
  try{if(CW.on){CW.st==2?cwList(CW.kind):cwPick()}}catch(e){}
@@ -1264,6 +1267,19 @@ function rcTile(){try{const r=document.createElement('div');r.className='tile rc
   const pk=[];[src('__mv'),src('__sr')].forEach(a=>{for(let n=0,g=0;n<40&&g<6&&a.length;n++){const c=a[Math.random()*a.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}});
   pk.slice(0,12).forEach(u=>{const i=document.createElement('img');i.alt='';i.loading='lazy';i.decoding='async';i.src=thumb(u,'w185');i.onerror=()=>i.remove();z.append(i)});
   const tx=document.createElement('div');tx.className='rct';tx.textContent=t('rc_t');r.append(z,tx);r.onclick=()=>rcvOpen('all');return r}catch(e){try{elog('rct '+e)}catch(x){}return document.createDocumentFragment()}}
+/* ===== بطاقة الأطفال: بنفس شكل المقترحات، وتفتح شاشة المقترحات بوضع الأطفال ===== */
+Object.assign(T.ar,{kd_l:'قنوات الأطفال',kd_m:'أفلام الأطفال',kd_s:'مسلسلات الأطفال'});
+Object.assign(T.en,{kd_l:'Kids channels',kd_m:'Kids movies',kd_s:'Kids series'});
+function rkFk(it){return RV.kind=='kids'&&KDM.get(it)=='lv'?'lv':rcFk(it)}
+function kidPlayLive(c){const L=src('__kids').filter(x=>KDM.get(x)=='lv');S.view=L.includes(c)?L:S.live;S.cur=S.view.indexOf(c);direct(c,null)}
+function kidsTasks(){const a=src('__kids'),g={lv:[],mv:[],sr:[]};a.forEach(c=>{const k=KDM.get(c);if(g[k])g[k].push(c)});
+ const pick=(l,n)=>l.filter(c=>c.logo).concat(l.filter(c=>!c.logo)).slice(0,n);
+ return [['lv','kd_l',60],['mv','kd_m',40],['sr','kd_s',40]].map(([k,tk,n])=>()=>{const l=pick(g[k],n);return l.length?{id:'k'+k,title:t(tk),list:l}:null})}
+function kidTile(){try{const r=document.createElement('div');r.className='tile rctile kidtile';r.tabIndex=0;const z=document.createElement('div');z.className='rcz';
+  const pk=[],a=src('__kids').filter(c=>c.logo&&KDM.get(c)!='lv');
+  for(let n=0,g=0;n<60&&g<6&&a.length;n++){const c=a[Math.random()*a.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}
+  pk.slice(0,12).forEach(u=>{const i=document.createElement('img');i.alt='';i.loading='lazy';i.decoding='async';i.src=thumb(u,'w185');i.onerror=()=>i.remove();z.append(i)});
+  const tx=document.createElement('div');tx.className='rct';tx.textContent=t('p_kids');r.append(z,tx);r.onclick=()=>rcvOpen('kids');return r}catch(e){try{elog('kdt '+e)}catch(x){}return document.createDocumentFragment()}}
 /* ===== مواصلة المشاهدة: بطاقة + شاشة مربعين (أفلام / مسلسلات) ===== */
 var CW={on:0,st:0,kind:'mv',cur:null,ft:0,from:null};
 function cwItems(kind){try{return Object.values(getProg()).filter(p=>p&&p.kind==kind&&p.d>0&&p.url&&!adBlk(p)).sort((a,b)=>b.ts-a.ts).slice(0,30)}catch(e){return[]}}
@@ -1519,7 +1535,8 @@ function renderSug(){
  box.append(
   rcTile(),
   hero(sg.it,sg.k,x=>showDet(x,sg.k)),
-  cwTile());
+  cwTile(),
+   kidTile());
  [...box.children].forEach(d=>{if(d._it&&d._fk!='lv')bgUrl(d._it).catch(()=>{})});/* تسخين: جيب رابط المعاينة مسبقاً */
  const a=document.activeElement;if(!a||a==document.body||!a.closest('#home'))focusEl($('#home .tile')||$('#b-fav'));
  clearTimeout(_rcT);_rcT=setTimeout(renderRC,40);
@@ -1532,7 +1549,7 @@ function sgRotate(){try{
  cur.replaceWith(nh);if(nh._it)bgUrl(nh._it).catch(()=>{});
 }catch(e){try{elog('sgr '+e)}catch(x){}}}
 setInterval(sgRotate,SG_MS);
-$('#b-fav').onclick=()=>showPage('__fav');$('#b-kids').onclick=()=>showPage('__kids');
+$('#b-fav').onclick=()=>showPage('__fav');
 $('#b-new').onclick=()=>{S._sgT=0;renderSug()};
 $('#b-out').onclick=()=>{store.del('conf');location.reload()};
 const CK={a:null,b:null,hm:'',ap:'',day:-1,lg:''};
@@ -3766,24 +3783,32 @@ function rcvTasks(kind){rcSync();const P=rcPrefs(),Pr=rcProfile(),ex=rcExclude()
  T.push(()=>add('top_r',t('rc_tr'),dd(rcTopBy(allp,K2,it=>(it.rt>=7||M[it.id])&&!ex[it.id]&&rcInfo(it).r>=7&&(!needF||rcPass(it,P)),(a,b)=>rcInfo(b).r-rcInfo(a).r||(b.ts||0)-(a.ts||0)))));
  return T}
 
-function rcvCard(it){const d=rcCard(it);d.onclick=()=>{rcvClose(1);showDet(it,d._fk)};const r=rcInfo(it).r;
- if(rcIsNew(it)||r>0){const b=document.createElement('span');b.className='bd'+(rcIsNew(it)?' nw':'');b.textContent=rcIsNew(it)?t('rc_nb'):'★ '+r;d.append(b)}
+function rcvCard(it){const lv=RV.kind=='kids'&&KDM.get(it)=='lv';let d;
+ if(lv){d=document.createElement('div');d.className='rcc rcl';d.tabIndex=0;d.dataset.id=it.id;d._it=it;d._fk='lv';
+  if(it.logo){const i=document.createElement('img');i.loading='lazy';i.alt='';i.src=thumb(it.logo,'w185');i.onerror=()=>i.remove();d.append(i)}
+  const c=document.createElement('div'),n=document.createElement('b');c.className='rcn';n.dir='auto';n.textContent=it.name||'';c.append(n);d.append(c);if(isFav(it.id))d.append(favBadge());
+  d.onclick=()=>{rcvClose(1);kidPlayLive(it)}}
+ else{d=rcCard(it);d.onclick=()=>{rcvClose(1);showDet(it,d._fk)};const r=rcInfo(it).r;
+  if(rcIsNew(it)||r>0){const b=document.createElement('span');b.className='bd'+(rcIsNew(it)?' nw':'');b.textContent=rcIsNew(it)?t('rc_nb'):'★ '+r;d.append(b)}}
  d.onfocus=()=>{clearTimeout(RV.ft);RV.ft=setTimeout(()=>rcvHero(it),90);const row=d.parentNode,b=$('#rcv-b');if(row&&b){const y=row.parentNode.offsetTop-6;if(Math.abs(b.scrollTop-y)>4)b.scrollTop=y}};return d}
-function rcvHero(it){if(!RV.on||!it)return;RV.cur=it;const d=rcInfo(it),fk=rcFk(it),a=$('#rcv-art'),bg=$('#rcv-bg');
+function rcvHero(it){if(!RV.on||!it)return;RV.cur=it;const kd=RV.kind=='kids',lv=kd&&KDM.get(it)=='lv',fk=rkFk(it),d=lv?null:rcInfo(it),a=$('#rcv-art'),bg=$('#rcv-bg');
+ $('#rcv-in').style.display=lv?'none':'';a.classList.toggle('lgo',lv);
  if(it.logo){if(a.getAttribute('src')!==it.logo){a.classList.remove('fi');a.style.display='';a.onerror=()=>{a.style.display='none'};a.src=it.logo;void a.offsetWidth;a.classList.add('fi')}
   const lo=thumb(it.logo,'w154');if(bg.getAttribute('src')!==lo){bg.src=lo}bg.style.display=''}else{a.style.display='none';bg.style.display='none'}
- $('#rcv-tag').textContent='✨ '+t('rc_tag');$('#rcv-ti').textContent=cleanTitle(it.name)||it.name;
- const m=[t(fk=='sr'?'rc_sr':'rc_mv')];if(d.y)m.push(d.y);d.g.slice(0,2).forEach(g=>m.push(RCN(RCG,g)));if(d.l)m.push(RCN(RCL,d.l));if(d.r>0)m.push('★ '+d.r);if(rcIsNew(it))m.push(t('rc_nb'));
- $('#rcv-mt').textContent=m.join('  ·  ');$('#rcv-why').textContent=rcReason(it);rcvFav()}
+ $('#rcv-tag').textContent=kd?'\u263A '+t('p_kids'):'✨ '+t('rc_tag');$('#rcv-ti').textContent=lv?(it.name||''):(cleanTitle(it.name)||it.name);
+ let m;
+ if(lv){m=[t('p_ch')];if(it.group)m.push(it.group)}
+ else{m=[t(fk=='sr'?'rc_sr':'rc_mv')];if(d.y)m.push(d.y);d.g.slice(0,2).forEach(g=>m.push(RCN(RCG,g)));if(d.l)m.push(RCN(RCL,d.l));if(d.r>0)m.push('★ '+d.r);if(rcIsNew(it))m.push(t('rc_nb'))}
+ $('#rcv-mt').textContent=m.join('  ·  ');$('#rcv-why').textContent=kd?'':rcReason(it);rcvFav()}
 function rcvFav(){const it=RV.cur;if(it)$('#rcv-fv').textContent=(isFav(it.id)?'♥ ':'♡ ')+t(isFav(it.id)?'pm_unfav':'pm_fav')}
 function rcvBuild(){if(!RV.on)return;const b=$('#rcv-b'),tok=RV.bt=(RV.bt|0)+1,t0=Date.now();RV.fd=0;b.innerHTML='';b.scrollTop=0;
- $('#rcv-hd').textContent=t('rc_t');$('#rcv-bk').textContent=(S.lang=='ar'?'› ':'‹ ')+t('back');$('#rcv-cu').textContent='⚙ '+t('rc_cu');
+ const kd=RV.kind=='kids';$('#rcv-hd').textContent=t(kd?'p_kids':'rc_t');$('#rcv-bk').textContent=(S.lang=='ar'?'› ':'‹ ')+t('back');$('#rcv-cu').textContent=kd?t('rc_all')+(S.lang=='ar'?' ‹':' ›'):'⚙ '+t('rc_cu');
  $('#rcv-pl').textContent='▶ '+t('play');$('#rcv-in').textContent='ⓘ '+t('rc_det');
  let first=null,i=0,T;const act=$('#rcv .rcv-act');
- try{T=rcvTasks(RV.kind)}catch(e){T=[];try{elog('rcv '+e)}catch(x){}}
- if(!rcHasSignal()){const n=document.createElement('div');n.className='rcv-nt';n.textContent=t('rc_none');b.append(n)}
+ try{T=RV.kind=='kids'?kidsTasks():rcvTasks(RV.kind)}catch(e){T=[];try{elog('rcv '+e)}catch(x){}}
+ if(RV.kind!='kids'&&!rcHasSignal()){const n=document.createElement('div');n.className='rcv-nt';n.textContent=t('rc_none');b.append(n)}
  const fin=()=>{try{elog('perf rcv '+(Date.now()-t0)+'ms rows='+b.querySelectorAll('section').length)}catch(e){}
-  if(first)return;act.style.display='none';RV.cur=null;$('#rcv-tag').textContent='';$('#rcv-ti').textContent=t('rc_t');$('#rcv-mt').textContent='';$('#rcv-why').textContent=t('rc_none');$('#rcv-art').style.display='none';$('#rcv-bg').style.display='none';focusEl($('#rcv-cu'))};
+  if(first)return;act.style.display='none';RV.cur=null;$('#rcv-tag').textContent='';$('#rcv-ti').textContent=t(RV.kind=='kids'?'p_kids':'rc_t');$('#rcv-mt').textContent='';$('#rcv-why').textContent=t(RV.kind=='kids'?'empty':'rc_none');$('#rcv-art').style.display='none';$('#rcv-bg').style.display='none';focusEl($(RV.kind=='kids'?'#rcv-bk':'#rcv-cu'))};
  (function next(){if(!RV.on||RV.bt!==tok)return;if(i>=T.length){fin();return}
   let r=null;try{r=T[i++]()}catch(e){try{elog('rcv row '+e)}catch(x){}}
   if(r){const w=document.createElement('section'),h=document.createElement('h4'),rw=document.createElement('div'),fr=document.createDocumentFragment();h.className='rcv-rt';h.dir='auto';h.textContent=r.title;rw.className='rcv-rw';
@@ -3798,10 +3823,10 @@ function rcvKey(e){if(!RV.on)return false;const k=e.keyCode,a=document.activeEle
  if(BACK.includes(k)){e.preventDefault();if(!e.repeat)rcvClose();return true}
  if((k==405||k==70)&&a&&a._it){e.preventDefault();toggleFav(a._it,a._fk);const b=a.querySelector('.fvb');if(isFav(a._it.id)&&!b)a.append(favBadge());else if(!isFav(a._it.id)&&b)b.remove();rcvFav();osd(t(isFav(a._it.id)?'favadd':'favdel'));return true}
  if(k>=37&&k<=40){e.preventDefault();spatial(k,'#rcv .rcc,#rcv .rcb')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}return true}
-$('#rcv-bk').onclick=()=>rcvClose();$('#rcv-cu').onclick=()=>rcMenu();
-$('#rcv-pl').onclick=()=>{const it=RV.cur;if(!it)return;rcvClose(1);openVod(it,rcFk(it))};
+$('#rcv-bk').onclick=()=>rcvClose();$('#rcv-cu').onclick=()=>{if(RV.kind=='kids'){rcvClose(1);showPage('__kids')}else rcMenu()};
+$('#rcv-pl').onclick=()=>{const it=RV.cur;if(!it)return;const lv=rkFk(it)=='lv';rcvClose(1);if(lv)kidPlayLive(it);else openVod(it,rcFk(it))};
 $('#rcv-in').onclick=()=>{const it=RV.cur;if(!it)return;rcvClose(1);showDet(it,rcFk(it))};
-$('#rcv-fv').onclick=()=>{const it=RV.cur;if(!it)return;toggleFav(it,rcFk(it));rcvFav();osd(t(isFav(it.id)?'favadd':'favdel'))};
+$('#rcv-fv').onclick=()=>{const it=RV.cur;if(!it)return;toggleFav(it,rkFk(it));rcvFav();osd(t(isFav(it.id)?'favadd':'favdel'))};
 $('#rc-all').onclick=()=>rcvOpen('all');
 
 /* ===== سجل المشاهدة: لكل حساب لحاله (محلي على الجهاز) ===== */
@@ -4028,11 +4053,11 @@ R('H','.sbx','البحث الشامل والصوت','البحث في كل الق
 R('H','.tw','الساعة والطقس والشبكة','الوقت والتاريخ والطقس واسم الشبكة وحالة الاشتراك.|معلومات للعرض فقط.|تتحدث تلقائياً.','Clock, weather, network','Time, date, weather, network and account info.|Display only.|Updates automatically.'),
 R('H','#wg','الويدجتس','بطاقات اختيارية: أوقات الصلاة، أسعار العملات، راديو، ملاحظة وويدجت خاص.|فعّلها من الإعدادات.|تظهر هنا مرتبة.','Widgets','Optional cards: prayer times, FX rates, radio, note, custom.|Enable them in Settings.|They appear here.'),
 R('H','#tiles','القنوات والأفلام والمسلسلات','ثلاث بلاطات للأقسام الرئيسية مع عدد العناصر.|اضغط البلاطة (OK على الريموت).|ينفتح القسم بقائمته.','Channels, Movies, Series','Three tiles for main sections with counts.|Press a tile (OK on remote).|The section opens.'),
-R('H','#sug .rctile','مقترحات','بطاقة تعرض لك اقتراحات مرتبة حسب ذوقك وما شاهدته.|اضغط البطاقة لفتح شاشة المقترحات.|تقدر تخصص الأنواع واللغة والسنة، وتشغّل أي عمل منها.','Suggestions','A card with picks ranked by your taste and viewing.|Press it to open the Suggestions screen.|Customize genres, language and year, and play anything from it.'),
+R('H','#sug .rctile:not(.kidtile)','مقترحات','بطاقة تعرض لك اقتراحات مرتبة حسب ذوقك وما شاهدته.|اضغط البطاقة لفتح شاشة المقترحات.|تقدر تخصص الأنواع واللغة والسنة، وتشغّل أي عمل منها.','Suggestions','A card with picks ranked by your taste and viewing.|Press it to open the Suggestions screen.|Customize genres, language and year, and play anything from it.'),
 R('H','#sug .hero','فيلم أو مسلسل لك','بطاقة بالنص تبدّل بين فيلم ومسلسل كل 10 دقايق، وتعرض معاينة عند التحديد.|اضغطها لفتح التفاصيل، أو زر الاقتراحات لتبديلها فوراً.|تظهر تفاصيل العمل وتقدر تشغّله.','A movie or series for you','The middle card alternates between a movie and a series every 10 minutes, with a preview on focus.|Press it for details, or use the refresh button to swap it now.|Details open and you can play it.'),
 R('H','#sug .cwtile','مواصلة المشاهدة','تجمع كل ما بدأت مشاهدته مع حلقة التقدم، مقسّمة إلى أفلام ومسلسلات.|اضغط البطاقة ثم اختر مربع «أفلام» أو «مسلسلات».|تظهر أعمالك غير المكتملة، اختر واحداً ليكمل من آخر موضع، أو أزِله من القائمة.','Continue watching','Everything you started, with a progress ring, split into Movies and Series.|Press the card, then pick the Movies or Series square.|Your unfinished titles appear; choose one to resume, or remove it from the list.'),
 R('H','#b-fav','المفضلة','اختصار لقائمة ما أضفته بالقلب ♥.|اضغط الزر.|تنفتح صفحة المفضلة.','Favorites','Shortcut to items you hearted ♥.|Press it.|Favorites page opens.'),
-R('H','#b-kids','قسم الأطفال','يجمع قنوات وأفلام ومسلسلات الأطفال بمكان واحد.|اضغط زر الوجه المبتسم.|تنفتح صفحة الأطفال، وتقدر تفلتر قنوات / أفلام / مسلسلات.','Kids','Gathers kids channels, movies and series in one place.|Press the smiley button.|The Kids page opens; filter Channels / Movies / Series.'),
+R('H','#sug .kidtile','قسم الأطفال','يجمع قنوات وأفلام ومسلسلات الأطفال بمكان واحد.|اضغط بطاقة الأطفال اللي بجنب المقترحات.|تنفتح شاشة بنفس شكل المقترحات بصفوف قنوات وأفلام ومسلسلات، و«عرض الكل» بيفتح الصفحة الكاملة.','Kids','Gathers kids channels, movies and series in one place.|Press the Kids card next to Suggestions.|A screen styled like Suggestions opens with rows of channels, movies and series; “See all” opens the full page.'),
 R('H','#b-new','اقتراحات جديدة','تبديل الاقتراحات بمجموعة أخرى.|اضغط الزر.|تتجدد البطاقات.','New suggestions','Reshuffles the suggestions.|Press it.|New cards appear.'),
 R('H','#b-lang','تبديل اللغة','تبديل سريع بين العربية والإنجليزية.|اضغط الزر.|تتغير لغة كل الشاشات واتجاهها.','Language','Quick Arabic/English switch.|Press it.|All screens change language/direction.'),
 R('H','#b-guide','دليل الاستخدام','يعيد هذه الجولة في أي وقت، وهو موجود أيضاً في الإعدادات.|اضغط ؟.|تبدأ الجولة من أولها.','User guide','Replays this tour anytime; also in Settings.|Press ?.|Tour restarts.'),
