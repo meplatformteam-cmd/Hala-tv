@@ -1505,6 +1505,7 @@ public class MainActivity extends Activity {
     org.json.JSONArray jt = new org.json.JSONArray();
     int audAll = 0, audOk = 0, txtBad = 0;
     org.json.JSONArray jall = new org.json.JSONArray();
+    org.json.JSONArray jaa = new org.json.JSONArray();
     try {
       for (Tracks.Group g : tr.getGroups()) {
         int ty = g.getType();
@@ -1512,6 +1513,14 @@ public class MainActivity extends Activity {
         for (int i = 0; i < g.length; i++) {
           if (ty == C.TRACK_TYPE_AUDIO) { audAll++; if (g.isTrackSupported(i)) audOk++; }
           Format f = g.getTrackFormat(i);
+          if (ty == C.TRACK_TYPE_AUDIO) {
+            JSONObject au = new JSONObject();
+            au.put("m", f.sampleMimeType == null ? "" : f.sampleMimeType);
+            au.put("ch", f.channelCount);
+            au.put("u", g.isTrackSupported(i));
+            au.put("s", g.isTrackSelected(i));
+            jaa.put(au);
+          }
           if (ty == C.TRACK_TYPE_TEXT) {
             String m0 = f.sampleMimeType == null ? "" : f.sampleMimeType;
             if (m0.contains("media3-cues") && f.codecs != null) m0 = f.codecs;
@@ -1544,7 +1553,7 @@ public class MainActivity extends Activity {
     exoVid = tr.containsType(C.TRACK_TYPE_VIDEO);
     if (exoVid && !tr.isTypeSupported(C.TRACK_TYPE_VIDEO)) exoBad("NO_VIDEO_DECODER");
     boolean td = exo != null && exo.getTrackSelectionParameters().disabledTrackTypes.contains(C.TRACK_TYPE_TEXT);
-    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + ",\"nu\":" + txtBad + ",\"all\":" + jall.toString() + ",\"td\":" + (td ? 1 : 0) + "}");
+    js("tracks", "{\"a\":" + ja.toString() + ",\"t\":" + jt.toString() + ",\"na\":" + (audAll > 0 && audOk == 0 ? 1 : 0) + ",\"nu\":" + txtBad + ",\"all\":" + jall.toString() + ",\"aa\":" + jaa.toString() + ",\"td\":" + (td ? 1 : 0) + "}");
   }
 
   @Override
