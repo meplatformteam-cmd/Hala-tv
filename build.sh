@@ -4,7 +4,7 @@ if [ ! -f logo.png ]; then for L in logo_png.JPG logo_png.jpg logo.JPG logo.jpg 
 mkdir -p android/app/src/main/res/xml android/app/src/main/java/com/hala/tv android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-xxhdpi
 cp index.html android/app/src/main/assets/index.html
 BUILD_TS=$(date -u '+%Y-%m-%d %H:%M')
-sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g;s|__BUILD__|${BUILD_TS}|g;s|__SUB_SRV__|${SUB_SRV:-}|g;s|__STT_KEY__|${STT_KEY:-}|g" android/app/src/main/assets/index.html
+sed -i "s|__OS_KEY__|${OS_KEY:-}|g;s|__OS_USER__|${OS_USER:-}|g;s|__OS_PASS__|${OS_PASS:-}|g;s|__TMDB_KEY__|${TMDB_KEY:-}|g;s|__PAIR_URL__|${PAIR_URL:-https://meplatformteam-cmd.github.io/Hala-tv/index.html}|g;s|__APP_VER__|${APP_VER:-}|g;s|__BUILD__|${BUILD_TS}|g;s|__SUB_SRV__|${SUB_SRV:-}|g;s|__STT_KEY__|${STT_KEY:-}|g;s|__AI_KEY__|${AI_KEY:-}|g;s|__AI_PROV__|${AI_PROV:-}|g" android/app/src/main/assets/index.html
 cat > android/settings.gradle <<'EOF'
 pluginManagement {
   repositories { google(); mavenCentral(); gradlePluginPortal() }

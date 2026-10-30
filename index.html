@@ -499,6 +499,7 @@ html.exo-on,html.exo-on body,html.exo-on #app,html.exo-on video#v{background:tra
 #xb-c b i{font-style:normal}
 #xb-c b svg{width:clamp(17px,2.3vh,26px);height:clamp(17px,2.3vh,26px);fill:#fff;display:block}
 #xb-c b.hit{background:#fff;color:#000;transform:scale(1.1)}
+#xb-c b.fc{background:#fff;color:#000;transform:scale(1.12);box-shadow:0 0 0 .45vh rgba(255,255,255,.55)}#xb-c b.fc svg{fill:#000}
 #xb-c b.hit svg{fill:#000}
 #xb-pp{min-width:clamp(70px,6.3vw,100px)!important}
 #xb.live #xb-rw,#xb.live #xb-ff{display:none}
@@ -1124,7 +1125,7 @@ html.mob .srg .li.srm{font-size:13px}
  </header><div id="wg"></div>
  <div class="nav" id="tiles"></div>
  <div class="sug" id="sug"></div>
- <div class="sh"><button class="circ" tabindex="0" id="b-fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" tabindex="0" id="b-new"><svg viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.7 0 2.9-.9 3.9-2.2M13.1 9.2C14.1 7.9 15.3 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button><button class="circ" tabindex="0" id="b-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button><button class="circ" tabindex="0" id="b-guide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 1 1 3.8 2.3c-.9.5-1.3 1.1-1.3 2M12 16.8v.1"/></svg></button><button class="circ" tabindex="0" id="b-wa" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4L3 21z"/><path d="M9 8.5c.4 2.6 2.9 5.1 5.5 5.5l1.2-1.2-1.9-1-.9.8c-.8-.4-1.7-1.3-2.1-2.1l.8-.9-1-1.9L9 8.5z"/></svg></button><button class="circ" tabindex="0" id="b-set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button class="circ" tabindex="0" id="b-th"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button><button class="circ" tabindex="0" id="b-out"><svg viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/></svg></button><div id="cw"></div></div>
+ <div class="sh"><button class="circ" tabindex="0" id="b-fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" tabindex="0" id="b-rf"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg></button><button class="circ" tabindex="0" id="b-new"><svg viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.7 0 2.9-.9 3.9-2.2M13.1 9.2C14.1 7.9 15.3 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button><button class="circ" tabindex="0" id="b-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></button><button class="circ" tabindex="0" id="b-guide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 1 1 3.8 2.3c-.9.5-1.3 1.1-1.3 2M12 16.8v.1"/></svg></button><button class="circ" tabindex="0" id="b-wa" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4L3 21z"/><path d="M9 8.5c.4 2.6 2.9 5.1 5.5 5.5l1.2-1.2-1.9-1-.9.8c-.8-.4-1.7-1.3-2.1-2.1l.8-.9-1-1.9L9 8.5z"/></svg></button><button class="circ" tabindex="0" id="b-set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button class="circ" tabindex="0" id="b-th"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button><button class="circ" tabindex="0" id="b-out"><svg viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/></svg></button><div id="cw"></div></div>
  <div id="rc" style="display:none!important"><div class="rch"><h3 id="rc-t" data-i="rc_t"></h3><button class="pill rcb" tabindex="0" id="rc-all"></button><button class="pill rcb" tabindex="0" id="rc-cu"></button></div><div class="rcr" id="rc-r"></div></div>
 </div>
 
@@ -1145,19 +1146,20 @@ html.mob .srg .li.srm{font-size:13px}
  <div id="rcv-b"></div></div>
 <div id="page"><div id="pbg"></div>
  <div class="ph"><button class="pill" tabindex="0" id="p-back" data-i="back"></button><h2 class="ruq"><span id="p-t"></span><small id="p-n"></small></h2><button class="pill" tabindex="0" id="p-vm"></button><button class="pill" tabindex="0" id="p-cin"></button><button class="pill" tabindex="0" id="p-sort" style="display:none"></button><button class="pill" tabindex="0" id="p-lock"></button><button class="pill" tabindex="0" id="p-sch" style="display:none"></button><input id="p-q" dir="auto" tabindex="0" data-ip="search"><button class="pill mic" id="mic2" tabindex="0" aria-label="mic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></button></div>
-<div class="pg" id="pg"><div id="p-g"></div><div id="p-a"></div><div id="p-sc"></div><div id="p-l"></div><div id="p-pv"></div><div id="cin-info"><img id="ci-pos" alt=""><div id="ci-tx"><div id="ci-t"></div><div id="ci-m"></div><div id="ci-p"></div></div></div></div>
+<div class="pg" id="pg"><div id="p-g"></div><div id="p-a"></div><div id="p-sc"></div><div id="p-l"></div><div id="p-pv"></div><div id="cin-info"><img id="ci-pos" alt=""><div id="ci-np"></div><div id="ci-tx"><div id="ci-t"></div><div id="ci-m"></div><div id="ci-p"></div></div></div></div>
 </div>
 
 <div id="app"><video id="v" autoplay playsinline poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg=="></video><div id="bf"></div><div id="ld"><img class="ldb" alt=""><img class="ldp" alt=""><div class="ldo"></div><img class="ldl" alt="" style="display:none"><div class="ldt" style="display:none"></div><div class="lds"></div></div><div id="xb"><div id="xb-r"><div id="xb-c"><b id="xb-rw"><svg viewBox="0 0 24 24"><path d="M11 6v12l-8.5-6zM21 6v12l-8.5-6z"/></svg><i>10</i></b><b id="xb-pp"></b><b id="xb-ff"><i>10</i><svg viewBox="0 0 24 24"><path d="M3 6v12l8.5-6zM13 6v12l8.5-6z"/></svg></b></div><span id="xb-t"></span><div id="xb-b"><i id="xb-f"></i><b id="xb-k"></b></div><span id="xb-d"></span></div><div id="xb-j"></div><div id="xb-e"></div></div><div id="subov"></div><div id="msg"></div><div id="pm"></div><div id="sp"><div class="spc">
  <div class="sph"><h2 class="ruq" data-i="subs"></h2><button class="circ sx" id="sp-x" tabindex="0"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
- <div class="spr" id="sp-ch"><button class="btn sx" id="sp-e" tabindex="0" data-i="subsrv"></button><button class="btn sx" id="sp-a" tabindex="0" data-i="subosa"></button><button class="btn sx" id="sp-off" tabindex="0" data-i="suboff"></button></div>
+ <div class="spr" id="sp-ch"><button class="btn sx" id="sp-e" tabindex="0" data-i="subsrv"></button><button class="btn sx" id="sp-ai" tabindex="0" data-i="sp_ai"></button><button class="btn sx" id="sp-a" tabindex="0" data-i="subosa"></button><button class="btn sx" id="sp-off" tabindex="0" data-i="suboff"></button></div>
  <div class="spr" id="sp-sr" style="display:none"><input class="sx" id="sp-q" dir="auto" tabindex="0" data-ip="subq"><button class="btn sx" id="sp-go" tabindex="0" data-i="subgo"></button></div>
  <div id="sp-st"></div><div id="sp-dg"></div>
  <div id="sp-list"></div>
  <div class="spr"><span class="sl" data-i="subsync"></span><button class="pill sx" tabindex="0" id="sp-m">− 0.5</button><button class="pill sx" tabindex="0" id="sp-m1">− 0.1</button><b id="sp-o" dir="ltr">0.0s</b><button class="pill sx" tabindex="0" id="sp-p1">+ 0.1</button><button class="pill sx" tabindex="0" id="sp-pl">+ 0.5</button></div>
+ <div class="spr"><span class="sl"></span><button class="pill sx" tabindex="0" id="sp-m5">− 5</button><button class="pill sx" tabindex="0" id="sp-m2">− 2</button><button class="pill sx" tabindex="0" id="sp-fs" data-i="sp_fs"></button><button class="pill sx" tabindex="0" id="sp-p2">+ 2</button><button class="pill sx" tabindex="0" id="sp-p5">+ 5</button><button class="pill sx" tabindex="0" id="sp-tst" data-i="sp_tst"></button><button class="pill sx" tabindex="0" id="sp-rs" data-i="sp_rs"></button></div>
 </div></div>
 <button class="circ" id="fv" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg></button><button class="circ" id="cc" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.4 2.4 0 1 0 0 3.6M17 10.2a2.4 2.4 0 1 0 0 3.6"/></svg></button></div>
-<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-eco"></button><div class="sgi" id="st-di"></div><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><button class="btn" tabindex="0" id="st-guide"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-net"></button><button class="btn" tabindex="0" id="st-ntw"></button><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt" tabindex="0"></pre><button class="btn" tabindex="0" id="st-logs"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="ntv"><div id="nt-gl"></div><div class="ntc"><div class="nth"><button class="btn" id="nt-bk" tabindex="0"></button><h2 id="nt-t"></h2></div><div class="ntmain"><div class="nt-g2"><div class="nt-big"><b id="nt-pc">–</b><span id="nt-u"></span></div><div id="nt-st" aria-live="polite"></div><div class="nt-sp"><svg viewBox="0 0 300 80" preserveAspectRatio="none"><path id="nt-sp-a"/><path id="nt-sp-l"/></svg></div><ul class="nt-steps" id="nt-steps"></ul></div><div class="nt-r"><div class="nt-m" id="nt-m"></div><div class="nt-v" id="nt-v"><h4></h4><p></p></div><div class="nt-a" id="nt-a"><h4></h4><p></p></div><div class="nt-b"><button class="btn" id="nt-again" tabindex="0"></button><button class="btn sec" id="nt-done" tabindex="0"></button></div></div></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
+<div id="set"><div class="ph"><button class="pill" tabindex="0" id="st-back" data-i="back"></button><h2 class="ruq" data-i="setT"></h2><span id="st-ver"></span></div><h3 class="sh3" data-i="s_disp"></h3><button class="btn" tabindex="0" id="st-vm"></button><button class="btn" tabindex="0" id="st-eng"></button><button class="btn" tabindex="0" id="st-dev"></button><button class="btn" tabindex="0" id="st-eco"></button><div class="sgi" id="st-di"></div><button class="btn" tabindex="0" id="st-kb"></button><button class="btn" tabindex="0" id="st-tha"></button><button class="btn" tabindex="0" id="st-guide"></button><h3 class="sh3" data-i="s_sec"></h3><button class="btn" tabindex="0" id="st-pw"></button><button class="btn" tabindex="0" id="st-kid"></button><button class="btn" tabindex="0" id="st-adl"></button><div id="st-w" style="display:contents"></div><h3 class="sh3" data-i="s_hist"></h3><button class="btn" tabindex="0" id="st-hist"></button><button class="btn" tabindex="0" id="st-hclr"></button><p class="sub" id="st-hint"></p><h3 class="sh3" id="st-aih"></h3><button class="btn" tabindex="0" id="st-aip"></button><input id="st-aik" type="password" dir="ltr" tabindex="0" autocomplete="off"><input id="st-aim" dir="ltr" tabindex="0" autocomplete="off"><p class="sub" id="st-aih2"></p><h3 class="sh3" data-i="s_app"></h3><button class="btn" tabindex="0" id="st-net"></button><button class="btn" tabindex="0" id="st-ntw"></button><button class="btn" tabindex="0" id="st-upd"></button><h3 class="sh3" id="st-logh"></h3><button class="btn" tabindex="0" id="st-log"></button><button class="btn" tabindex="0" id="st-logc"></button><pre id="st-logt" tabindex="0"></pre><button class="btn" tabindex="0" id="st-logs"></button><p class="sub" data-i="kidhint"></p></div><div id="pwd"><div class="spc"><h2 class="ruq" id="pw-t"></h2><input id="pw-i" type="password" inputmode="numeric" tabindex="0"><div id="pw-e"></div><div class="spr"><button class="btn" id="pw-ok" tabindex="0" data-i="okb"></button><button class="btn" id="pw-x" tabindex="0" data-i="cnl" style="background:transparent;color:var(--tx)"></button></div></div></div><div id="dlg"><div class="dc"><h3 id="dlg-t"></h3><p id="dlg-s"></p><div id="dlg-l"></div></div></div><div id="kb"><span id="kb-l"></span><div id="kb-v"></div><div id="kb-k"></div></div><div id="qrb"><div id="qr"></div><span id="qrt"></span></div><div id="pairv"><div class="card0"><h2 class="ruq" data-i="prT" style="font-size:34px;margin-bottom:12px"></h2><input id="pr-n" data-ip="nmph" dir="auto"><div class="tabs"><div class="ptab on" tabindex="0" data-pm="m3u" data-i="tabm3u"></div><div class="ptab" tabindex="0" data-pm="xt">Xtream Codes</div></div><div id="pr-m"><input id="pr-u" dir="ltr" placeholder="http://example.com/playlist.m3u"></div><div id="pr-x" style="display:none"><input id="pr-s" dir="ltr" data-ip="xsph"><input id="pr-us" dir="ltr" data-ip="xuph"><input id="pr-p" dir="ltr" type="password" data-ip="xpph"></div><button class="btn" id="pr-go" tabindex="0" data-i="prgo" style="color:var(--ov)"></button><div id="pr-e"></div></div></div><div id="ntv"><div id="nt-gl"></div><div class="ntc"><div class="nth"><button class="btn" id="nt-bk" tabindex="0"></button><h2 id="nt-t"></h2></div><div class="ntmain"><div class="nt-g2"><div class="nt-big"><b id="nt-pc">–</b><span id="nt-u"></span></div><div id="nt-st" aria-live="polite"></div><div class="nt-sp"><svg viewBox="0 0 300 80" preserveAspectRatio="none"><path id="nt-sp-a"/><path id="nt-sp-l"/></svg></div><ul class="nt-steps" id="nt-steps"></ul></div><div class="nt-r"><div class="nt-m" id="nt-m"></div><div class="nt-v" id="nt-v"><h4></h4><p></p></div><div class="nt-a" id="nt-a"><h4></h4><p></p></div><div class="nt-b"><button class="btn" id="nt-again" tabindex="0"></button><button class="btn sec" id="nt-done" tabindex="0"></button></div></div></div></div></div><div id="adh"></div><div id="det"></div><div id="osd"></div>
 
 <style id="tc-css">
 html{--u:2}
@@ -1300,7 +1302,7 @@ netfail:'ما قدرنا نوصل للرابط. افتح الملف بمتصفح
 needurl:'اكتب الرابط',fill:'عبّي كل الخانات',deny:'السيرفر رفض الدخول',badacc:'الحساب مش مزبوط',nochan:'ما لقينا قنوات',savedfail:'الدخول المحفوظ ما زبط، اكتب بياناتك من جديد',err:'خطأ ',
 hi:n=>`يا هلا فيك يا ${n}`,g0:'لسا صاحي؟ يلا اختار شو بدك تشوف.',g1:'صباح الخير، شو بدك تشوف اليوم؟',g2:'شو الأخبار؟ شو بدك تتفرج عليه هسا؟',g3:'مسا الخير، شو بدك تشوف هسا؟',g4:'سهرة حلوة، اختار اللي بعجبك.',sugg:' جبتلك كم اقتراح.',
 sec_mv:'أفلام بتسوى',sec_sr:'مسلسلات للسهرة',sec_lv:'ع الهوا هسا',nomv:'ما لقينا أفلام بالقائمة',nosr:'ما لقينا مسلسلات بالقائمة',nolv:'ما في قنوات',
-all:'كل القنوات',newsug:'غيّرلي الاقتراحات',subs:'الترجمة',subq:'اسم الفيلم أو المسلسل',subgo:'دوّر',subsearching:'عم ندوّر…',subnone:'ما لقينا ترجمة، جرّب اسم تاني',subtimeout:'انتهى وقت البحث (45 ثانية) بدون نتيجة. جرّب اسم تاني أو ارجع حاول لاحقاً',subbadfmt:'ما قدرنا نقرا الملف كترجمة (المدعوم: SRT / VTT / ASS، مش صور)',subnopick:'جهازك ما فيه تطبيق لاختيار الملفات. استخدم زر الرابط بدل الملف',subdl:'عم ننزّل الترجمة…',subok:'تم تحميل الترجمة ✓',subfail:'ما زبط: ',suboff:'بدون ترجمة',subsync:'تزبيط التوقيت',subkey:'API Key',subusr:'اليوزر',subpw:'كلمة السر',subsave:'احفظ',subneed:'سجّل بموقع opensubtitles.com (مجاني) وحط المفتاح واليوزر وكلمة السر هون مرة وحدة',subnet:'ما قدرنا نوصل لسيرفر الترجمة. تأكد من الإنترنت وجرّب بعد شوي',sublimit:'خلص حد التنزيل اليومي',subbad:'المفتاح أو اليوزر أو الباسوورد مش مزبوط',subsrv:'ترجمة السيرفر',subosa:'OpenSubtitles عربي',subnotr:'ما لقينا ترجمة حقيقية، لا بالمشغّل ولا من السيرفر',subunsup:n=>`${n} ترجمة بصيغة غير مدعومة (صورية مثل PGS/VobSub)`,subwebmkv:'المشغّل العادي ما بيقرا الترجمة اللي جوا ملف MKV، فعّل ExoPlayer',subblk:'ما لقينا ترجمة جاهزة لهالمحتوى حالياً. جرّب اسم تاني أو ارجع حاول بعد شوي',subshown:'الترجمة ظاهرة ع الفيديو ✓',subsel:'اخترنا الترجمة، ناطرين المشغّل يعرضها…',subloaded:'تحمّلت الترجمة، ناطرين أول سطر يظهر…',subnoshow:'الترجمة مختارة بس ما ظهر منها نص ع الفيديو',subrefused:'المشغّل ما قبل هالترجمة',subcur:'الترجمة: ',subnodelay:'تأخير التوقيت مش متاح للترجمة المدمجة بـ ExoPlayer',subcache:'من الكاش',subhint:'↓ ترجمة   ↑ ♥',sug:'مقترحات',lab_mv:'فيلم إلك',lab_sr:'مسلسل إلك',lab_lv:'ع الهوا هسا',play:'▶ شغّل',p_fav:'المفضلة',favadd:'انضاف للمفضلة ♥',favdel:'انشال من المفضلة',nofav:'ما في إشي بالمفضلة لسا. وانت عم تتفرج دوس ♥ أو الزر الأصفر بالريموت',out:'خروج',lang:'English',
+all:'كل القنوات',newsug:'غيّرلي الاقتراحات',subs:'الترجمة',subq:'اسم الفيلم أو المسلسل',subgo:'دوّر',subsearching:'عم ندوّر…',subnone:'ما لقينا ترجمة، جرّب اسم تاني',subtimeout:'انتهى وقت البحث (45 ثانية) بدون نتيجة. جرّب اسم تاني أو ارجع حاول لاحقاً',subbadfmt:'ما قدرنا نقرا الملف كترجمة (المدعوم: SRT / VTT / ASS، مش صور)',subnopick:'جهازك ما فيه تطبيق لاختيار الملفات. استخدم زر الرابط بدل الملف',subdl:'عم ننزّل الترجمة…',subok:'تم تحميل الترجمة ✓',subfail:'ما زبط: ',suboff:'بدون ترجمة',subsync:'تزبيط التوقيت',subkey:'API Key',subusr:'اليوزر',subpw:'كلمة السر',subsave:'احفظ',subneed:'سجّل بموقع opensubtitles.com (مجاني) وحط المفتاح واليوزر وكلمة السر هون مرة وحدة',subnet:'ما قدرنا نوصل لسيرفر الترجمة. تأكد من الإنترنت وجرّب بعد شوي',sublimit:'خلص حد التنزيل اليومي',subbad:'المفتاح أو اليوزر أو الباسوورد مش مزبوط',subsrv:'ترجمة السيرفر',subosa:'OpenSubtitles عربي',subnotr:'ما لقينا ترجمة حقيقية، لا بالمشغّل ولا من السيرفر',subunsup:n=>`${n} ترجمة بصيغة غير مدعومة (صورية مثل PGS/VobSub)`,subwebmkv:'المشغّل العادي ما بيقرا الترجمة اللي جوا ملف MKV، فعّل ExoPlayer',subblk:'ما لقينا ترجمة جاهزة لهالمحتوى حالياً. جرّب اسم تاني أو ارجع حاول بعد شوي',subshown:'الترجمة ظاهرة ع الفيديو ✓',subsel:'اخترنا الترجمة، ناطرين المشغّل يعرضها…',subloaded:'تحمّلت الترجمة، ناطرين أول سطر يظهر…',subnoshow:'الترجمة مختارة بس ما ظهر منها نص ع الفيديو. جرّب "اختبار ظهور النص" أو "أول جملة الآن" أو اضبط التوقيت',subrefused:'المشغّل ما قبل هالترجمة',subcur:'الترجمة: ',subnodelay:'تأخير التوقيت مش متاح للترجمة المدمجة بـ ExoPlayer',subcache:'من الكاش',subhint:'↓ ترجمة   ↑ ♥',sug:'مقترحات',lab_mv:'فيلم إلك',lab_sr:'مسلسل إلك',lab_lv:'ع الهوا هسا',play:'▶ شغّل',p_fav:'المفضلة',favadd:'انضاف للمفضلة ♥',favdel:'انشال من المفضلة',nofav:'ما في إشي بالمفضلة لسا. وانت عم تتفرج دوس ♥ أو الزر الأصفر بالريموت',out:'خروج',lang:'English',
 p_mv:'أفلام',p_sr:'مسلسلات',p_sp:'رياضة',p_nw:'أخبار',p_kids:'أطفال',p_ch:'قنوات',back:'رجوع',search:'دوّر هون',cont:'كمّل من وين وقفت',more:'كمان',empty:'ما في إشي هون',
 city:'عمّان',w:['صحو','شوية غيم','غيم','ضباب','عم تشتي','تلج','زخّات مطر','رعد وبرق'],c:['الدنيا برد كتير، دفّي حالك','الجو بارد شوي','الجو تحفة','الدنيا حامية شوي','الدنيا نار، شغّل المكيّف'],
 wfail:'ما قدرنا نجيب الجو هسا',meas:'عم نقيس النت…',netna:'ما قدرنا نقيس النت',wait:'ثواني…',serfail:'ما قدرنا نفتح المسلسل هسا',sfail:'ما اشتغل البث',ch:'قناة',ungr:'غير مصنّف',am:'ص',pm:'م',
@@ -1313,7 +1315,7 @@ netfail:'Couldn\u2019t reach the link. Open the file in a normal browser (Chrome
 needurl:'Enter the link',fill:'Fill in all fields',deny:'The server rejected the login',badacc:'Invalid account',nochan:'No channels found',savedfail:'Saved login failed, please enter your details again',err:'Error ',
 hi:n=>`Welcome, ${n}`,g0:'Still up? Pick something to watch.',g1:'Good morning, what are you watching today?',g2:'Good afternoon, what are you in the mood for?',g3:'Good evening, what will it be tonight?',g4:'Enjoy your night, pick what you like.',sugg:' Here are a few picks.',
 sec_mv:'Movies for you',sec_sr:'Series for tonight',sec_lv:'Live now',nomv:'No movies found in this list',nosr:'No series found in this list',nolv:'No channels',
-all:'All channels',newsug:'Shuffle picks',subs:'Subtitles',subq:'Movie or series title',subgo:'Search',subsearching:'Searching…',subnone:'No subtitles found, try another name',subtimeout:'Search timed out after 45 s with no result. Try another name or retry later',subbadfmt:'Could not read this file as a subtitle (supported: SRT / VTT / ASS, not image subtitles)',subnopick:'This device has no file-picker app. Use the Link option instead',subdl:'Downloading subtitle…',subok:'Subtitle loaded ✓',subfail:'Failed: ',suboff:'Subtitles off',subsync:'Sync',subkey:'API Key',subusr:'Username',subpw:'Password',subsave:'Save',subneed:'Sign up at opensubtitles.com (free) and enter your API key, username and password once',subnet:'Couldn\\u2019t reach the subtitle server. Check your internet and try again shortly',sublimit:'Daily download limit reached',subbad:'API key, username or password is invalid',subsrv:'Server Subtitles',subosa:'OpenSubtitles Arabic',subnotr:'No real subtitle tracks found in the player or from the server',subunsup:n=>`${n} track(s) in an unsupported format (image-based such as PGS/VobSub)`,subwebmkv:'The Web Player cannot read tracks inside MKV files. Enable ExoPlayer',subblk:'No ready subtitles found for this title right now. Try another name or retry shortly',subshown:'Subtitles showing on video ✓',subsel:'Track selected, waiting for the player to render it…',subloaded:'Subtitle loaded, waiting for the first line…',subnoshow:'Subtitle is selected but no text has appeared on the video',subrefused:'The player did not accept this track',subcur:'Subtitle: ',subnodelay:'Timing offset is not available for ExoPlayer embedded tracks',subcache:'cached',subhint:'↓ Subtitles   ↑ ♥',sug:'Suggestions',lab_mv:'A movie for you',lab_sr:'A series for you',lab_lv:'Live now',play:'▶ Play',p_fav:'Favorites',favadd:'Added to favorites ♥',favdel:'Removed from favorites',nofav:'No favorites yet. While watching, tap ♥ or press the yellow remote button',out:'Sign out',lang:'\u0639\u0631\u0628\u064a',
+all:'All channels',newsug:'Shuffle picks',subs:'Subtitles',subq:'Movie or series title',subgo:'Search',subsearching:'Searching…',subnone:'No subtitles found, try another name',subtimeout:'Search timed out after 45 s with no result. Try another name or retry later',subbadfmt:'Could not read this file as a subtitle (supported: SRT / VTT / ASS, not image subtitles)',subnopick:'This device has no file-picker app. Use the Link option instead',subdl:'Downloading subtitle…',subok:'Subtitle loaded ✓',subfail:'Failed: ',suboff:'Subtitles off',subsync:'Sync',subkey:'API Key',subusr:'Username',subpw:'Password',subsave:'Save',subneed:'Sign up at opensubtitles.com (free) and enter your API key, username and password once',subnet:'Couldn\\u2019t reach the subtitle server. Check your internet and try again shortly',sublimit:'Daily download limit reached',subbad:'API key, username or password is invalid',subsrv:'Server Subtitles',subosa:'OpenSubtitles Arabic',subnotr:'No real subtitle tracks found in the player or from the server',subunsup:n=>`${n} track(s) in an unsupported format (image-based such as PGS/VobSub)`,subwebmkv:'The Web Player cannot read tracks inside MKV files. Enable ExoPlayer',subblk:'No ready subtitles found for this title right now. Try another name or retry shortly',subshown:'Subtitles showing on video ✓',subsel:'Track selected, waiting for the player to render it…',subloaded:'Subtitle loaded, waiting for the first line…',subnoshow:'Subtitle is selected but no text has appeared on the video. Try "Test text display", "First line now" or adjust the timing',subrefused:'The player did not accept this track',subcur:'Subtitle: ',subnodelay:'Timing offset is not available for ExoPlayer embedded tracks',subcache:'cached',subhint:'↓ Subtitles   ↑ ♥',sug:'Suggestions',lab_mv:'A movie for you',lab_sr:'A series for you',lab_lv:'Live now',play:'▶ Play',p_fav:'Favorites',favadd:'Added to favorites ♥',favdel:'Removed from favorites',nofav:'No favorites yet. While watching, tap ♥ or press the yellow remote button',out:'Sign out',lang:'\u0639\u0631\u0628\u064a',
 p_mv:'Movies',p_sr:'Series',p_sp:'Sports',p_nw:'News',p_kids:'Kids',p_ch:'Channels',back:'Back',search:'Search here',cont:'Continue watching',more:'More',empty:'Nothing here',
 city:'Amman',w:['Clear','Partly cloudy','Cloudy','Fog','Rain','Snow','Showers','Thunderstorm'],c:['Freezing, bundle up','A bit chilly','Lovely weather','Getting warm','Scorching, turn on the AC'],
 wfail:'Couldn\u2019t get the weather',meas:'Measuring internet…',netna:'Couldn\u2019t measure internet',wait:'One moment…',serfail:'Couldn\u2019t open the series',sfail:'Stream unavailable',ch:'Channel',ungr:'Other',am:'AM',pm:'PM',
@@ -1328,6 +1330,7 @@ Object.assign(T.ar,{cw_t:'مواصلة المشاهدة',cw_pick:'اختر ما 
 Object.assign(T.en,{cw_t:'Continue watching',cw_pick:'Choose what to resume',cw_none:'Nothing to resume yet',cw_hint:'Start a movie or series and it will appear here so you can pick up where you left off',cw_n:n=>n+' in progress',cw_left:m=>m+' min left',cw_seen:'watched',cw_play:'Resume',cw_rm:'Remove',cw_rmd:'Removed from the list'});
 Object.assign(T.en,{rc_all:'See all',rc_top:'Top picks for you',rc_bw:n=>'Because you watched '+n,rc_gr:g=>g+' picked for you',rc_new:'Recently added',rc_tr:'Top rated in your library',rc_tag:'Picked for you',rc_mv:'Movie',rc_sr:'Series',rc_det:'Details',rc_nb:'New',rc_mt:g=>'Matches your taste: '+g});
 Object.assign(T.en,{xp_q:'Stop watching?',xp_saved:'Your position will be saved',xp_stay:'Keep watching',xp_go:'Exit',xa_q:'Exit Hala TV?',xa_no:'Cancel',xa_go:'Yes, exit',sk_live:'Live — seeking not available',sk_nodur:'Duration not known yet',sk_s:'s',s_hist:'Watch history',hist_on:'Save watch history',hist_hint:'History is stored locally on this device only (not on the server, not synced), separately for each account.',hist_offn:' Currently off: new viewing is not recorded and existing history is kept.',hclr:'🗑 Clear watch history',hclr_q:'Clear this account\u2019s watch history?',hclr_s:'This removes history, resume points and Continue Watching. Favorites, the account, settings and other accounts\u2019 history are not affected.',hclr_do:'Clear',hclr_ok:'✓ History cleared',sort:'Sort',so_a1:'أ – ي',so_a2:'ي – أ',so_e1:'A – Z',so_e2:'Z – A',so_new:'Newest first',so_orig:'Original order',noaud:'No supported audio track for this title on your device'});
+Object.assign(T.ar,{sp_ai:'🤖 ترجمة بالذكاء الاصطناعي',sp_rs:'↺ صفر',sp_fs:'⏱ أول جملة الآن',sp_tst:'👁 اختبار ظهور النص',sp_tdone:'✓ النص ظاهر على الشاشة — العرض سليم، الموضوع بس توقيت الملف',sp_len:'⚠ طول الملف ما بيطابق الفيلم (غالباً نسخة تانية). جرّب ملف تاني أو اضبط التوقيت',sp_fsok:'تمت المزامنة على أول جملة'});Object.assign(T.en,{sp_ai:'🤖 AI translation',sp_rs:'↺ Reset',sp_fs:'⏱ First line now',sp_tst:'👁 Test text display',sp_tdone:'✓ Text is visible on screen — display is fine, only the file timing differs',sp_len:'⚠ File length does not match the movie (likely another cut). Try another file or adjust timing',sp_fsok:'Synced to the first line'});
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],enc=encodeURIComponent;
 let S={now:null,lang:'ar',mode:'m3u',chans:[],live:[],mv:[],sr:[],view:[],cur:-1,from:null,page:null,limit:72,conf:null,demo:false,demoProg:{},name:'',vod:false,track:null,lastId:null},hls=null,osdT,lastSave=0,L=37,R=39;
 const _sc=new Map(),store={get:k=>{if(_sc.has(k))return _sc.get(k);let v=null;try{v=JSON.parse(localStorage.getItem(k))}catch(e){}_sc.set(k,v);return v},set:(k,v)=>{try{const x=JSON.stringify(v);localStorage.setItem(k,x);_sc.set(k,JSON.parse(x))}catch(e){_sc.delete(k)}},del:k=>{_sc.delete(k);try{localStorage.removeItem(k)}catch(e){}}};
@@ -1371,7 +1374,7 @@ function applyLang(){
  const ar=S.lang=='ar'; document.documentElement.lang=S.lang; document.documentElement.dir=ar?'rtl':'ltr'; L=ar?37:39; R=ar?39:37;
  document.title=t('app'); $$('[data-i]').forEach(e=>e.textContent=t(e.dataset.i)); $$('[data-ip]').forEach(e=>e.placeholder=t(e.dataset.ip));
  $$('.lg').forEach(b=>b.classList.toggle('on',b.dataset.l==S.lang)); store.set('lang',S.lang);
- $('#b-fav').title=t('p_fav');$('#b-new').title=t('newsug');$('#b-lang').title=t('lang');$('#b-out').title=t('out');
+ $('#b-fav').title=t('p_fav');{const r=$('#b-rf');if(r)r.title=HX('تحديث السيرفر','Refresh server')}$('#b-new').title=t('newsug');$('#b-lang').title=t('lang');$('#b-out').title=t('out');
  if(V()=='home'){renderHome();weather()} else if(V()=='page')renderPage();
  try{if(RV.on)rcvBuild()}catch(e){}
  try{if(CW.on){CW.st==2?cwList(CW.kind):cwPick()}}catch(e){}
@@ -1487,7 +1490,7 @@ function favNow(){if(!S.now)return;toggleFav(S.now.it,S.now.k);osd(t(isFav(S.now
 $('#fv').onclick=favNow;$('#cc').onclick=()=>openSubs();
 function mk(it,kind,fn,fk){
  const d=document.createElement('div');d.className='cd'+(kind=='lv'?' lv':'');d.tabIndex=0;d.dataset.id=it.id||'';d._it=it;d._fk=fk||it.kind||'lv';
- if(it.logo){const i=document.createElement('img');i.loading='lazy';i.src=thumb(it.logo,'w342');i.onerror=()=>i.remove();d.append(i)}
+ if(it.logo){const i=document.createElement('img');i.loading='lazy';i.src=thumb(it.logo,'w342');i.onerror=()=>{i.remove();npTo(d,it,d._fk)};d.append(i)}else npTo(d,it,d._fk);
  const c=document.createElement('div');c.className='cap'+(it.d?' hp':'');c.dir='auto';c.textContent=it.name;d.append(c);
  if(it.d){const b=document.createElement('div');b.className='pb';b.innerHTML='<i></i>';b.firstChild.style.width=Math.min(100,it.t/it.d*100)+'%';d.append(b)}
  if(isFav(it.id))d.append(favBadge());
@@ -1496,6 +1499,11 @@ function mk(it,kind,fn,fk){
 var pv=null,pvT,_aw=0;
 function audChk(v,g,gf){setTimeout(()=>{try{if(g!==gf()||v.paused||v.currentTime<.8)return;v.muted=false;v.volume=1;
  if(typeof v.webkitAudioDecodedByteCount=='number'&&v.webkitAudioDecodedByteCount===0&&!_aw){_aw=1;elog('preview: no audio decoded (codec?) '+(v.currentSrc||''));osd(S.lang=='ar'?'صوت هالملف (AC3/DTS) ما بيشتغل بالمعاينة، بيشتغل بالمشغّل الكامل':'This file\u2019s audio codec is not supported in previews; it plays in the full player')}}catch(e){}},1800)}
+/* ===== بطاقة "لا يتوفر بوستر": اسم العمل فوق + شعار التطبيق + الكلمة، بدل الشاشة السودا ===== */
+(function(){try{const l=document.querySelector('img.logo');if(l&&l.src){const st=document.createElement('style');st.id='npb-logo';st.textContent='.npb .npl{background-image:url("'+l.src+'")}';document.head.appendChild(st)}}catch(e){}})();
+function npb(it,fk){const d=document.createElement('div');d.className='npb';const nm=String((it&&it.name)||''),n=document.createElement('b');n.className='npn';n.dir='auto';n.textContent=fk=='lv'?nm:(cleanTitle(nm)||nm);const l=document.createElement('i');l.className='npl';const x=document.createElement('small');x.className='nps';x.textContent=HX('لا يتوفر بوستر','No poster available');d.append(n,l,x);return d}
+function npTo(p,it,fk){if(!p)return null;for(let i=0;i<p.children.length;i++)if(p.children[i].classList.contains('npb'))return p.children[i];const d=npb(it,fk);p.classList.add('np');p.insertBefore(d,p.firstChild);return d}
+function hlsWeak(){try{const c=navigator.connection||{};return !!(c.saveData||/^(slow-)?[23]g$/.test(c.effectiveType||'')||(c.downlink&&c.downlink<3)||document.documentElement.classList.contains('lowp')||(window.NM&&NM.slow))}catch(e){return false}}
 function killPv(){clearTimeout(pvT);if(pv){try{pv.destroy()}catch(e){}pv=null}$$('.hero video,#p-pv video,#hbg video,#pbg video').forEach(v=>{v.removeAttribute('src');v.load()});$$('#hbg video,#pbg video').forEach(v=>v.remove())}
 function vShow(v,fn){var ok=function(){return v.videoWidth>0&&v.videoHeight>0};if(ok()){fn();return}var h=function(){if(ok()){v.removeEventListener('timeupdate',h);v.removeEventListener('loadeddata',h);fn()}};v.addEventListener('timeupdate',h);v.addEventListener('loadeddata',h)}
 function prevPlay(v,u,d){return setTimeout(()=>{if(!v.isConnected||!v.getClientRects().length)return;
@@ -1506,7 +1514,7 @@ function hero(it,fk,fn){
  const ck=document.createElement('span');ck.className='ck';ck.innerHTML=IC[fk];d.append(ck);
  if(!it){d.classList.add('empty');return d}
  d.tabIndex=0;d.dataset.id=it.id||'';d._it=it;d._fk=fk;
- const nf=()=>{const f=document.createElement('div');f.className='nf2';f.innerHTML=IC[fk];d.prepend(f)};
+ const nf=()=>{npTo(d,it,fk)};
  if(it.logo){const i=document.createElement('img');i.className='pz'+(fk=='lv'?' lg2':'');i.src=it.logo;i.onerror=()=>{i.remove();nf()};d.prepend(i)}else nf();
  d.onfocus=()=>heroPrev(d,it,fk);d.onmouseenter=()=>{if(document.activeElement!==d){try{d.focus({preventScroll:true})}catch(e){d.focus()}}};d.onblur=()=>{killPv();d.querySelectorAll('video').forEach(v=>v.remove());$$('#hbg video').forEach(v=>v.remove())};
  if(isFav(it.id))d.append(favBadge());
@@ -1522,9 +1530,10 @@ function renderTiles(){
   if(it){const i=document.createElement('img');i.className='bgi';i.src=it.logo;i.onerror=()=>i.remove();d.append(i)}
   const l=document.createElement('div');l.className='lb';l.innerHTML='<span class="ic"></span><span class="tt"><span class="ruq"></span><small></small></span>';
   l.querySelector('.ic').innerHTML=IC[ic];l.querySelector('.ruq').textContent=t(PM[k]);l.querySelector('small').textContent=src(k).length;d.append(l);
-  d.onclick=()=>showPage(k);b.append(d);
+  d.dataset.k=k;d.onclick=()=>{S.hk=k;showPage(k)};b.append(d);
  });
  if(ai>=0)focusEl($$('#home .tile')[ai]);
+ else if(S.hk&&V()=='home'){const tt=$$('#home .tile').find(x=>x.dataset.k==S.hk);S.hk=null;if(tt)focusEl(tt)}   /* رجوع من قسم: ارجع لنفس البطاقة (مش أول وحدة = القنوات) */
 }
 function rcTile(){try{const r=document.createElement('div');r.className='tile rctile';r.tabIndex=0;const z=document.createElement('div');z.className='rcz';
   const pk=[];[src('__mv'),src('__sr')].forEach(a=>{for(let n=0,g=0;n<40&&g<6&&a.length;n++){const c=a[Math.random()*a.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}});
@@ -1808,10 +1817,11 @@ setTimeout(()=>nmCheck('boot'),2500);nmLoop();
 /* تنبيه: لو البث صار يتقطع أو انقطع الاتصال، اعرض رسالة بلطف وافتح الفحص */
 function ntWeak(why){try{
  if(store.get('ntw')===0||NT.on||document.hidden||Date.now()-NT.warnT<900000)return;
+ if(Date.now()-(S.lastKeyT||0)<2500&&!S.ntRe){S.ntRe=1;setTimeout(()=>{S.ntRe=0;ntWeak(why)},2800);return}
  const d=$('#dlg');if(d&&d.classList.contains('on'))return;
  NT.warnT=Date.now();
  const m=why=='off'?HX('انقطع الاتصال بالإنترنت.','The internet connection dropped.'):HX('الإنترنت عندك ضعيف وعم يتقطع البث.','Your internet looks weak and the stream keeps buffering.');
- dlgOpen(HX('تأكد من الإنترنت','Check your internet'),m+' '+HX('بدك أفحصه لك هلق؟','Shall I test it for you now?'),[{t:HX('📶 افحص الإنترنت','📶 Test my connection'),cur:1,fn:()=>{if(V()=='app'){try{exitPlayer()}catch(e){}}setTimeout(ntOpen,80)}},{t:HX('لاحقاً','Later')}],1)
+ dlgOpen(HX('تأكد من الإنترنت','Check your internet'),m+' '+HX('بدك أفحصه لك هلق؟','Shall I test it for you now?'),[{t:HX('📶 افحص الإنترنت','📶 Test my connection'),fn:()=>{if(V()=='app'){try{exitPlayer()}catch(e){}}setTimeout(ntOpen,80)}},{t:HX('لاحقاً','Later'),cur:1}],1)
 }catch(e){try{elog('ntw '+e)}catch(x){}}}
 (function(){const v=$('#v');
  v.addEventListener('waiting',()=>{if(V()!='app'||v.seeking)return;const n=Date.now();NT.bw=NT.bw.filter(x=>n-x<90000);NT.bw.push(n);if(NT.bw.length>=4){NT.bw=[];ntWeak('buf')}});
@@ -1828,6 +1838,7 @@ function renderSug(){
   rcTile(),
   spTile(),
   cwTile(),
+  (typeof rlTile=='function'?rlTile():document.createDocumentFragment()),
    kidTile());
  [...box.children].forEach(d=>{if(d._it&&d._fk!='lv')bgUrl(d._it).catch(()=>{})});/* تسخين: جيب رابط المعاينة مسبقاً */
  const a=document.activeElement;if(!a||a==document.body||!a.closest('#home'))focusEl($('#home .tile')||$('#b-fav'));
@@ -1842,6 +1853,24 @@ function sgRotate(){try{
 }catch(e){try{elog('sgr '+e)}catch(x){}}}
 setInterval(sgRotate,SG_MS);
 $('#b-fav').onclick=()=>showPage('__fav');
+/* تحديث السيرفر: بيعيد تحميل القنوات والأفلام والمسلسلات من السيرفر (لما السيرفر يضيف أو يغيّر محتوى). القوائم القديمة بتضل ظاهرة لحد ما التحديث يخلص. */
+async function refreshServer(){
+ if(S.rfBusy||S.demo)return;const conf=store.get('conf');if(!conf){osd(HX('ما في سيرفر مسجّل للتحديث','No server saved'));return}
+ S.rfBusy=1;const b=$('#b-rf');b&&b.classList.add('spin');osd(HX('عم نحدّث قوائم السيرفر…','Refreshing server lists…'));
+ const n0=[S.live.length,S.mv.length,S.sr.length];
+ try{
+  S.cm=1;await load(conf);
+  /* الأفلام والمسلسلات بتوصل بعد القنوات: استنى لحد ما تخلص */
+  for(let i=0;i<60&&S.lv;i++)await new Promise(r=>setTimeout(r,500));
+  S.cm=0;try{renderHome()}catch(e){}if(V()=='page')try{renderPage()}catch(e){}
+  const d=(a,b)=>a>b?' (+'+(a-b)+')':a<b?' (−'+(b-a)+')':'';
+  const m=HX('تم تحديث السيرفر ✓  قنوات ','Server updated ✓  Channels ')+S.live.length+d(S.live.length,n0[0])+HX(' · أفلام ',' · Movies ')+S.mv.length+d(S.mv.length,n0[1])+HX(' · مسلسلات ',' · Series ')+S.sr.length+d(S.sr.length,n0[2]);
+  osd(m);
+ }catch(e){S.cm=0;osd(HX('ما زبط تحديث السيرفر: ','Server refresh failed: ')+(e&&e.message?e.message:HX('تأكد من الإنترنت','check your internet')));try{elog('refresh btn: '+(e&&e.message))}catch(x){}}
+ S.rfBusy=0;const b2=$('#b-rf');b2&&b2.classList.remove('spin');
+}
+$('#b-rf').onclick=refreshServer;$('#b-rf').title=HX('تحديث السيرفر','Refresh server');
+
 $('#b-new').onclick=()=>{S._sgT=0;renderSug()};
 $('#b-out').onclick=()=>{store.del('conf');location.reload()};
 const CK={a:null,b:null,hm:'',ap:'',day:-1,lg:''};
@@ -1877,7 +1906,7 @@ async function net(){
 
 /* ===== صفحات الأقسام (كل قسم لحاله) ===== */
 function showPage(k,keep){try{tipPage(k,keep)}catch(e){}
- S.page=k;S.from=null;setView('page');if(!keep){S.limit=100;S.gsig='';S.grp='';S.let='';S.gl='';S.manage=false;$('#p-q').value=''}
+ if(V()=='home'&&/^__(all|mv|sr)$/.test(k))S.hk=k;S.page=k;S.from=null;setView('page');if(!keep){S.limit=100;S.gsig='';S.grp='';S.let='';S.gl='';S.manage=false;$('#p-q').value=''}
  renderPage();
  const e=keep&&S.lastId&&$$('#page .li').find(x=>x.dataset.id==S.lastId);
  focusEl(e||$('#page .li')||$('#p-q'));
@@ -1887,7 +1916,17 @@ function setPv(it,fk){
  if($('#page').classList.contains('srp')){killPv();return}
  if($('#page').classList.contains('cinp')){killPv();if(!it)window.CIN&&CIN.hide();return}
  const b=$('#p-pv');killPv();b.innerHTML='';if(!it)return;
- if(it.logo){const i=document.createElement('img');i.src=it.logo;i.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(fk=='lv'?'contain;padding:12%':'cover');i.onerror=()=>i.remove();b.append(i)}
+ if(fk=='lv'&&$('#page').classList.contains('chn')){
+  const pw=document.createElement('div');pw.className='pvv';b.append(pw);
+  const nm=String(it.name||'').trim(),ini=(nm.replace(/^[^\p{L}\p{N}]+/u,'').charAt(0)||'\u25B6').toUpperCase();
+  const fb=npb(it,'lv');fb.classList.add('npf');pw.append(fb);
+  if(it.logo){const i=document.createElement('img');i.src=it.logo;i.className='pvl';i.onerror=()=>i.remove();i.onload=()=>fb.remove();pw.append(i)}
+  if(it.url&&BGOK){const v=document.createElement('video');v.muted=false;v.volume=1;v.playsInline=true;pw.append(v);pvT=prevPlay(v,it.url,700)}
+  const r=document.activeElement&&document.activeElement.closest?document.activeElement.closest('.li'):null,cn=r&&r.querySelector('.cn'),inf=document.createElement('div');inf.className='pvi';
+  const h=document.createElement('b');h.textContent=nm;inf.append(h);
+  const m=document.createElement('small');m.textContent=[cn?'#'+cn.textContent:'',it.group?strip(it.group):''].filter(Boolean).join('  \u00B7  ');inf.append(m);
+  const hn=document.createElement('em');hn.textContent=HX('اضغط OK للتشغيل','Press OK to play');inf.append(hn);b.append(inf);return}
+ if(it.logo){const i=document.createElement('img');i.src=it.logo;i.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(fk=='lv'?'contain;padding:12%':'cover');i.onerror=()=>{i.remove();npTo(b,it,fk)};b.append(i)}else npTo(b,it,fk);
  if(fk=='lv'&&it.url&&BGOK){const v=document.createElement('video');v.muted=false;v.volume=1;v.playsInline=true;b.append(v);pvT=prevPlay(v,it.url,700)}
  else if(fk=='mv'&&!(window.CIN&&CIN.active()))bgPrev('#pbg',it,fk);
 }
@@ -1896,7 +1935,7 @@ let COL;try{COL=new Intl.Collator('ar')}catch(e){COL={compare:(a,b)=>a<b?-1:a>b?
 const AL=c=>!c?'':'أإآٱ'.includes(c)?'ا':c=='ى'?'ي':c=='ة'?'ه':c.toUpperCase(),first0=n=>AL(((n||'').replace(/^[^A-Za-z\u0621-\u064A]+/,'')[0])||'');
 const _LC=new WeakMap(),_fm=new Map(),first=n=>{let r=_fm.get(n);if(r===undefined){r=first0(n);_fm.set(n,r)}return r};
 const LET=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'];
-const VM=()=>{if(!store.get('vm2')){store.set('vm2',1);store.set('vm','modern')}const v=store.get('vm');return v=='grid'||v=='list'?v:'modern'};
+const VM=()=>{if(!store.get('vm3')){store.set('vm3',1);store.set('vm2',1);store.set('vm','list')}const v=store.get('vm');if(v=='grid')return v;if(v=='modern'&&!document.documentElement.classList.contains('lowp'))return v;return 'list'};
 const _GS=new WeakMap(),_HV=new WeakMap(),_GI=new WeakMap(),_CRW=(vod,q,gs)=>vod&&VM()=='modern'&&!document.documentElement.classList.contains('mob')&&!q&&!S.let&&S.grp===''&&gs.length>=2;function _gsOf(a){let r=_GS.get(a);if(!r){r=[...new Set(a.map(c=>c.group).filter(Boolean))];_GS.set(a,r)}return r}
 function renderPage(){
  const k=S.page;if(!k)return;
@@ -1927,12 +1966,12 @@ function renderPage(){
    G.append(e)});if(G.firstChild&&G.firstChild.className=='gl-strip'){const L=document.createElement('div');L.className='gl-list';[...G.children].slice(1).forEach(n=>L.append(n));G.append(L);G.classList.add('hasl')}else G.classList.remove('hasl')}else G.classList.remove('hasl');
  const A=$('#p-a');A.innerHTML='';let _hv=_HV.get(all);if(!_hv){_hv={};_HV.set(all,_hv)}const _hn=k+'|'+S.grp+'|'+q;let have=_hv[_hn];if(!have){have=new Set();for(const c of all)if(gm(c)&&(!qm||qm(c)))have.add(first(c.name));_hv[_hn]=have}
  [['','•'],...LET.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.let||'')===v?' on':'')+(v&&!have.has(v)?' dim':'');e.tabIndex=0;e.textContent=n;e.onclick=()=>{S.let=v;S.limit=100;renderPage();focusEl($('#p-a .ai.on'))};A.append(e)});
- const Li=$('#p-l');Li.innerHTML='';const vmo=VM(),gv=vod?vmo!='list':vmo=='grid';Li.classList.toggle('gv',gv);const LVP=!vod&&!fv&&(k=='__all'||k=='__sp'||k=='__nw');$('#page').classList.toggle('lvg',LVP&&gv);{const _cp=vmo=='modern'&&!LVP&&!document.documentElement.classList.contains('mob');$('#page').classList.toggle('cinp',_cp);if(!_cp&&window.CIN)try{CIN.hide()}catch(e){}}$('#page').classList.toggle('cinr',_CRW(vod,q,gs));window.CIN&&CIN.pill();$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=({list:'☰ ',grid:'▦ ',modern:'🎬 '})[vmo]+t({list:'vml',grid:'vmg',modern:'vmm'}[vmo]);
+ const Li=$('#p-l');Li.innerHTML='';const vmo=VM(),LVP=!vod&&!fv&&(k=='__all'||k=='__sp'||k=='__nw'),gv=LVP?false:vod?vmo!='list':vmo=='grid';Li.classList.toggle('gv',gv);$('#page').classList.toggle('chn',LVP);{const vb=$('#p-vm');if(vb)vb.style.display=LVP?'none':''}$('#page').classList.toggle('lvg',LVP&&gv);{const _cp=vmo=='modern'&&!LVP&&!document.documentElement.classList.contains('mob');$('#page').classList.toggle('cinp',_cp);if(!_cp&&window.CIN)try{CIN.hide()}catch(e){}}$('#page').classList.toggle('cinr',_CRW(vod,q,gs));window.CIN&&CIN.pill();$('#pg').classList.toggle('gvw',gv);$('#p-vm').textContent=({list:'☰ ',grid:'▦ ',modern:'🎬 '})[vmo]+t({list:'vml',grid:'vmg',modern:'vmm'}[vmo]);
  if(!S.view.length){Li.innerHTML='<div class="none">'+t(fv?'nofav':S.grp==='__rc'?'rc_none':'empty')+'</div>';setPv(null);return}
  const sig=k+'|'+S.grp+'|'+S.let+'|'+q+'|'+vmo,STEP=gv?8:24;if(S.gsig!==sig){S.gsig=sig;S.gn=STEP}
  if(S.lastId){const ix=S.view.findIndex(c=>c.id==S.lastId);if(ix>=0)S.gn=Math.max(S.gn,ix+STEP+1)}
  S.step=STEP;S.mk=c=>{const fk=fv?c.kind:vod?(k=='__mv'?'mv':'sr'):KM.get(c)||'lv',e=document.createElement('div');e.className='li'+((fk||'lv')=='lv'?' lv':'')+(c.logo?'':' nl');e.tabIndex=0;e._it=c;e._fk=fk||'lv';e.dataset.id=c.id||'';
-  if(c.logo){const i=document.createElement('img');i.loading='lazy';i.src=thumb(c.logo,'w342');i.onerror=()=>i.remove();e.append(i)}
+  if(c.logo){const i=document.createElement('img');i.loading='lazy';i.src=thumb(c.logo,'w342');i.onerror=()=>{i.remove();if(gv&&e._fk!='lv')npTo(e,c,e._fk)};e.append(i)}else if(gv&&e._fk!='lv')npTo(e,c,e._fk);
   const n=document.createElement('span');n.dir='auto';n.textContent=c.name;e.append(n);if(isFav(c.id))e.append(favBadge());
   if(e._fk=='lv'&&S.grp!=='__c'){const nb=document.createElement('b');nb.className='cn';nb.textContent=String(Li.children.length+1).padStart(3,'0');e.insertBefore(nb,e.firstChild);if(!c.logo)e.dataset.i=(String(c.name||'').replace(/^[^\p{L}\p{N}]+/u,'').charAt(0)||'\u25B6').toUpperCase();if(c.group){const g=document.createElement('small');g.className='cg';g.textContent=strip(c.group);e.append(g)}}
   e.onclick=()=>{S.lastId=c.id;S.grp==='__c'?direct(c,c.kind):fk=='lv'||!fk?playLive(c):showDet(c,fk)};(S.mkT||Li).append(e)};
@@ -1965,9 +2004,9 @@ function start(c){
  if(!EXO.run){try{v.pause();v.removeAttribute('src');v.load()}catch(e){}}
  const pr=S.track&&getProg()[S.track.id];
  if(pr&&pr.url==c.url&&pr.t>5)v.addEventListener('loadedmetadata',()=>{v.currentTime=pr.t},{once:true});
- v.controls=S.vod&&!tchOn();
+ v.controls=S.vod&&!tchOn();try{v.setAttribute('controlslist','nofullscreen noremoteplayback');v.disablePictureInPicture=true}catch(e){}
  if(!EXO.use(c.url)&&/\.m3u8(\?|$)/i.test(c.url)&&window.Hls&&Hls.isSupported()){
-  hls=new Hls({maxBufferLength:20});hls.on(Hls.Events.MANIFEST_PARSED,()=>{if(hls&&hls.levels.length>1){let b=0;hls.levels.forEach((l,i)=>{const o=hls.levels[b];if((l.height||0)>(o.height||0)||((l.height||0)==(o.height||0)&&(l.bitrate||0)>(o.bitrate||0)))b=i});hqi=b;hls.currentLevel=b}});hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED,()=>window.spRefresh&&spRefresh());hls.loadSource(c.url);hls.attachMedia(v);
+  const _wk=hlsWeak();hls=new Hls(_wk?{maxBufferLength:30,maxMaxBufferLength:60,backBufferLength:15,capLevelToPlayerSize:true,startFragPrefetch:true,startLevel:0,abrEwmaDefaultEstimate:1200000,abrBandWidthFactor:.8,abrBandWidthUpFactor:.6,manifestLoadingMaxRetry:4,levelLoadingMaxRetry:4,fragLoadingMaxRetry:5,fragLoadingRetryDelay:800,maxBufferHole:.5}:{maxBufferLength:20,startFragPrefetch:true});hls.on(Hls.Events.MANIFEST_PARSED,()=>{if(hls&&hls.levels.length>1){let b=0;hls.levels.forEach((l,i)=>{const o=hls.levels[b];if((l.height||0)>(o.height||0)||((l.height||0)==(o.height||0)&&(l.bitrate||0)>(o.bitrate||0)))b=i});hqi=b;if(!_wk)hls.currentLevel=b}});hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED,()=>window.spRefresh&&spRefresh());hls.loadSource(c.url);hls.attachMedia(v);
   hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){elog('HLS '+d.type+' '+d.details);hls.destroy();hls=null;v.src=c.url;v.play().catch(()=>{})}});
  }else v.src=c.url;
  v.play().catch(()=>{});osd((c.label||c.name)+(S.vod?'    '+t('subhint'):''));
@@ -2127,13 +2166,26 @@ const _hc={};let _hid=0;
 window.__http=(id,r)=>{const f=_hc[id];delete _hc[id];if(f)f(JSON.parse(r))};
 function fto(url,opt,ms){const c=window.AbortController?new AbortController():null,t=c&&setTimeout(()=>c.abort(),ms||15000);return fetch(url,Object.assign({},opt||{},c?{signal:c.signal}:{})).finally(()=>t&&clearTimeout(t))}
 function xhttp(method,url,headers,body){
- if(window.HalaNative&&HalaNative.http)return new Promise(res=>{const id='h'+(++_hid);_hc[id]=res;HalaNative.http(id,method,url,JSON.stringify(headers||{}),body||'')});
- return fto(url,{method,headers,body:body||undefined},20000).then(async r=>({status:r.status,body:await r.text()})).catch(e=>({status:0,body:'',error:String(e)}));
+ const viaF=()=>fto(url,{method,headers,body:body||undefined},20000).then(async r=>({status:r.status,body:await r.text()})).catch(e=>({status:0,body:'',error:String(e)}));
+ if(window.HalaNative&&HalaNative.http)return new Promise(res=>{const id='h'+(++_hid);_hc[id]=res;HalaNative.http(id,method,url,JSON.stringify(headers||{}),body||'')}).then(r=>{
+  /* فشل الاتصال من طرف التطبيق (شهادة/DNS/مهلة): جرّب من طرف المتصفح الداخلي قبل ما نستسلم */
+  if(r&&r.status===0){try{SUB.lerr=String(r.error||'')}catch(e){}return viaF().then(f=>f.status?f:r)}return r});
+ return viaF();
 }
 async function xbytes(url,headers){
- if(window.HalaNative&&HalaNative.http){const r=await xhttp('GET',url,Object.assign({'X-Hala-Raw':'1'},headers||{}));if(r.status!=200||!r.b64)return{status:r.status||0};return{status:200,bytes:Uint8Array.from(atob(r.b64),c=>c.charCodeAt(0))}}
- try{const r=await fto(url,null,10000);if(!r.ok)return{status:r.status};return{status:200,bytes:new Uint8Array(await r.arrayBuffer())}}catch(e){return{status:0}}
+ const viaF=async()=>{try{const r=await fto(url,null,20000);if(!r.ok)return{status:r.status};return{status:200,bytes:new Uint8Array(await r.arrayBuffer())}}catch(e){try{SUB.lerr=String(e)}catch(x){}return{status:0}}};
+ if(window.HalaNative&&HalaNative.http){const r=await xhttp('GET',url,Object.assign({'X-Hala-Raw':'1'},headers||{}));
+  if(r.status==200&&r.b64){try{return{status:200,bytes:Uint8Array.from(atob(r.b64),c=>c.charCodeAt(0))}}catch(e){}}
+  try{if(r.error)SUB.lerr=String(r.error)}catch(e){}
+  const f=await viaF();return f.status==200?f:{status:r.status||f.status||0}}
+ return viaF();
 }
+/* سبب فشل الاتصال بلغة مفهومة (الأجهزة القديمة غالباً مشكلتها التاريخ/الشهادات) */
+function netWhy(){const e=String((typeof SUB!='undefined'&&SUB.lerr)||'');
+ if(/SSL|certificate|trust anchor|handshake|CERT|ValidatorException/i.test(e))return HX('الجهاز ما قدر يتحقق من أمان الاتصال (غالباً تاريخ أو وقت الجهاز غلط، أو نظام قديم). صحّح التاريخ والوقت من إعدادات الجهاز وجرّب','The device could not verify the secure connection (usually wrong date/time on the device, or an old system). Fix the date and time in device settings and try again');
+ if(/timed? ?out|timeout/i.test(e))return HX('الاتصال بسيرفر الترجمة بطيء، جرّب مرة ثانية','The connection to the subtitle server is slow, try again');
+ if(/UnknownHost|resolve|No address|EAI_/i.test(e))return HX('الجهاز ما قدر يوصل لعنوان سيرفر الترجمة (مشكلة DNS). جرّب شبكة ثانية','The device could not resolve the subtitle server address (DNS). Try another network');
+ return ''}
 const OS={base:'https://api.opensubtitles.com/api/v1',ua:'HalaTV v1.0',lang:'ar',tok:null};
 const osCfg=()=>({k:'__OS_KEY__',u:'__OS_USER__',p:'__OS_PASS__'}),osOK=()=>{const c=osCfg();return c.k&&c.u&&c.p&&!/^__/.test(c.k)};
 const osH=(auth)=>{const c=osCfg(),h={'Api-Key':c.k||'','Content-Type':'application/json','Accept':'application/json','User-Agent':OS.ua};if(auth&&OS.tok)h.Authorization='Bearer '+OS.tok;return h};
@@ -2292,8 +2344,9 @@ function subTick(){
   if(S.sub.kind=='tt'){const c=S.sub.tt.cues;if(c){const a=[];for(let i=0;i<c.length;i++){const q=c[i];if(q.startTime<=tm&&q.endTime>tm)a.push(cueText(q.text||''))}tx=a.join('\n')}}
   else tx=cuesAt(S.sub.cues,tm);
  }
+ const tst=SUB.tu&&Date.now()<SUB.tu;if(tst)tx=t('sp_tdone');
  if(tx===SUB.txt)return;SUB.txt=tx;o.textContent='';
- if(tx&&S.sub&&!S.sub.shown){S.sub.shown=1;SUB.st='shown';clearTimeout(SUB.pt);if(spOpen())spSt(t('subshown')+' \u00B7 '+(S.sub.name||''))}
+ if(tx&&!tst&&S.sub&&!S.sub.shown){S.sub.shown=1;SUB.st='shown';clearTimeout(SUB.pt);if(spOpen())spSt(t('subshown')+' \u00B7 '+(S.sub.name||''))}
  if(tx)tx.split('\n').forEach(l=>{const s=document.createElement('span');s.textContent=l;s.dir=AR_RE.test(l)?'rtl':'ltr';o.append(s)});
 }
 function subStop(keepNative){
@@ -2313,7 +2366,7 @@ function setSub(x,lang,meta){
  if(!cues.length){SUB.err='decode: 0 cues parsed from '+(x?x.length:0)+' chars';spSt(t('subbadfmt'));return false}
  subStop();nativeTextOff();SUB.err='';
  const dk=meta.key?meta.key+(meta.rel?'|'+meta.rel:''):'';let o0=meta.off;
- if(o0==null&&dk)o0=store.get('subdl:'+dk);if(o0==null&&meta.key)o0=store.get('subdl:'+meta.key);if(o0==null)o0=0;
+ if(o0==null&&dk)o0=store.get('subdl:'+dk);if(o0==null&&meta.key)o0=store.get('subdl:'+meta.key);if(o0==null)o0=0;if(!isFinite(o0)||Math.abs(o0)>300)o0=0;
  S.sub={kind:'cues',cues,lang:lang||'ar',off:o0,name:meta.name||'',disp:meta.disp||'',key:meta.key||'',dk,shown:0};
  SUB.st='loaded';subStart();setDelayUI();spSt(t('subloaded')+' \u00B7 '+cues.length+' \u00B7 '+(S.sub.disp||S.sub.name||'')+(meta.cached?' \u00B7 '+t('subcache'):''));if(meta.disp){try{osd('\u2713 '+meta.disp)}catch(e){}}
  if(meta.key&&meta.save){SC.put(meta.key,x,meta.name);store.set('subauto:'+meta.key,1)}
@@ -2482,7 +2535,7 @@ function parseResults(html,defT){
   if(ti){const i2=tx.indexOf(ti);if(i2>=0)rel=tx.slice(i2+ti.length).replace(/^[\s\-–—:|]+/,'').split(/\s(?:\d+\s?CD\b|\d[\d,]*\s?x\b|\d{4}-\d\d-\d\d)/)[0].slice(0,110).trim()}
   const ym=ti.match(/\(\s*((?:19|20)\d\d)\s*\)/),fl=row.match(/flag\s+([a-z]{2,3})\b/i);
   ti=(ti||defT||'').replace(/\s*\(\s*(?:19|20)\d\d\s*\)\s*$/,'').replace(/^"([^"]+)"/,'$1').trim();
-  o.push({id:m[1],title:ti,year:ym?+ym[1]:0,name:rel||(ti?'':tx.slice(0,110))||m[1],n:dl?+dl[1].replace(/,/g,''):0,lang:fl?fl[1].toLowerCase():'ar'});
+  o.push({id:m[1],title:ti,year:ym?+ym[1]:0,name:rel||(ti?'':tx.slice(0,110))||m[1],n:dl?+dl[1].replace(/,/g,''):0,lang:fl?fl[1].toLowerCase():(SUB.sl2||'ar')});
  });
  return o;
 }
@@ -2496,7 +2549,7 @@ function scoreRes(x,se,ep,raw){
 }
 async function webFind(q,se,ep,raw,ctx){
  if(Date.now()-WEBBLK<6e5)return{blocked:1,items:[]};
- let neterr=0,err=0;const mid=se&&ep?`/season-${se}/episode-${ep}`:'',path=`/en/search/sublanguageid-ara${mid}/moviename-${enc(q)}`;
+ let neterr=0,err=0;const mid=se&&ep?`/season-${se}/episode-${ep}`:'',path=`/en/search/sublanguageid-${SUB.sl3||'ara'}${mid}/moviename-${enc(q)}`;
  for(const host of [DLB,WB]){
   const r=await xhttp('GET',host+path,UA);
   if(r.status==0){neterr=1;continue}
@@ -2505,22 +2558,26 @@ async function webFind(q,se,ep,raw,ctx){
   let items=parseResults(r.body,'');
   if(!items.length){
    const top=parseMovieLinks(r.body).map(m=>({m,s:bestMatch(ctx,m.name)})).sort((a,b)=>b.s-a.s)[0];
-   if(top&&(top.s<0||top.s>=.34)){const r2=await xhttp('GET',host+`/en/search/sublanguageid-ara${mid}/idmovie-${top.m.id}`,UA);if(blockedRes(r2)){WEBBLK=Date.now();return{blocked:1,items:[]}}if(r2.status==200)items=parseResults(r2.body,top.m.name.replace(/\s*\(\s*(?:19|20)\d\d\s*\)\s*$/,''))}
+   if(top&&(top.s<0||top.s>=.34)){const r2=await xhttp('GET',host+`/en/search/sublanguageid-${SUB.sl3||'ara'}${mid}/idmovie-${top.m.id}`,UA);if(blockedRes(r2)){WEBBLK=Date.now();return{blocked:1,items:[]}}if(r2.status==200)items=parseResults(r2.body,top.m.name.replace(/\s*\(\s*(?:19|20)\d\d\s*\)\s*$/,''))}
   }
   if(items.length){items.sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw));return{items:items.slice(0,25).map(x=>{const it={id:x.id,name:x.name,title:x.title,year:x.year,lang:x.lang,n:x.n};it.get=()=>webGet(it);return it})}}
  }
  return{items:[],err,neterr};
 }
 async function webGet(x){
- spSt(t('subdl'));
+ spSt(t('subdl'));let bad='',net=0;SUB.lerr='';
  for(const u of [`${DLB}/en/download/sub/${x.id}`,`${WB}/en/subtitleserve/sub/${x.id}`]){
-  const r=await xbytes(u,UA);
-  if(r.status!=200||!r.bytes)continue;
-  try{const b=extractSub(r.bytes);return finishGet(dec(b),x.name,x.disp)}catch(e){if(e.message=='html'){spSt(t('subblk'));WEBBLK=Date.now();return false}if(e.message=='rar'){spSt(t('subbadfmt'));return false}}
+  for(let k=0;k<2;k++){
+   const r=await xbytes(u,UA);
+   if(r.status!=200||!r.bytes){net=1;if(k==0)await new Promise(z=>setTimeout(z,900));continue}   /* مرة ثانية قبل ما نعتبرها فشلت */
+   try{const b=extractSub(r.bytes);const ok=finishGet(dec(b),x.name,x.disp);if(ok)return true;bad='fmt';break}
+   catch(e){if(e.message=='html'){spSt(t('subblk'));WEBBLK=Date.now();return false}if(e.message=='rar'){spSt(t('subbadfmt'));return false}bad='fmt';break}
+  }
  }
- spSt(t('subfail')+'opensubtitles.org');return false;
+ const w=net&&!bad?netWhy():'';
+ spSt(bad&&!net?t('subbadfmt'):w?t('subfail')+w:t('subfail')+'opensubtitles.org');return false;
 }
-function finishGet(text,name,disp){if(SUB.gs!==SUB.sess)return false;const ti=trackInfo(),q=qParse($('#sp-q').value||ti.title),k=ckey(q.title,q.se||ti.se,q.ep||ti.ep);return setSub(text,'ar',{name,disp,key:k,save:1,rel:relKey(name)})}
+function finishGet(text,name,disp){if(SUB.gs!==SUB.sess)return false;if(SUB.ai){SUB.aiText=text;return true}const ti=trackInfo(),q=qParse($('#sp-q').value||ti.title),k=ckey(q.title,q.se||ti.se,q.ep||ti.ep);return setSub(text,'ar',{name,disp,key:k,save:1,rel:relKey(name)})}
 async function osLogin(){
  if(OS.tok)return true;
  const c=osCfg(),r=await xhttp('POST',OS.base+'/login',osH(false),JSON.stringify({username:c.u,password:c.p})),j=jp(r.body);
@@ -2528,11 +2585,11 @@ async function osLogin(){
  spSt(r.status==0?t('subnet'):t('subbad'));return false;
 }
 async function osFind(q,se,ep,raw,ctx){
- const r=await xhttp('GET',OS.base+'/subtitles?query='+enc(q.toLowerCase())+'&languages=ar&order_by=download_count&order_direction=desc'+(se&&ep?'&season_number='+se+'&episode_number='+ep:''),osH(false)),j=jp(r.body);
+ const r=await xhttp('GET',OS.base+'/subtitles?query='+enc(q.toLowerCase())+'&languages='+(SUB.sl2||'ar')+'&order_by=download_count&order_direction=desc'+(se&&ep?'&season_number='+se+'&episode_number='+ep:''),osH(false)),j=jp(r.body);
  if(r.status==0){SUB.apiMsg=t('subnet');spSt(SUB.apiMsg);return null}
  if(r.status==401||r.status==403){SUB.apiMsg=t('subbad');spSt(SUB.apiMsg);return null}
  return (j.data||[]).filter(x=>x.attributes&&x.attributes.files&&x.attributes.files[0]).map(x=>{const at=x.attributes,fd=at.feature_details||{},isEp=/episode/i.test(fd.feature_type||'')||(fd.season_number>0&&fd.episode_number>0);
-  const it={name:at.release||at.files[0].file_name||'\u2014',title:(isEp?(fd.parent_title||fd.movie_name):(fd.title||fd.movie_name))||'',year:+(isEp?(fd.parent_year||fd.year):fd.year)||0,se:isEp?fd.season_number:null,ep:isEp?fd.episode_number:null,lang:at.language||'ar',n:at.download_count||0,pen:(at.ai_translated||at.machine_translated)?-8:0,ai:!!(at.ai_translated||at.machine_translated)};
+  const it={name:at.release||at.files[0].file_name||'\u2014',title:(isEp?(fd.parent_title||fd.movie_name):(fd.title||fd.movie_name))||'',year:+(isEp?(fd.parent_year||fd.year):fd.year)||0,se:isEp?fd.season_number:null,ep:isEp?fd.episode_number:null,lang:at.language||SUB.sl2||'ar',n:at.download_count||0,pen:(at.ai_translated||at.machine_translated)?-8:0,ai:!!(at.ai_translated||at.machine_translated)};
   it.get=()=>osGet(at,it);return it}).sort((a,b)=>scoreRes(b,se,ep,raw)-scoreRes(a,se,ep,raw)).slice(0,25);
 }
 async function osGet(at,it){
@@ -2541,11 +2598,11 @@ async function osGet(at,it){
  if(r.status==401){OS.tok=null;if(await osLogin()){r=await xhttp('POST',OS.base+'/download',osH(true),body);j=jp(r.body)}}
  if(r.status==406){spSt(t('sublimit'));return false}
  if(!j.link){spSt(t('subfail')+(j.message||r.status));return false}
- const f=await xbytes(j.link,{});if(f.status!=200||!f.bytes){spSt(t('subnet'));return false}
+ let f=await xbytes(j.link,{});if(f.status!=200||!f.bytes){await new Promise(z=>setTimeout(z,900));f=await xbytes(j.link,{})}if(f.status!=200||!f.bytes){spSt(netWhy()||t('subnet'));return false}
  try{return finishGet(dec(extractSub(f.bytes)),it?it.name:(at.release||''),it&&it.disp)}catch(e){spSt(t('subbadfmt'));return false}
 }
 async function srvFind(q,se,ep){
- const r=await xhttp('GET',SRVB()+'/find?q='+enc(q)+'&lang=ar'+(se&&ep?'&se='+se+'&ep='+ep:''),{});
+ const r=await xhttp('GET',SRVB()+'/find?q='+enc(q)+'&lang='+(SUB.sl2||'ar')+(se&&ep?'&se='+se+'&ep='+ep:''),{});
  return (jp(r.body).items||[]).map(x=>({name:x.name,n:x.n||'',get:()=>srvGet(x.id,x.name)}));
 }
 async function srvGet(id,name){
@@ -2572,9 +2629,11 @@ async function subFind(title,se,ep,raw,tok,ctx){
 }
 
 function subSrcTxt(){const on=x=>t(x?'sc_on':'sc_off');return t('sc_src')+': '+t('sc_srv')+' '+on(srvOK())+' · '+t('sc_os')+' '+on(osOK())+' · '+t('sc_web')+' '+t('sc_on')}
-async function subApply(x,tgt){spSt(t('subdl'));let ok=false;try{ok=await x.get()}catch(e){ok=false}
+async function subApply(x,tgt,noAlt){spSt(t('subdl'));let ok=false;try{ok=await x.get()}catch(e){ok=false}
+ /* لو هالملف فشل نزّل جاهز الملف اللي بعده بالقائمة (لحد 2) بدل ما يبقى المستخدم يجرّب يدوي */
+ if(!ok&&!noAlt&&SUB.alts&&SUB.alts.length>1&&SUB.gs===SUB.sess){const al=SUB.alts.filter(y=>y!==x&&!y.nonAr&&y.v&&y.v.good).slice(0,2);for(const y of al){if(!spOpen())break;spSt(HX('الملف الأول ما نزل، عم نجرّب ملف تاني…','The first file failed, trying another…'));try{ok=await y.get()}catch(e){ok=false}if(ok){x=y;break}}}
  if(ok&&S.sub&&S.sub.cues&&S.sub.cues.length){const c=S.sub.cues,smp=c.slice(0,60).map(q=>q.t||'').join(''),arc=(smp.match(/[\u0600-\u06FF]/g)||[]).length,tot=(smp.match(/[A-Za-z\u0600-\u06FF]/g)||[]).length;
-  const m=t('sc_ok')+' '+c.length+' '+t('sc_ln')+' '+tgt+(tot&&arc/tot<.3?'  '+t('sc_noar'):'');spSt(m);osd(m);return true}
+  let m=t('sc_ok')+' '+c.length+' '+t('sc_ln')+' '+tgt+(tot&&arc/tot<.3?'  '+t('sc_noar'):'');try{const du=(window.EXO&&EXO.run)?EXO.d:$('#v').duration,le=c[c.length-1].e;if(du>900&&isFinite(du)&&(le>du*1.2||le<du*.55))m+='  '+t('sp_len')}catch(e){}spSt(m);osd(m);return true}
  const m=t('sc_bad')+' '+($('#sp-st').textContent||'');osd(t('sc_bad'));return false}
 function subConfirm(x){return new Promise(res=>{const ti=trackInfo(),nm=x.title?x.title+(x.year?' ('+x.year+')':''):x.name,tgt=ti.title+(ti.se&&ti.ep?' S'+ti.se+'E'+ti.ep:'');
  dlgOpen(t('sc_t'),'«'+nm+'»  —  '+t('sc_q')+' '+tgt,[{t:t('sc_yes'),cur:true,fn:async()=>res(await subApply(x,tgt))},{t:t('sc_no'),fn:()=>res(false)}])})}
@@ -2590,7 +2649,7 @@ async function osSearch(auto){
  const a0=await subFind(title,se,ep,ti.raw,tok,ctx);
  if(a0===null||tok!==SUB.sq)return;
  if(!a0.length){focusEl($('#sp-q'));return}
- const a=a0.map((x,i)=>(x._i=i,x)).sort((x,y)=>y.v.rank-x.v.rank||x._i-y._i).slice(0,12);
+ const a=a0.map((x,i)=>(x._i=i,x)).sort((x,y)=>y.v.rank-x.v.rank||x._i-y._i).slice(0,12);SUB.alts=a;
  const nOk=a.filter(x=>x.v.k=='ok'&&!x.nonAr).length,allBad=a.every(x=>!x.v.good);
  spSt(allBad?vt('nomatch'):(ca&&auto&&S.sub?t('subok')+' \u00B7 '+S.sub.cues.length+' \u00B7 '+t('subcache'):(nOk?vt('good')+' ('+nOk+')':'')));
  a.forEach(x=>listRow(x.title?x.title+(x.year?' ('+x.year+')':''):x.name,langLbl(x)+(x.ai?' \u00B7 \uD83E\uDD16':'')+(x.n?' \u00B7 \u2B07 '+x.n:''),()=>subConfirm(x),false,{vd:x.v,rel:x.title?x.name:''}));
@@ -2608,6 +2667,10 @@ function subAuto(){
 }
 $('#sp-go').onclick=()=>osSearch();$('#sp-x').onclick=closeSubs;
 $('#sp-m').onclick=()=>subOff(-.5);$('#sp-pl').onclick=()=>subOff(.5);$('#sp-m1').onclick=()=>subOff(-.1);$('#sp-p1').onclick=()=>subOff(.1);
+$('#sp-m5').onclick=()=>subOff(-5);$('#sp-m2').onclick=()=>subOff(-2);$('#sp-p2').onclick=()=>subOff(2);$('#sp-p5').onclick=()=>subOff(5);
+function subSyncFirst(){if(!S.sub||!S.sub.cues||!S.sub.cues.length){subOff(0);return}const c=S.sub.cues.find(q=>q.e-q.s>.4)||S.sub.cues[0],tgt=Math.round((subNow()-c.s)*10)/10;subOff(Math.round((tgt-(S.sub.off||0))*10)/10);spSt(t('sp_fsok')+' \u00B7 '+(S.sub.off>=0?'+':'')+S.sub.off.toFixed(1)+'s')}
+function subTest(){closeSubs();SUB.tu=Date.now()+5000;if(!SUB.tm)SUB.tm=setInterval(subTick,120);SUB.txt=null;subTick();setTimeout(()=>{SUB.tu=0;SUB.txt=null;if(!S.sub){clearInterval(SUB.tm);SUB.tm=0}subTick()},5200)}
+$('#sp-ai').onclick=()=>aiRun();$('#sp-rs').onclick=()=>{if(S.sub)subOff(-(S.sub.off||0));else subOff(0)};$('#sp-fs').onclick=subSyncFirst;$('#sp-tst').onclick=subTest;
 $('#sp-off').onclick=setSubOff;
 $('#sp-e').onclick=()=>srvSubs();$('#sp-a').onclick=()=>osSearch(true);
 window.__nopicker=()=>{};
@@ -2619,7 +2682,7 @@ function centerLi(r){const L=$('#p-l');if(!L)return;
    d=rtl?b.right-(a.right-parseFloat(cs.paddingRight||0)):b.left-(a.left+parseFloat(cs.paddingLeft||0));
   if(Math.abs(d)<4)return;L.scrollLeft=L.scrollLeft+d;return}
  const a=L.getBoundingClientRect(),b=r.getBoundingClientRect(),d=b.top-a.top-(L.clientHeight-b.height)/2;if(Math.abs(d)<4)return;const y=Math.max(0,L.scrollTop+d);try{L.scrollTo({top:y,behavior:'smooth'})}catch(x){L.scrollTop=y}}
-function focusEl(e){if(e){try{e.focus({preventScroll:true})}catch(x){e.focus()}if(e.classList&&e.classList.contains('li')&&e.parentNode&&e.parentNode.classList.contains('gv'))centerLi(e);else e.scrollIntoView({block:'nearest',inline:'nearest'})}}
+function focusEl(e){if(e){try{e.focus({preventScroll:true})}catch(x){e.focus()}try{const r=e.getBoundingClientRect();if(r.width)S.lfc=[r.left+r.width/2,r.top+r.height/2,Date.now()]}catch(x){}if(e.classList&&e.classList.contains('li')&&e.parentNode&&e.parentNode.classList.contains('gv'))centerLi(e);else e.scrollIntoView({block:'nearest',inline:'nearest'})}}
 function spatial(k,sel){
  const a=document.activeElement;
  if(V()=='set'&&typeof sel=='string'&&sel.indexOf('#set')===0&&setNav(k))return;
@@ -2634,7 +2697,7 @@ function spatial(k,sel){
    const gs=$('#p-a')&&$('#p-a').getClientRects().length?$('#p-a'):$('#p-g .gl-strip');if(gs){const ar=a.getBoundingClientRect(),sr=gs.getBoundingClientRect(),toward=k==39?sr.left>=ar.right-5:sr.right<=ar.left+5;if(toward){const it=[...gs.querySelectorAll('.gi,.ai')].filter(x=>x.getClientRects().length);let bt=null,bd=1e9;it.forEach(x=>{const q=x.getBoundingClientRect(),dd=Math.abs(q.top+q.height/2-(ar.top+ar.height/2));if(dd<bd){bd=dd;bt=x}});if(bt)focusEl(bt)}}return}}}
  if((k==38||k==40)&&a&&a.parentNode&&a.classList){const pid=a.parentNode.id,c=a.classList,cn=false,cl=pid=='p-l'&&!a.parentNode.classList.contains('gv')&&c.contains('li')?'li':pid=='p-g'&&c.contains('gi')&&!cn?'gi':pid=='p-a'&&c.contains('ai')&&!cn?'ai':'';
   if(cl){const n=k==40?a.nextElementSibling:a.previousElementSibling;if(n&&n.classList.contains(cl)){focusEl(n);return}}}
- const els=$$(sel).filter(e=>e.getClientRects().length);if(!els.includes(a)){focusEl(els[0]);return}
+ const els=$$(sel).filter(e=>e.getClientRects().length);if(!els.includes(a)){let f=els[0];const lf=S.lfc;if(f&&lf&&Date.now()-lf[2]<15000){let bd=1e9;els.forEach(e=>{const q=e.getBoundingClientRect(),d=Math.hypot(q.left+q.width/2-lf[0],q.top+q.height/2-lf[1]);if(d<bd){bd=d;f=e}})}focusEl(f);return}   /* ضاع الفوكس (إعادة رسم): ارجع لأقرب عنصر لآخر مكان كنت فيه بدل ما تقفز لأول عنصر */
  const r=a.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,H=k==37||k==39;let best=null,bs=1e9,bo=null,bos=1e9;
  els.forEach(e=>{if(e===a)return;const q=e.getBoundingClientRect(),dx=q.left+q.width/2-cx,dy=q.top+q.height/2-cy;
   if(!(k==37?dx<-5:k==39?dx>5:k==38?dy<-5:dy>5))return;
@@ -2661,8 +2724,8 @@ function skUpd(){const b=$('#xb');if(!b.classList.contains('on'))return;const i=
  $('#xb-d').textContent=i.ok?fmtT(i.d):(S.vod?t('sk_nodur'):t('sk_live'));
  $('#xb-f').style.width=p+'%';$('#xb-k').style.left=p+'%'}
 function skShow(){if(V()!='app'||tcOn())return;const b=$('#xb');b.classList.add('on');xbCls(1);skUpd();window.engBadge&&engBadge();clearTimeout(SK.ht);SK.ht=setTimeout(skHideTry,4000)}
-function skHideTry(){const v=$('#v');if(SK.tgt!=null||(S.vod&&v.paused)){SK.ht=setTimeout(skHideTry,1500);return}$('#xb').classList.remove('on');xbCls(0)}
-function skReset(){clearTimeout(SK.rt);clearTimeout(SK.ht);clearTimeout(SK.jt);SK.tgt=null;SK.jump=0;SK.dir=0;const j=$('#xb-j');j.classList.remove('on');$('#xb').classList.remove('on');xbCls(0)}
+function skHideTry(){const v=$('#v');if(SK.bm||SK.tgt!=null||(S.vod&&v.paused)){SK.ht=setTimeout(skHideTry,1500);return}$('#xb').classList.remove('on');xbCls(0)}
+function skReset(){SK.bm=false;clearTimeout(SK.bt);skBarPaint();clearTimeout(SK.rt);clearTimeout(SK.ht);clearTimeout(SK.jt);SK.tgt=null;SK.jump=0;SK.dir=0;const j=$('#xb-j');j.classList.remove('on');$('#xb').classList.remove('on');xbCls(0)}
 function skBadge(){const j=$('#xb-j'),n=Math.abs(SK.jump);j.textContent='\u202A'+(SK.jump>0?'+':'−')+n+' '+t('sk_s')+'  •  '+fmtT(SK.tgt!=null?SK.tgt:$('#v').currentTime)+'\u202C';j.classList.add('on')}
 function skCommit(){if(SK.tgt==null)return;const v=$('#v'),tg=SK.tgt;SK.tgt=null;v.currentTime=tg;skUpd();clearTimeout(SK.jt);SK.jt=setTimeout(()=>{$('#xb-j').classList.remove('on');SK.jump=0;SK.dir=0},1400)}
 function seekKey(dir,e,base){
@@ -2679,6 +2742,14 @@ function seekKey(dir,e,base){
  const cur=SK.tgt!=null?SK.tgt:v.currentTime,tg=Math.min(Math.max(0,cur+dir*step),Math.max(0,i.d-1));
  SK.jump+=tg-cur;SK.tgt=tg;skUpd();skBadge();
  clearTimeout(SK.rt);SK.rt=setTimeout(skCommit,rep?450:220)}
+/* وضع الأزرار: Down يختار زر الإيقاف المؤقت بالنص، يمين/يسار للتنقل بين ⏪ ⏯ ⏩، OK للتنفيذ، Up/رجوع للخروج */
+function skBarBtns(){return[$('#xb-rw'),$('#xb-pp'),$('#xb-ff')]}
+function skBarPaint(){skBarBtns().forEach((b,i)=>b&&b.classList.toggle('fc',!!SK.bm&&i==SK.bi))}
+function skBarTick(){clearTimeout(SK.bt);SK.bt=setTimeout(()=>skBarOff(0),7000);skShow()}
+function skBarOn(){if(!S.vod||V()!='app'||tcOn())return;SK.bm=true;SK.bi=1;skShow();skBarPaint();skBarTick()}
+function skBarOff(hide){clearTimeout(SK.bt);SK.bm=false;skBarPaint();if(hide)skHide()}
+function skBarMove(d){SK.bi=Math.max(0,Math.min(2,(SK.bi==null?1:SK.bi)+d));skBarPaint();skBarTick()}
+function skBarOK(){const b=skBarBtns()[SK.bi==null?1:SK.bi];if(b)b.click();skBarTick()}
 window.skUpd=skUpd;window.skShow=skShow;window.skReset=skReset;window.skHide=skHide;window.xbCls=xbCls;
 $('#xb-rw').onclick=()=>seekKey(-1,null);$('#xb-ff').onclick=()=>seekKey(1,null);
 $('#xb-pp').onclick=()=>{const v=$('#v');v.paused?v.play():v.pause();skShow()};
@@ -2691,9 +2762,10 @@ function exitAsk(kind){
  if(kind=='play'){const sv=S.vod&&histOn()&&!S.demo&&($('#v').currentTime||0)>=15;
   dlgOpen(t('xp_q'),sv?t('xp_saved'):'',[{t:t('xp_stay'),cur:1},{t:t('xp_go'),dng:1,fn:()=>exitPlayer()}],1)}
  else dlgOpen(t('xa_q'),'',[{t:t('xa_no'),cur:1},{t:t('xa_go'),dng:1,fn:appQuit}],1)}
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown',()=>{S.lastKeyT=Date.now()},true);
+const mainKey=e=>{
  if(BACK.includes(e.keyCode))S.kdBackT=Date.now();
- if(modalKey(e)||waKey(e)||tipKey(e)||pwdKey(e)||kidKey(e)||rcvKey(e)||cwvKey(e)||ntvKey(e)||mtvKey(e))return;
+ if(modalKey(e)||waKey(e)||tipKey(e)||pwdKey(e)||kidKey(e)||rcvKey(e)||cwvKey(e)||ntvKey(e)||mtvKey(e)||(typeof rlKey=='function'&&rlKey(e)))return;
  const k=e.keyCode,a=document.activeElement,typing=a&&a.tagName=='INPUT',v=V();
  if(v=='login'){
   const f=$$('#login .lg,#login .tab,#login input,#login .btn').filter(x=>x.offsetParent),i=f.indexOf(a);
@@ -2717,7 +2789,7 @@ document.addEventListener('keydown',e=>{
  }
  if(v=='home'||v=='page'||v=='set'||v=='about'){
   const sel=v=='about'?'#about .pill,#about .abp':v=='set'?'#set .btn,#set .pill,#set input':v=='home'?'#home .hero:not(.empty),#home .tile,#home .circ,#home input,#home .wd[tabindex],#home .cwc,#home .rcc,#home .rcb':'#page .gi,#page .lk,#page .ai,#page .li,#page .pill,#page input';
-  if(BACK.includes(k)&&!typing){e.preventDefault();if(e.repeat)return;if(v=='page'||v=='set'||v=='about')showHome();else if(v=='home')exitAsk('app');return}
+  if(BACK.includes(k)&&(!typing||k!=8)){e.preventDefault();if(e.repeat)return;if(v=='page'||v=='set'||v=='about')showHome();else if(v=='home')exitAsk('app');return}
   if(typing&&(k==37||k==39)&&!useKb())return;
   if((k==405||k==70)&&!typing&&a&&a._it){e.preventDefault();toggleFavEl(a);return}
   if(k>=37&&k<=40){e.preventDefault();spatial(k,sel)}else if(k==13&&a&&a.click&&!typing){e.preventDefault();a.click()}
@@ -2737,25 +2809,42 @@ document.addEventListener('keydown',e=>{
   if(k>=37&&k<=40){e.preventDefault();spatial(k,'#pm .ri')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}
   return;
  }
+ if(S.vod&&SK.bm){   /* وضع أزرار الشريط: ⏪ ⏯ ⏩ */
+  if(BACK.includes(k)||k==38){e.preventDefault();if(!e.repeat)skBarOff(1);return}
+  if(k==37||k==39){e.preventDefault();if(!e.repeat)skBarMove(k==37?-1:1);return}
+  if(k==13||k==23){e.preventDefault();if(!e.repeat)skBarOK();return}
+  if(k==40){e.preventDefault();skBarTick();return}
+ }
  if(!S.vod&&((k>=48&&k<=57)||(k>=96&&k<=105))){e.preventDefault();const dg=k>=96?k-96:k-48;if(dg==0&&!S.nb){prevChan();return}S.nb=((S.nb||'')+dg).slice(-4);osd('# '+S.nb);clearTimeout(S.nbT);S.nbT=setTimeout(goNum,1500);return}
  if(!S.vod&&k==13&&S.nb){e.preventDefault();clearTimeout(S.nbT);goNum();return}
  if(k==405||k==70||k==48){e.preventDefault();favNow()}
  else if(S.vod&&(k==406||k==67||k==82||k==77||k==93)){e.preventDefault();epOK()?pmShow():openSubs()}
  else if(!S.vod&&k==38){e.preventDefault();step(-1)}
  else if(!S.vod&&k==40){e.preventDefault();step(1)}
- else if(S.vod&&(k==38||k==40)){e.preventDefault();skShow()}
+ else if(S.vod&&k==38){e.preventDefault();if(!e.repeat)pmShow()}
+ else if(S.vod&&k==40){e.preventDefault();if(!e.repeat)skBarOn()}
  else if(S.vod&&k==37){e.preventDefault();seekKey(-1,e)}
  else if(S.vod&&k==39){e.preventDefault();seekKey(1,e)}
- else if(BACK.includes(k)||k==R){e.preventDefault();if(!e.repeat)exitAsk('play')}
+ else if(BACK.includes(k)){e.preventDefault();if(!e.repeat)exitPlayer()}   /* رجوع = طلوع مباشر من التشغيل (التقدّم بينحفظ تلقائياً) */
+ else if(k==R&&!S.vod){e.preventDefault();skShow()}
  else if(mk==417||k==427||k==33){e.preventDefault();if(mk==417||S.vod)seekKey(1,e,30);else step(-1)}
  else if(mk==412||k==428||k==34){e.preventDefault();if(mk==412||S.vod)seekKey(-1,e,30);else step(1)}
  else if(k==L&&!S.vod){e.preventDefault();seekKey(1,e)}
- else if(mk==415||k==179||k==85){e.preventDefault();if(!e.repeat){vd.paused?vd.play():vd.pause();skShow()}}
- else if(k==13){e.preventDefault();if(!e.repeat){pmShow()}}
-});
+ else if(mk==415||k==179||k==85||k==19||k==415){e.preventDefault();if(!e.repeat){vd.paused?vd.play():vd.pause();skShow()}}
+ else if(k==13||k==23){e.preventDefault();if(!e.repeat){if(S.vod){vd.paused?vd.play():vd.pause();skShow()}else pmShow()}}
+};
+/* حماية: ضغطة رجوع وحدة ما لازم تنفّذ مرتين (الجهاز أحياناً بيبعتها مرتين أو الريموت بيعيدها). المعالجة الثقيلة (رسم الشاشة) بتخلص قبل ما نسجّل الوقت. */
+document.addEventListener('keydown',e=>{const bk=BACK.includes(e.keyCode);
+ if(bk&&!e.repeat&&Date.now()-(S.bkAct||0)<350){e.preventDefault();e.stopImmediatePropagation();return}
+ try{mainKey(e)}finally{if(bk&&!e.repeat)S.bkAct=S.kdBackT=Date.now()}});
 try{if(window.tizen&&tizen.tvinputdevice){['MediaPlayPause','MediaRewind','MediaFastForward','ChannelUp','ChannelDown'].forEach(n=>{try{tizen.tvinputdevice.registerKey(n)}catch(e){}})}}catch(e){}
 
-window.halaBack=()=>{if(kbOpen()){kbClose();return true}if(Date.now()-kbBT<600)return true;if(Date.now()-(S.kdBackT||0)<350)return true;if($('#dlg').classList.contains('on')){dlgClose();return true}if(waOn()){waBackKey();return true}if(XT.on){tipClose();return true}const v=V();if(v=='app'){if(pmOpen()){pmHide();return true}if(spOpen()){closeSubs();return true}exitAsk('play');return true}if(store.get('kid')&&v=='app')return true;if(pwdOpen()){pwClose();return true}if(v=='page'||v=='set'||v=='about'){showHome();return true}if(v=='det'){detBack();return true}if(v=='home'||v=='login'||v=='pair'){exitAsk('app');return true}return false};
+window.halaBack=()=>{try{return _halaBack()}finally{S.kdBackT=S.bkAct=Date.now()}};
+const _halaBack=()=>{if(kbOpen()){kbClose();return true}if(Date.now()-kbBT<600)return true;if(Date.now()-(S.kdBackT||0)<700)return true;if($('#dlg').classList.contains('on')){dlgClose();return true}if(waOn()){waBackKey();return true}if(XT.on){tipClose();return true}
+ /* شاشات فوقية (مقترحات، تابع المشاهدة، فحص النت، جدول المباريات، صفحة الممثل): نمرّر الرجوع لها بدل ما نرجع الشاشة اللي تحتها أو نطلع من التطبيق */
+ if((typeof RV!='undefined'&&RV.on)||(typeof CW!='undefined'&&CW.on)||(typeof NT!='undefined'&&NT.on)||(typeof MT!='undefined'&&MT.on)||(typeof RL!='undefined'&&RL.on)||document.querySelector('#act')){const ev=new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true});Object.defineProperty(ev,'keyCode',{get:()=>27});document.dispatchEvent(ev);return true}
+ if(V()=='boot')return true;
+ const v=V();if(v=='app'){if(S.vod&&SK.bm){skBarOff(1);return true}if(pmOpen()){pmHide();return true}if(spOpen()){closeSubs();return true}exitPlayer();return true}if(store.get('kid')&&v=='app')return true;if(pwdOpen()){pwClose();return true}if(v=='page'||v=='set'||v=='about'){showHome();return true}if(v=='det'){detBack();return true}if(v=='home'||v=='login'||v=='pair'){exitAsk('app');return true}return false};
 function accUI(){const a=document.createElement('div'),b=document.createElement('div'),l=S.lv?'…':'';a.textContent=S.acc||'';b.textContent=`${t('p_ch')} ${S.live.length} · ${t('p_mv')} ${l||S.mv.length} · ${t('p_sr')} ${l||S.sr.length}`;$('#ac').replaceChildren(a,b)}
 /* معاينة بالخلفية (الرئيسية + قوائم الأفلام والمسلسلات): فيديو واحد بس بنفس الوقت، بدون blur/فلاتر، بجودة منخفضة، وبعد تأخير بسيط */
 var SPU={};
@@ -2807,7 +2896,7 @@ async function showDet(it,fk){
  S.dFrom=(V()=='det'||V()=='app')?S.dFrom:V();S.det={it,fk};S.lastId=it.id;setView('det');window.CIN&&CIN.focus(it,fk);
  const b=$('#det'),q=x=>b.querySelector(x);
  b.innerHTML='<div class="di"><h2 class="ruq" dir="auto"></h2><div class="dm"></div><p class="dx" dir="auto"></p><p class="dc" dir="auto"></p><div class="db"><button class="btn" tabindex="0" id="d-play"></button><button class="btn sec" tabindex="0" id="d-fav"></button><button class="btn sec" tabindex="0" id="d-back"></button></div></div><div class="ss"></div><div class="ee"></div>';
- if(it.logo){const im=document.createElement('img');im.className='dp';im.src=it.logo;im.onerror=()=>im.remove();b.prepend(im)}
+ {const mkNp=()=>{const d=npb(it,fk);d.classList.add('dp','npd');return d};if(it.logo){const im=document.createElement('img');im.className='dp';im.src=it.logo;im.onerror=()=>{if(im.parentNode)im.parentNode.replaceChild(mkNp(),im)};b.prepend(im)}else b.prepend(mkNp())}
  const isS=fk=='sr'&&!!it.sid&&S.conf&&S.conf.mode=='xt';b.classList.toggle('srs',isS);b.style.setProperty('--bd',isS&&it.logo&&!/["')\\\s]/.test(it.logo)?'url('+it.logo+')':'none');
  q('h2').textContent=cleanTitle(it.name)||it.name;q('#d-play').textContent=t('play');q('#d-back').textContent=t('back');q('.dx').textContent=t('wait');
  const fv=()=>q('#d-fav').textContent=t(isFav(it.id)?'pm_unfav':'pm_fav');fv();
@@ -3114,7 +3203,7 @@ function pwdKey(e){if(!$('#pwd').classList.contains('on'))return false;const k=e
 function kidKey(e){if(!(store.get('kid')&&V()=='app'))return false;e.preventDefault();S.kq=(S.kq||[]).concat(e.keyCode).slice(-4);if(S.kq.join()=='38,38,40,40'){store.set('kid',false);S.kq=[];osd(t('kidoff'))}return true}
 const ecoTxt=()=>{const a=S.lang=='ar',m=ecoMode();return (a?'توفير السيرفر (معاينة الفيديو): ':'Server saver (video previews): ')+(m=='on'?(a?'مفعّل – بدون معاينة':'On – no previews'):m=='off'?(a?'متوقف – معاينة دائماً':'Off – always preview'):(a?'تلقائي':'Auto'))},DV=()=>{const d=store.get('dev');return d=='tv'||d=='phone'?d:'auto'},vmTxt=()=>t('vm')+': '+t({list:'vml',grid:'vmg',modern:'vmm'}[VM()]),dvTxt=()=>{const a=S.lang=='ar',v=DV(),n={tv:a?'تلفزيون':'TV',phone:a?'هاتف/تابلت':'Phone/Tablet',auto:(a?'تلقائي':'Auto')+' ('+(window.__cls=='tv'?(a?'تلفزيون':'TV'):window.__cls=='tablet'?(a?'تابلت':'Tablet'):(a?'هاتف':'Phone'))+')'};return t('dev')+': '+n[v]};
 function devLine(){const d=window.__di,a=S.lang=='ar',e=document.getElementById('st-di');if(!e)return;if(!d){e.textContent=a?'🔎 الجهاز: تم التعرف عليه من المتصفح فقط (مش من نظام أندرويد). النوع: '+(window.__cls=='tv'?'تلفزيون':window.__cls=='tablet'?'تابلت':'هاتف'):'🔎 Device detected from the browser only.';return}const cl={tv:a?'تلفزيون':'TV',tablet:a?'تابلت':'Tablet',phone:a?'هاتف':'Phone'}[d.cls]||d.cls,nt={wifi:a?'واي فاي':'Wi-Fi',eth:a?'كيبل':'Ethernet',cell:a?'بيانات الجوال':'Mobile data',none:a?'غير متصل':'Offline'}[d.net]||d.net,tr=[a?'محدود':'Limited',a?'متوسط':'Medium',a?'قوي':'Strong'][d.tier]||'';e.textContent='🔎 '+(a?'تعرّف التطبيق على جهازك: ':'Detected: ')+(d.brand?d.brand+' ':'')+d.model+' · '+cl+' · '+(a?'أندرويد ':'Android ')+d.rel+' · '+(a?'رام ':'RAM ')+(d.ram>0?(d.ram/1024).toFixed(1)+'GB':'?')+' · '+d.cores+(a?' أنوية':' cores')+' · '+(a?'الشبكة: ':'Network: ')+nt+' · '+(a?'مستوى الأداء: ':'Performance tier: ')+tr+(d.pen>0?(a?' · وضع حماية من التقطيع: مفعّل':' · anti-stutter boost on'):'')}
-function showSet(){setView('set');try{devLine()}catch(e){}thaTxt();adlTxt();ntTxt();buildSetW();$('#st-vm').textContent=vmTxt();$('#st-eng').textContent=engTxt();$('#st-dev').textContent=dvTxt();$('#st-eco').textContent=ecoTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'')+(S.updN?'  🔔 v'+S.updN:'');setLogUI();setHistUI();focusEl($('#st-vm'))}
+function showSet(){setView('set');try{aiUi()}catch(e){}try{devLine()}catch(e){}thaTxt();adlTxt();ntTxt();buildSetW();$('#st-vm').textContent=vmTxt();$('#st-eng').textContent=engTxt();$('#st-dev').textContent=dvTxt();$('#st-eco').textContent=ecoTxt();const p=store.get('pw');$('#st-pw').textContent=t(p?'chpw':'setpw');$('#st-kid').textContent=t('kid')+': '+t(store.get('kid')?'on':'off');$('#st-kb').textContent=t('kbm')+': '+t({auto:'kba',app:'kbp',sys:'kbs'}[store.get('kbm')||'auto']);$('#st-ver').textContent=(S.lang=='ar'?'الإصدار: ':'Version: ')+(APP_VER&&!/^__/.test(APP_VER)?'v'+APP_VER:'—')+(BLD&&!/^__/.test(BLD)?' · '+BLD:'');$('#st-upd').textContent=t('upd')+(APP_VER&&!/^__/.test(APP_VER)?'  (v'+APP_VER+')':'')+(S.updN?'  🔔 v'+S.updN:'');setLogUI();setHistUI();focusEl($('#st-vm'))}
 $('#b-set').onclick=showSet;{const w=$('#b-wa');if(w)w.onclick=()=>waOpenUI()}
 function setLogUI(){const ar=S.lang=='ar';$('#st-logh').textContent=ar?'سجل الأخطاء':'Error log';$('#st-log').textContent=ar?'📋 عرض آخر الأخطاء':'📋 Show recent errors';$('#st-logc').textContent=ar?'🗑 مسح السجل':'🗑 Clear log';{const e=$('#st-logs');if(e)e.textContent=ar?'📤 إرسال سجل الأخطاء':'📤 Send error log'}$('#st-logt').classList.remove('on')}
 $('#st-log').onclick=()=>{const p=$('#st-logt'),a=logRead();if(p.classList.contains('on')){p.classList.remove('on');return}p.textContent=a.length?a.slice(0,30).join('\n'):(S.lang=='ar'?'ما في أخطاء مسجلة ✓':'No errors logged ✓');p.classList.add('on');p.scrollTop=0;requestAnimationFrame(()=>{try{p.scrollIntoView({block:'nearest'})}catch(e){}})};
@@ -3649,7 +3738,9 @@ function tipShow(force){
  return true;
 }
 function tipBusy(){const dl=$("#dlg"),pw=$("#pwd");return XT.on||waOn()||(dl&&dl.classList.contains("on"))||(pw&&pw.classList.contains("on"))||(RV&&RV.on)||(CW&&CW.on)||(VQ&&VQ.on)||kbOpen()||document.hidden}
-function tipTry(){try{const v=V();if((v!="home"&&v!="page")||!tipOn()||tipBusy()||Date.now()-(XT.last||0)<1200000)return;tipShow()}catch(e){}}
+function tipTry(){try{const v=V();if((v!="home"&&v!="page")||!tipOn()||tipBusy()||Date.now()-(XT.last||0)<1200000)return;
+ /* لا تقاطع المستخدم: لو كان يضغط أزرار قبل ثواني (ممكن ضغطة OK تنفّذ زر النصيحة بالغلط)، أجّلها */
+ if(Date.now()-(S.lastKeyT||0)<6000){if((S.tipRe=(S.tipRe||0)+1)<8)setTimeout(tipTry,6000);return}S.tipRe=0;tipShow()}catch(e){}}
 function tipHome(){if(!S.tipFirst){S.tipFirst=1;setTimeout(tipTry,3000)}}
 function tipPage(k,keep){if(keep||!(k=="__all"||k=="__mv"||k=="__sr"))return;setTimeout(tipTry,1500)}
 function tipClose(noFocus){
@@ -4533,7 +4624,7 @@ window.CIN=(function(){
   n.onload=()=>{n.onload=null;if(shown!==u)return;n.classList.toggle('bd',!!bd);n.classList.add('on');o.classList.remove('on');ii^=1};
   n.onerror=()=>{n.onerror=null;if(shown===u){shown='';if(fb)img(fb,false)}};n.src=u}
  function info(it,m){
-  const po=$('#ci-pos');if(po){if(it&&it.logo){const u=thumb(it.logo,'w780');if(po.getAttribute('src')!==u){po.onerror=()=>po.classList.remove('on');po.src=u}po.classList.add('on')}else{po.classList.remove('on');po.removeAttribute('src')}}
+  const po=$('#ci-pos'),cn=$('#ci-np'),cnp=()=>{if(cn&&it){cn.innerHTML='';cn.appendChild(npb(it,'mv'));cn.classList.add('on')}};if(cn){cn.classList.remove('on')}if(po){if(it&&it.logo){const u=thumb(it.logo,'w780');if(po.getAttribute('src')!==u){po.onerror=()=>{po.classList.remove('on');cnp()};po.src=u}po.classList.add('on')}else{po.classList.remove('on');po.removeAttribute('src');cnp()}}
   if(!it){tt.textContent=mm.textContent=pp.textContent='';return}
   tt.textContent=cleanTitle(it.name)||it.name||'';
   const a=[];if(m&&m.year)a.push(m.year);if(m&&m.genre)a.push(m.genre);if(m&&m.rate>0)a.push('★ '+m.rate);if(!a.length&&it.group)a.push(it.group);
@@ -4740,6 +4831,313 @@ window.HalaGuide={start,end,steps:ST.length};
 })();
 </script>
 
+<style id="rf-css">#b-rf.spin svg{animation:rfspin .9s linear infinite}@keyframes rfspin{to{transform:rotate(360deg)}}</style>
+<style id="up-css">
+/* ===== إطار تحديد واضح ومهني (نهاري = أزرق قوي، ليلي = أبيض) ===== */
+:root{--fr:#fff;--frg:rgba(255,255,255,.32)}
+html[data-th=light]{--fr:#0b57ff;--frg:rgba(11,87,255,.30)}
+html[data-th=light] body.bgv{--fr:#fff;--frg:rgba(255,255,255,.32)}
+.tile:focus,.hero:focus,.cd:focus,.rcc:focus,.cwc:focus,.circ:focus,.rcb:focus,.ac:focus,.btn:focus,.pill:focus,.ep:focus,.gi:focus,.ai:focus{outline:none!important;border-color:var(--fr)!important;box-shadow:0 0 0 3px var(--fr),0 0 0 8px var(--frg)!important}
+html[data-th=light] .tile:focus,html[data-th=light] .circ:focus,html[data-th=light] .pill:focus{background-color:rgba(11,87,255,.10)}
+html[data-th=light] body:not(.bgv) .gi:focus,html[data-th=light] body:not(.bgv) .ai:focus,html[data-th=light] body:not(.bgv) .btn:focus,html[data-th=light] body:not(.bgv) .pill:focus{background:var(--fr);color:#fff}
+html[data-th=light] body:not(.bgv) #p-l:not(.gv)>.li:focus{background:var(--fr)!important;color:#fff!important;border-color:var(--fr)!important;box-shadow:0 0 0 3px var(--fr),0 0 0 8px var(--frg)}
+html[data-th=light] body:not(.bgv) #p-l:not(.gv)>.li:focus *{color:#fff!important}
+#p-l.gv>.li:focus{border-color:var(--fr)!important;box-shadow:0 0 0 3px var(--fr),0 0 0 8px var(--frg)!important;z-index:3}
+html.mob #p-l:not(.gv)>.li:not(.lv):focus{background:rgba(128,128,128,.30)!important;color:var(--tx)!important;box-shadow:inset 0 0 0 3px var(--fr)!important}
+html.mob #p-l:not(.gv)>.li:not(.lv):focus *{color:var(--tx)}
+#p-l:not(.gv)>.li:focus{outline:none}
+html[data-th=light] body:not(.bgv) #p-l:not(.gv)>.li.lv:focus{background:var(--fr)!important;color:#fff!important}
+html[data-th=light] body:not(.bgv) #p-l:not(.gv)>.li.lv:focus .cn,html[data-th=light] body:not(.bgv) #p-l:not(.gv)>.li.lv:focus .cg{background:rgba(255,255,255,.22)!important;color:#fff!important}
+/* ===== واجهة القنوات الخاصة: قائمة ثابتة + شاشة معاينة 16:9 ===== */
+#page.chn .pg{grid-template-columns:var(--cg,20%) 1fr 34%}
+#page.chn:not(.srp) #p-a{display:none}
+html.mob #page.chn #p-a{display:none}
+#p-pv .pvv{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:18px;overflow:hidden}
+#p-pv .pvv video{object-fit:contain;background:#000}
+#p-pv .pvv .pvl{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:14%;box-sizing:border-box;background:rgba(255,255,255,.9)}
+#p-pv .pvv video.on{z-index:2}
+#p-pv .pvf{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:900 clamp(40px,6vw,96px)/1 Cairo,Tahoma,sans-serif;color:#fff;background:linear-gradient(135deg,#2c2c31,#101013)}
+#p-pv .pvi{padding:16px 6px;display:flex;flex-direction:column;gap:8px}
+#p-pv .pvi b{font-size:clamp(22px,2vw,36px);font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+#p-pv .pvi small{font-size:clamp(15px,1.15vw,20px);color:var(--mu);font-weight:700;direction:ltr;text-align:start}
+#p-pv .pvi em{font-style:normal;font-size:clamp(14px,1vw,18px);color:var(--mu);margin-top:6px}
+#page.chn #p-pv{padding:14px;overflow:hidden auto}
+/* ===== الأجهزة الضعيفة: بدون حركات وتمويه ===== */
+html.lowp *,html.lowp *::before,html.lowp *::after{transition:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important;will-change:auto!important;scroll-behavior:auto!important}
+html.lowp #rcv-bg,html.lowp #cwv-bg,html.lowp #ld img.ldb,html.lowp .hero .bg,html.lowp .tile .bgi{display:none!important}
+html.lowp .tile,html.lowp .cd,html.lowp .hero,html.lowp .rcc,html.lowp .gi{box-shadow:none}
+html.lowp #scene,html.lowp [data-th=light] #scene{filter:none!important}
+html.lowp img.ld{animation:none!important}
+</style>
+<style id="np-css">
+/* ===== بطاقة بدل البوستر المفقود ===== */
+.npb{position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:.7em;padding:1.3em 1em 1.1em;text-align:center;overflow:hidden;font-size:clamp(12px,1.05vw,20px);color:#fff;background:linear-gradient(165deg,#2b2b31 0%,#101013 100%);border:1px solid rgba(255,255,255,.12)}
+.npb .npn{flex:none;max-width:100%;font-weight:800;font-size:1.05em;line-height:1.3;max-height:4em;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow-wrap:anywhere}
+.npb .npl{flex:1 1 auto;min-height:1.8em;width:68%;background-position:center;background-repeat:no-repeat;background-size:contain;opacity:.92}
+.npb .nps{flex:none;font-size:.78em;font-weight:700;opacity:.78;padding:.28em .9em;border-radius:999px;border:1px solid rgba(255,255,255,.35);white-space:nowrap}
+html[data-th=light] body:not(.bgv) .npb{color:#15161a;background:linear-gradient(165deg,#ffffff 0%,#e3e5ec 100%);border-color:rgba(0,0,0,.14)}
+html[data-th=light] body:not(.bgv) .npb .npl{filter:invert(1)}
+html[data-th=light] body:not(.bgv) .npb .nps{border-color:rgba(0,0,0,.32)}
+.cd>.npb,.li>.npb,#p-pv>.npb,.hero>.npb,.pvv>.npb,.rcc>.npb{position:absolute;top:0;right:0;bottom:0;left:0}
+.cd>.npb{font-size:clamp(11px,.9vw,16px);padding:1em .8em .8em;border-radius:inherit}
+.li>.npb{font-size:clamp(11px,.95vw,17px);border-radius:inherit}
+.cd.np .cap,.cd.np>.nf2,.li.np>span:not(.fvb),.hero.np>.nf2{display:none!important}
+#p-l:not(.gv) .npb{display:none!important}
+#p-pv>.npb{font-size:clamp(16px,1.6vw,30px);border-radius:inherit;padding:1.8em 1.2em 1.4em}
+.hero>.npb{font-size:clamp(12px,1.1vw,20px);z-index:0}
+.pvv>.npb{font-size:clamp(13px,1.15vw,21px);padding:.9em 1em .8em}
+.pvv>.npb .npn{-webkit-line-clamp:2}
+.npb.dp{font-size:clamp(16px,1.7vw,30px);padding:1.6em 1.1em 1.3em;border-radius:24px}
+html.mob .npb.dp{font-size:13px;border-radius:12px}
+#ci-np{display:none;position:relative;flex:none;height:min(28vh,300px);aspect-ratio:2/3;border-radius:1.6vh;overflow:hidden}
+#ci-np.on{display:block}
+#ci-np>.npb{position:absolute;top:0;right:0;bottom:0;left:0;font-size:clamp(11px,.95vw,17px)}
+#page.cinr #ci-np,#page.srp #ci-np{display:none!important}
+</style>
+
+
+<script id="reels-js">
+/* ===== ريلز: مقاطع ~دقيقة من الأفلام والمسلسلات. معزولة تماماً: ما في أي مؤقت/مستمع/تحميل وهي مسكّرة، وبتنبني عند الفتح وبتنهدم كاملة عند الخروج ===== */
+var RL={on:0};
+function rlTile(){try{if(store.get('kid'))return document.createDocumentFragment();
+ const r=document.createElement('div');r.className='tile rctile rltile';r.tabIndex=0;const z=document.createElement('div');z.className='rcz';
+ const tx=document.createElement('div');tx.className='rct';tx.textContent=HX('ريلز','Reels');r.append(z,tx);r.onclick=()=>rlOpen();return r}catch(e){try{elog('rlt '+e)}catch(x){}return document.createDocumentFragment()}}
+const RL_AR=/[؀-ۿ]/,RL_EN=/^[\x20-\x7EÀ-ſ]+$/;
+function rlLang(c){const n=String(c.name||'');return RL_AR.test(n)?'ar':RL_EN.test(n)?'en':'x'}
+function rlShuf(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0,x=a[i];a[i]=a[j];a[j]=x}return a}
+function rlOk(c){return !!(c&&c.url&&!(typeof adBlk=='function'&&adBlk(c)))}
+function rlKind(c,k){return k||c.kind||(c.sid?'sr':'mv')}
+/* مجموعة المقاطع: من مشاهدتك + مفضلتك + اقتراحات التطبيق، وبينها اكتشاف عشوائي (عربي/إنجليزي). لو ما في سجل: كلها عشوائي عربي/إنجليزي */
+function rlBuild(n){
+ const seen=RL.seen||(RL.seen=new Set()),out=[],A=[];
+ const push=(c,k,why,L)=>{if(!rlOk(c)||seen.has(c.url)||RL.bad[c.url])return;seen.add(c.url);L.push({c,k:rlKind(c,k),why})};
+ const H=[],F=[],R=[],X=[];
+ if(!RL.sig){RL.sig=1;
+  try{Object.values(getProg()).filter(p=>p&&p.url&&(p.kind=='mv'||p.kind=='sr')).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,20).forEach(p=>push(p,p.kind,'hist',H))}catch(e){}
+  try{favs().filter(f=>f&&f.url).slice(0,20).forEach(f=>push(f,f.kind,'fav',F))}catch(e){}
+  try{rcList('all',24).forEach(c=>push(c,rcFk(c),'rec',R))}catch(e){}
+ }
+ const sg=[];rlShuf(H);rlShuf(R);rlShuf(F);
+ for(let i=0;i<40&&(i<H.length||i<R.length||i<F.length);i++){if(H[i])sg.push(H[i]);if(R[i])sg.push(R[i]);if(F[i])sg.push(F[i])}
+ const mv=src('__mv'),sr=src('__sr').filter(c=>c.url);
+ for(let t=0;X.length<n&&t<n*12;t++){const L=(sr.length&&Math.random()<.25)?sr:mv;if(!L.length)break;const c=L[Math.random()*L.length|0],lg=rlLang(c);if(lg=='x')continue;push(c,L===sr?'sr':'mv','rnd',X)}
+ let si=0,xi=0;while(out.length<n&&(si<sg.length||xi<X.length)){for(let k=0;k<2&&si<sg.length;k++)out.push(sg[si++]);if(xi<X.length)out.push(X[xi++])}
+ return out}
+function rlMsg(m,ms){const e=$('#rl .rl-ms');if(!e)return;e.textContent=m;e.classList.add('on');clearTimeout(RL.mt);RL.mt=setTimeout(()=>{e.classList.remove('on')},ms||1800)}
+function rlStopV(){clearTimeout(RL.sg);clearTimeout(RL.au);const v=$('#rl .rl-v');if(RL.hls){try{RL.hls.destroy()}catch(e){}RL.hls=null}
+ if(v){v.onloadedmetadata=v.onplaying=v.onerror=v.ontimeupdate=v.onended=v.onwaiting=null;try{v.pause();v.removeAttribute('src');v.load()}catch(e){}}}
+function rlUi(){const el=$('#rl');if(!el)return;const w=RL.q[RL.i],c=w.c;
+ $('#rl .rl-t').textContent=(typeof cleanTitle=='function'&&cleanTitle(c.name))||c.name||'';
+ $('#rl .rl-bd').textContent=({hist:HX('من مشاهدتك','From your watching'),fav:HX('من مفضلتك','From favorites'),rec:HX('مقترح لك','Suggested for you'),rnd:HX('اكتشف','Discover')})[w.why];
+ $('#rl .rl-m').textContent=(w.k=='sr'?t('rc_sr'):t('rc_mv'))+(c.se&&c.ep?' · '+t('season')+' '+c.se+' · '+t('episode')+' '+c.ep:'');
+ const ph=$('#rl .rl-ph');ph.removeAttribute('src');ph.style.display='none';if(c.logo){ph.onload=()=>{if(RL.q&&RL.q[RL.i]===w)ph.style.display=''};ph.src=thumb(c.logo,'w342')}
+ const f=$('#rl .rl-fav');if(f)f.textContent=isFav(c.id)?'♥':'♡';
+ $('#rl .rl-pb i').style.transform='scaleX(0)';el.classList.remove('pl','bm','pz');el.classList.add('ld')}
+function rlPlay(){
+ if(!RL.on)return;rlStopV();const w=RL.q[RL.i],c=w.c,g=++RL.g,v=$('#rl .rl-v');if(!v)return;RL.bm=0;rlUi();
+ RL.pt=0;RL.lt=-1;RL.len=60;RL.t0=0;RL.started=0;
+ v.muted=!!RL.mute;
+ const u=c.url;
+ if(/\.m3u8(\?|$)/i.test(u)&&window.Hls&&Hls.isSupported()){try{RL.hls=new Hls({maxBufferLength:8,maxMaxBufferLength:14,backBufferLength:5,startLevel:0,capLevelToPlayerSize:true,startFragPrefetch:true,manifestLoadingMaxRetry:2,levelLoadingMaxRetry:2,fragLoadingMaxRetry:2});RL.hls.loadSource(u);RL.hls.attachMedia(v);RL.hls.on(Hls.Events.ERROR,(e,x)=>{if(x.fatal&&g===RL.g)rlBad(g)})}catch(e){v.src=u}}else v.src=u;
+ v.onloadedmetadata=()=>{if(g!==RL.g)return;const d=v.duration;
+  if(isFinite(d)&&d>0){if(d>240){const a=w.k=='sr'?.08:.12,b=w.k=='sr'?.45:.55;RL.t0=Math.max(20,d*(a+Math.random()*(b-a)));try{v.currentTime=RL.t0}catch(e){}}else{RL.len=Math.min(d,45)}}};
+ v.onplaying=()=>{if(g!==RL.g)return;RL.started=1;RL.badRun=0;clearTimeout(RL.sg);const el=$('#rl');if(el){el.classList.remove('ld');el.classList.add('pl')}
+  clearTimeout(RL.au);RL.au=setTimeout(()=>{if(g!==RL.g||!RL.on||v.paused||v.muted)return;if(typeof v.webkitAudioDecodedByteCount=='number'&&v.webkitAudioDecodedByteCount===0&&v.currentTime>1){rlMsg(HX('صوت هالملف مش مدعوم هون، تخطّينا','This file’s audio is not supported here, skipped'),1600);rlBad(g,1)}},2600)};
+ v.onerror=()=>{if(g===RL.g)rlBad(g)};
+ v.ontimeupdate=()=>{if(g!==RL.g)return;const t=v.currentTime,d=t-RL.lt;if(RL.lt>=0&&d>0&&d<1.6)RL.pt+=d;RL.lt=t;
+  const p=$('#rl .rl-pb i');if(p)p.style.transform='scaleX('+Math.min(1,RL.pt/RL.len)+')';
+  if(RL.pt>=RL.len)rlGo(1)};
+ v.onended=()=>{if(g===RL.g)rlGo(1)};
+ RL.sg=setTimeout(()=>{if(g===RL.g&&!RL.started)rlBad(g)},15000);
+ const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{if(g!==RL.g)return;if(!v.muted){v.muted=true;RL.mute=true;rlSnd();v.play().catch(()=>{})}})}
+function rlBad(g,quiet){if(g!==RL.g||!RL.on)return;const w=RL.q[RL.i];if(w)RL.bad[w.c.url]=1;RL.badRun=(RL.badRun||0)+1;
+ if(RL.badRun>=5){rlStopV();RL.badRun=0;const el=$('#rl');if(el)el.classList.remove('ld');rlMsg(HX('ما قدرنا نشغّل مقاطع. تأكد من الاتصال وجرّب بعد شوي','Could not play clips. Check your connection and try again'),4000);return}
+ if(!quiet)rlMsg(HX('هالمقطع ما اشتغل، بنجرّب التالي','This clip failed, trying the next'),1400);
+ rlGo(1,1)}
+function rlGo(d,auto){
+ if(!RL.on)return;
+ if(d<0){if(RL.i<=0){rlMsg(HX('هذا أول مقطع','This is the first clip'),900);return}RL.i--}
+ else{if(RL.i+1>=RL.q.length){const m=rlBuild(24);if(!m.length){if(RL.i+1>=RL.q.length){if(auto){RL.i=0;rlPlay()}else rlMsg(HX('ما في مقاطع زيادة هلأ','No more clips right now'),1400);return}}else RL.q.push(...m)}
+  if(RL.q.length>60){RL.q.splice(0,20);RL.i-=20}RL.i++}
+ rlPlay()}
+function rlPause(on){const v=$('#rl .rl-v'),el=$('#rl');if(!v)return;if(on===undefined)on=!v.paused;if(on){try{v.pause()}catch(e){}el.classList.add('pz')}else{el.classList.remove('pz');const p=v.play();if(p&&p.catch)p.catch(()=>{})}rlPP()}
+function rlPP(){const b=$('#rl .rl-pp'),v=$('#rl .rl-v');if(b&&v)b.textContent=v.paused?'▶':'❚❚'}
+function rlSnd(){const b=$('#rl .rl-snd'),v=$('#rl .rl-v');if(v)v.muted=!!RL.mute;if(b)b.textContent=RL.mute?'🔇':'🔊';try{store.set('rlm',RL.mute?1:0)}catch(e){}}
+function rlBar(on){const el=$('#rl');if(!el)return;RL.bm=on;el.classList.toggle('bm',!!on);
+ if(on){rlPause(true);focusEl($('#rl .rl-pp'))}else{try{document.activeElement.blur()}catch(e){}rlPause(false)}}
+function rlFull(){const w=RL.q[RL.i];if(!w)return;const c=w.c,k=w.k;rlClose(1);try{direct(c,k)}catch(e){try{elog('rlf '+e)}catch(x){}}}
+function rlFav(){const w=RL.q[RL.i];if(!w)return;try{toggleFav(w.c,w.k)}catch(e){}const f=$('#rl .rl-fav');if(f)f.textContent=isFav(w.c.id)?'♥':'♡';rlMsg(isFav(w.c.id)?t('favadd'):t('favdel'),1200)}
+function rlSeek(s){const v=$('#rl .rl-v');if(!v||!isFinite(v.duration))return;try{v.currentTime=Math.max(0,Math.min(v.duration-1,v.currentTime+s))}catch(e){}rlMsg((s>0?'+':'−')+Math.abs(s)+HX(' ث',' s'),700)}
+function rlOpen(){
+ if(RL.on)return;
+ RL.on=1;RL.from=document.activeElement;RL.q=[];RL.i=-1;RL.g=0;RL.bad={};RL.seen=null;RL.sig=0;RL.badRun=0;RL.mute=!!store.get('rlm');RL.fill=false;
+ try{killPv();window.CIN&&CIN.hide&&CIN.hide()}catch(e){}
+ const el=document.createElement('div');el.id='rl';el.className='ld';
+ el.innerHTML='<img class="rl-ph" alt=""><video class="rl-v" playsinline preload="metadata"></video><div class="rl-ldr"></div><div class="rl-gr"></div>'
+  +'<div class="rl-inf"><span class="rl-bd"></span><b class="rl-t" dir="auto"></b><small class="rl-m"></small></div>'
+  +'<div class="rl-bar"><b class="rl-pp" tabindex="0">❚❚</b><b class="rl-full" tabindex="0"></b><b class="rl-fav" tabindex="0">♡</b><b class="rl-snd" tabindex="0">🔊</b><b class="rl-fit" tabindex="0">⤢</b><b class="rl-x" tabindex="0">✕</b></div>'
+  +'<div class="rl-pb"><i></i></div><div class="rl-ms"></div><div class="rl-hint"></div>';
+ document.body.appendChild(el);
+ const ar=S.lang=='ar',mob=document.documentElement.classList.contains('mob');
+ $('#rl .rl-full').textContent='🎬 '+HX('شاهد كامل','Watch full');
+ $('#rl .rl-hint').textContent=mob?HX('اسحب لفوق للتالي • اضغط للإيقاف','Swipe up for next • tap to pause'):HX('↑↓ مقطع • ←→ ±10ث • OK إيقاف وخيارات • رجوع خروج','↑↓ clip • ←→ ±10s • OK pause & options • Back exit');
+ setTimeout(()=>{const h=$('#rl .rl-hint');if(h)h.classList.add('off')},5000);
+ const B=x=>$('#rl .rl-'+x);
+ B('pp').onclick=()=>{rlPause();};B('full').onclick=rlFull;B('fav').onclick=rlFav;B('snd').onclick=()=>{RL.mute=!RL.mute;rlSnd()};B('fit').onclick=()=>{RL.fill=!RL.fill;el.classList.toggle('fill',RL.fill)};B('x').onclick=()=>rlClose();
+ rlSnd();
+ /* لمس: سحب عمودي = تالي/سابق، نقرة = إيقاف/تشغيل. مستمعين على العنصر نفسه فبتروح معه */
+ let ty=0,tx=0,tt=0;
+ el.addEventListener('touchstart',e=>{const t0=e.touches[0];ty=t0.clientY;tx=t0.clientX;tt=Date.now()},{passive:true});
+ el.addEventListener('touchend',e=>{if(e.target.closest&&e.target.closest('.rl-bar'))return;const t0=e.changedTouches[0],dy=t0.clientY-ty,dx=t0.clientX-tx;
+  if(Math.abs(dy)>55&&Math.abs(dy)>Math.abs(dx)*1.3){rlGo(dy<0?1:-1)}},{passive:true});
+ el.addEventListener('wheel',e=>{e.preventDefault();const n=Date.now();if(n-(RL.wh||0)<600)return;RL.wh=n;rlGo(e.deltaY>0?1:-1)},{passive:false});
+ el.querySelector('.rl-v').addEventListener('click',()=>{rlPause()});
+ RL.vis=()=>{if(document.hidden)rlPause(true)};document.addEventListener('visibilitychange',RL.vis);
+ const m=rlBuild(24);
+ if(!m.length){$('#rl').classList.remove('ld');rlMsg(HX('ما في أفلام أو مسلسلات نعرضها هلأ','No movies or series to show right now'),3000);RL.q=[];return}
+ RL.q=m;RL.i=0;rlPlay()}
+function rlClose(q){if(!RL.on)return;RL.on=0;clearTimeout(RL.mt);rlStopV();try{document.removeEventListener('visibilitychange',RL.vis)}catch(e){}RL.vis=null;
+ const el=$('#rl');if(el)el.remove();RL.q=RL.bad=RL.seen=null;const f=RL.from;RL.from=null;
+ if(!q&&f&&f.isConnected)focusEl(f)}
+function rlKey(e){if(!RL.on)return false;const k=e.keyCode,el=$('#rl');
+ if(BACK.includes(k)){e.preventDefault();if(!e.repeat){if(RL.bm)rlBar(0);else rlClose()}return true}
+ if(k==38||k==33||k==427){e.preventDefault();if(!e.repeat)rlGo(-1);return true}
+ if(k==40||k==34||k==428){e.preventDefault();if(!e.repeat)rlGo(1);return true}
+ if(k==179||k==415||k==19||k==32){e.preventDefault();if(!e.repeat)rlPause();return true}
+ if(k==37||k==39){e.preventDefault();
+  if(RL.bm){const bs=[...el.querySelectorAll('.rl-bar b')],i=bs.indexOf(document.activeElement),rtl=document.documentElement.dir=='rtl',d=(k==39?1:-1)*(rtl?-1:1),j=Math.max(0,Math.min(bs.length-1,(i<0?0:i)+d));focusEl(bs[j])}
+  else rlSeek(k==39?10:-10);return true}
+ if(k==13){e.preventDefault();if(e.repeat)return true;if(RL.bm){const a=document.activeElement;if(a&&a.click)a.click()}else rlBar(1);return true}
+ e.preventDefault();return true}
+</script>
+<style id="rl-css">
+.rltile .rct::before{content:"\25B6"!important;font-size:1.1em!important}
+.rltile .rcz{display:block;opacity:1;transform:none;background:linear-gradient(160deg,#3b0f5a 0%,#c1245f 55%,#f58a1f 100%)}
+.rltile .rcz::after{content:"\25B6";position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:3.2em;height:3.2em;border-radius:50%;background:rgba(0,0,0,.28);border:2px solid rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;font-size:clamp(18px,2vw,30px);color:#fff;padding-inline-start:.15em;box-sizing:border-box}
+html.mob .rltile .rcz::after{display:none}
+#rl{position:fixed;top:0;right:0;bottom:0;left:0;z-index:62;background:#000;color:#fff;overflow:hidden;direction:inherit;touch-action:none;-webkit-user-select:none;user-select:none}
+#rl .rl-v{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;background:#000}
+#rl.fill .rl-v{object-fit:cover}
+#rl .rl-ph{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+#rl.pl .rl-ph{display:none!important}
+#rl .rl-gr{position:absolute;left:0;right:0;bottom:0;height:44%;background:linear-gradient(to top,rgba(0,0,0,.88),rgba(0,0,0,0));pointer-events:none}
+#rl .rl-inf{position:absolute;inset-inline:4vw 24vw;bottom:calc(5vh + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:.5vh;align-items:flex-start}
+#rl .rl-bd{align-self:flex-start;font-size:clamp(12px,1.1vw,18px);font-weight:800;padding:.2em .8em;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3)}
+#rl .rl-t{font-size:clamp(20px,2.4vw,40px);font-weight:900;line-height:1.25;text-shadow:0 2px 8px rgba(0,0,0,.7)}
+#rl .rl-m{font-size:clamp(13px,1.2vw,20px);opacity:.8}
+#rl .rl-bar{position:absolute;inset-inline-end:3vw;bottom:calc(5vh + env(safe-area-inset-bottom,0px));display:none;gap:1.2vw;align-items:center}
+#rl.bm .rl-bar{display:flex}
+#rl .rl-bar b{min-width:clamp(44px,3.6vw,64px);height:clamp(44px,3.6vw,64px);padding:0 .9em;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border-radius:999px;background:rgba(30,30,34,.85);border:2px solid rgba(255,255,255,.28);font-size:clamp(16px,1.5vw,26px);font-weight:800;cursor:pointer;white-space:nowrap}
+#rl .rl-bar b:focus{outline:none;border-color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 8px rgba(255,255,255,.3);transform:scale(1.06)}
+#rl .rl-pb{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.22)}
+#rl .rl-pb i{display:block;height:100%;width:100%;background:#fff;transform-origin:left center;transform:scaleX(0)}
+html[dir=rtl] #rl .rl-pb i{transform-origin:right center}
+#rl .rl-ms{position:absolute;left:50%;top:14%;transform:translateX(-50%);max-width:86vw;padding:.6em 1.4em;border-radius:999px;background:rgba(20,20,24,.92);border:1px solid rgba(255,255,255,.25);font-weight:700;font-size:clamp(14px,1.4vw,24px);text-align:center;opacity:0;pointer-events:none}
+#rl .rl-ms.on{opacity:1}
+#rl .rl-hint{position:absolute;left:0;right:0;top:calc(2vh + env(safe-area-inset-top,0px));text-align:center;font-size:clamp(12px,1.1vw,18px);opacity:.75;text-shadow:0 1px 4px #000}
+#rl .rl-hint.off{display:none}
+#rl .rl-ldr{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;display:none;animation:rlsp .8s linear infinite}
+#rl.ld .rl-ldr{display:block}
+@keyframes rlsp{to{transform:rotate(360deg)}}
+#rl.pz:not(.bm)::after{content:"\275A\275A";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:clamp(40px,6vw,90px);opacity:.8;text-shadow:0 2px 12px #000}
+html.mob #rl .rl-inf{inset-inline:4vw 20vw;bottom:calc(5.5vh + env(safe-area-inset-bottom,0px))}
+html.mob #rl .rl-bar{display:flex;flex-direction:column;inset-inline-end:3vw;bottom:calc(8vh + env(safe-area-inset-bottom,0px));gap:14px}
+html.mob #rl .rl-bar b{min-width:48px;height:48px;font-size:20px;padding:0}
+html.mob #rl .rl-bar .rl-full{font-size:0;padding:0}html.mob #rl .rl-bar .rl-full::before{content:"\1F3AC";font-size:20px}
+html.mob #rl .rl-t{font-size:20px}
+html.mob #rl .rl-pp{display:none}
+html.lowp #rl .rl-ldr{animation-duration:1.4s}
+</style>
+
+<script id="ai-js">
+/* ===== ترجمة الترجمة بالذكاء الاصطناعي: تاخذ ترجمة (إنجليزي غالباً) وتترجمها لعربي، وتظهر الجمل أول بأول من مكان المشاهدة ===== */
+const AI_K='__AI_KEY__',AI_PV='__AI_PROV__';
+const AI_P=[['free','Google Translate · مجاني بدون مفتاح','Google Translate · free, no key'],['claude','Claude (Anthropic)','Claude (Anthropic)'],['gemini','Gemini (Google)','Gemini (Google)'],['openai','OpenAI (ChatGPT)','OpenAI (ChatGPT)']];
+const AI_M={claude:'claude-haiku-5-5',gemini:'gemini-2.0-flash',openai:'gpt-4o-mini'};
+const aiProv=()=>{const p=store.get('aip')||(/^__/.test(AI_PV)?'':AI_PV)||'free';return AI_P.some(x=>x[0]==p)?p:'free'};
+const aiKey=()=>(store.get('aikey')||(/^__/.test(AI_K)?'':AI_K)||'').trim();
+const aiModel=()=>(store.get('aimodel')||'').trim()||AI_M[aiProv()]||'';
+const aiLbl=p=>{const x=AI_P.find(a=>a[0]==p)||AI_P[0];return S.lang=='ar'?x[1]:x[2]};
+function aiUi(){
+ const h=$('#st-aih'),b=$('#st-aip'),k=$('#st-aik'),m=$('#st-aim'),p=aiProv(),ar=S.lang=='ar';if(!h)return;
+ h.textContent=ar?'ترجمة بالذكاء الاصطناعي':'AI subtitle translation';
+ b.textContent=(ar?'المزوّد: ':'Provider: ')+aiLbl(p);
+ const need=p!='free';k.style.display=m.style.display=need?'':'none';
+ k.placeholder=ar?'مفتاح API (بيتخزّن على الجهاز بس)':'API key (stored on this device only)';m.placeholder=(ar?'الموديل (اختياري): ':'Model (optional): ')+(AI_M[p]||'');
+ if(document.activeElement!==k)k.value=store.get('aikey')||'';if(document.activeElement!==m)m.value=store.get('aimodel')||'';
+ $('#st-aih2').textContent=p=='free'?(ar?'مجاني وسريع ومناسب كبداية، جودته أقل من النماذج الذكية.':'Free and fast; quality is lower than the AI models.'):(ar?'جودة أعلى. التكلفة على حسابك عند المزوّد (فيلم كامل غالباً أقل من سنت أو سنتين).':'Higher quality. Billed by the provider on your account (a full movie is usually a cent or two).')}
+function aiBind(){const b=$('#st-aip');if(!b||b._ai)return;b._ai=1;
+ b.onclick=()=>{const i=AI_P.findIndex(x=>x[0]==aiProv());store.set('aip',AI_P[(i+1)%AI_P.length][0]);aiUi();focusEl(b)};
+ $('#st-aik').onchange=$('#st-aik').oninput=e=>store.set('aikey',e.target.value.trim());
+ $('#st-aim').onchange=$('#st-aim').oninput=e=>store.set('aimodel',e.target.value.trim())}
+const aiSrt=cs=>{const f=t=>{t=Math.max(0,t);const h=t/3600|0,m=(t%3600)/60|0,s=t%60|0,ms=Math.round((t%1)*1000);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+','+String(ms>999?999:ms).padStart(3,'0')};return cs.map((c,i)=>(i+1)+'\n'+f(c.s)+' --> '+f(c.e)+'\n'+c.t).join('\n\n')+'\n'};
+const aiPrompt=(title,arr)=>'You are a professional subtitle translator. Translate the following subtitle lines into natural, fluent Arabic (clear Modern Standard Arabic with an easy conversational tone, suitable for on-screen reading). Title: "'+title+'". Rules: return exactly '+arr.length+' items in the same order; keep line breaks (\\n) where the source has them; do not merge or split items; do not add notes; keep proper names sensible; keep each item short. Return ONLY a JSON array of strings, nothing else.\n'+JSON.stringify(arr);
+function aiParse(txt,n){let a=String(txt||'');const i=a.indexOf('['),j=a.lastIndexOf(']');if(i<0||j<i)throw new Error('bad json');const r=JSON.parse(a.slice(i,j+1));if(!Array.isArray(r)||r.length!==n)throw new Error('count '+(r&&r.length)+'/'+n);return r.map(x=>String(x==null?'':x))}
+function aiErr(r){const s=r.status;const e=new Error(s==401||s==403?'key':s==429?'rate':s==0?'net':'http '+s);e.st=s;return e}
+async function aiBatch(prov,title,arr){
+ if(prov=='free'){
+  const r=await xhttp('POST','https://translate.googleapis.com/translate_a/t?client=gtx&sl=auto&tl=ar&dt=t&format=text',{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},arr.map(x=>'q='+encodeURIComponent(x)).join('&'));
+  if(r.status!=200)throw aiErr(r);let j;try{j=JSON.parse(r.body)}catch(e){throw new Error('bad json')}
+  if(typeof j=='string')j=[j];const o=(j||[]).map(x=>Array.isArray(x)?x[0]:x);if(o.length!==arr.length)throw new Error('count');return o.map(x=>String(x==null?'':x))}
+ const key=aiKey(),model=aiModel(),pr=aiPrompt(title,arr);let r,txt='';
+ if(prov=='claude'){r=await xhttp('POST','https://api.anthropic.com/v1/messages',{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},JSON.stringify({model,max_tokens:8000,temperature:.2,messages:[{role:'user',content:pr}]}));
+  if(r.status!=200)throw aiErr(r);const j=JSON.parse(r.body);txt=(j.content||[]).map(x=>x.text||'').join('')}
+ else if(prov=='gemini'){r=await xhttp('POST','https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent?key='+encodeURIComponent(key),{'Content-Type':'application/json'},JSON.stringify({contents:[{parts:[{text:pr}]}],generationConfig:{temperature:.2,responseMimeType:'application/json'}}));
+  if(r.status!=200)throw aiErr(r);const j=JSON.parse(r.body);txt=((((j.candidates||[])[0]||{}).content||{}).parts||[]).map(x=>x.text||'').join('')}
+ else{r=await xhttp('POST','https://api.openai.com/v1/chat/completions',{'Authorization':'Bearer '+key,'Content-Type':'application/json'},JSON.stringify({model,temperature:.2,messages:[{role:'user',content:pr}]}));
+  if(r.status!=200)throw aiErr(r);const j=JSON.parse(r.body);txt=(((j.choices||[])[0]||{}).message||{}).content||''}
+ return aiParse(txt,arr.length)}
+function aiShow(cues,keep){const o=(S.sub&&S.sub.ai)?S.sub.off:0;if(S.sub&&S.sub.ai){S.sub.cues=cues}else{subStop();nativeTextOff();S.sub={kind:'cues',cues,lang:'ar',off:o||0,name:'AI',disp:'AI',key:'',dk:'',shown:0,ai:1};SUB.st='loaded'}
+ subStart();setDelayUI()}
+async function aiFetchEn(){
+ const ti=trackInfo(),q=qParse(ti.title),se=ti.se||q.se,ep=ti.ep||q.ep,title=q.title,ym=(ti.raw||'').match(/\b(19[2-9]\d|20[0-4]\d)\b/),ctx={titles:[title],year:ym?+ym[1]:0,se,ep};
+ const c2=cleanTitle(ti.raw);if(c2&&!ctx.titles.includes(c2))ctx.titles.push(c2);
+ SUB.ai=1;SUB.sl2='en';SUB.sl3='eng';SUB.mode='ai';SUB.gs=SUB.sess;const tk=++SUB.sq;$('#sp-list').innerHTML='';
+ try{const a0=await subFind(title,se,ep,ti.raw,tk,ctx);if(a0===null||tk!==SUB.sq)return null;
+  if(!a0.length)return {err:HX('ما لقينا ترجمة إنجليزية للفيلم','No English subtitle found for this title')};
+  const good=a0.filter(x=>x.v&&x.v.good),lst=(good.length?good:a0).slice(0,3);
+  for(const x of lst){SUB.aiText=null;spSt(HX('عم ننزّل الترجمة الإنجليزية…','Downloading the English subtitle…'));let ok=false;try{ok=await x.get()}catch(e){ok=false}
+   if(tk!==SUB.sq)return null;if(ok&&SUB.aiText){const cs=parseSub(SUB.aiText);if(cs.length>20)return {cues:cs,name:x.name||''}}}
+  return {err:HX('ما قدرنا ننزّل ترجمة إنجليزية صالحة','Could not download a usable English subtitle')}
+ }finally{SUB.ai=0;SUB.sl2=SUB.sl3=null;SUB.aiText=null}}
+async function aiRun(){
+ const prov=aiProv(),ar=S.lang=='ar',say=m=>{if(spOpen())spSt(m);else osd(m)};
+ if(prov!='free'&&!aiKey()){say(HX('ضيف مفتاح الـAPI من الإعدادات › ترجمة بالذكاء الاصطناعي','Add your API key in Settings › AI subtitle translation'));return}
+ SUB.ait=SUB.ait|0;if(SUB.aiRun){SUB.ait++;SUB.aiRun=0;say(HX('تم إيقاف الترجمة بالذكاء الاصطناعي','AI translation stopped'));return}
+ const my=++SUB.ait,sess=SUB.sess;SUB.aiRun=1;
+ try{
+  let src=null,name='';
+  if(S.sub&&S.sub.cues&&S.sub.cues.length&&!S.sub.ai){const smp=S.sub.cues.slice(0,80).map(q=>q.t||'').join(''),arc=(smp.match(/[؀-ۿ]/g)||[]).length,tot=(smp.match(/[A-Za-z؀-ۿ]/g)||[]).length;if(tot&&arc/tot<.3){src=S.sub.cues.map(c=>({s:c.s,e:c.e,t:c.t}));name=S.sub.name||''}}
+  if(!src){say(HX('عم ندوّر على ترجمة إنجليزية…','Looking for an English subtitle…'));const r=await aiFetchEn();if(my!==SUB.ait||sess!==SUB.sess)return;if(!r){return}if(r.err){say(r.err);return}src=r.cues;name=r.name}
+  const items=src.map((c,i)=>({i,s:c.s,e:c.e,t:c.t})).filter(c=>c.t&&!/[؀-ۿ]/.test(c.t));
+  if(items.length<5){say(HX('الترجمة الحالية عربية أصلاً أو فاضية','The current subtitle is already Arabic or empty'));return}
+  const title=((typeof trackInfo=='function'&&trackInfo().title)||'').slice(0,120),size=prov=='free'?40:50,now=(typeof subNow=='function'?subNow():0)-(S.sub&&S.sub.off||0),chunks=[];
+  for(let i=0;i<items.length;i+=size)chunks.push(items.slice(i,i+size));
+  chunks.sort((a,b)=>{const fa=a[a.length-1].e<now-30?1:0,fb=b[b.length-1].e<now-30?1:0;return fa-fb||a[0].s-b[0].s});
+  const done=[],total=items.length;let fin=0,fail=0,errk='',q=chunks.slice();
+  const s0=S.sub,alive=()=>my===SUB.ait&&sess===SUB.sess&&(S.sub===s0||(S.sub&&S.sub.ai));
+  const merge=()=>{const a=done.slice().sort((x,y)=>x.s-y.s||x.i-y.i).map(c=>({s:c.s,e:c.e,t:c.t}));if(a.length)aiShow(a)};
+  const prog=()=>{const p=Math.round(fin/total*100);say('🤖 '+HX('عم نترجم','Translating')+' '+p+'%  ·  '+aiLbl(prov))};
+  const worker=async()=>{while(q.length&&alive()&&fail<4){const ch=q.shift();let ok=false,tr=0;
+    while(!ok&&tr<3&&alive()){try{const out=await aiBatch(prov,title,ch.map(c=>c.t));ch.forEach((c,k)=>{c.t=(typeof cueText=='function'?cueText(out[k]):out[k])||c.t;done.push(c)});fin+=ch.length;ok=true}
+     catch(e){errk=e.message||'';if(e.st==401||e.st==403){fail=9;break}tr++;await new Promise(z=>setTimeout(z,e.st==429?4000*tr:900*tr))}}
+    if(!ok&&alive()&&fail<9){if(ch.length>10){const h=ch.length>>1;q.unshift(ch.slice(0,h),ch.slice(h))}else fail++}
+    if(ok&&alive()){merge();prog()}}};
+  prog();
+  await Promise.all(Array.from({length:prov=='free'?3:2},worker));
+  if(!alive())return;
+  if(!done.length){say(errk=='key'||fail>=9?HX('المفتاح مش مقبول عند المزوّد. راجعه من الإعدادات','The provider rejected the key. Check it in Settings'):errk=='rate'?HX('وصلنا حد الاستخدام عند المزوّد، جرّب بعد شوي','Rate limit reached, try again shortly'):errk=='net'?HX('مشكلة اتصال بالإنترنت','Network problem'):HX('فشلت الترجمة: ','Translation failed: ')+errk);return}
+  const all=done.slice().sort((x,y)=>x.s-y.s||x.i-y.i).map(c=>({s:c.s,e:c.e,t:c.t})),ti=trackInfo(),k=ckey(qParse(ti.title).title,ti.se||qParse(ti.title).se,ti.ep||qParse(ti.title).ep),off=S.sub&&S.sub.ai?S.sub.off:0;
+  setSub(aiSrt(all),'ar',{name:'AI '+aiLbl(prov),disp:'\u{1F916} '+aiLbl(prov),key:k,save:1,off});
+  const msg='✓ '+HX('تمت الترجمة بالذكاء الاصطناعي','AI translation done')+' · '+all.length+(fin<total?'  ('+HX('بعض الجمل ما انترجمت','some lines were skipped')+')':'');say(msg);osd(msg)
+ }catch(e){try{elog('ai '+(e&&e.message||e))}catch(x){}say(HX('خطأ بالترجمة بالذكاء الاصطناعي: ','AI translation error: ')+(e&&e.message||e))}
+ finally{if(my===SUB.ait)SUB.aiRun=0}}
+aiBind();
+</script>
+<style id="ai-css">
+#set input{width:100%;box-sizing:border-box;padding:.7em 1em;border-radius:14px;border:2px solid var(--ln);background:var(--sf);color:var(--tx);font:inherit;min-height:56px}
+#set input:focus{outline:none;border-color:var(--fr);box-shadow:0 0 0 3px var(--fr),0 0 0 8px var(--frg)}
+</style>
 <script id="img-js">
 /* صور البوسترات: إعادة محاولة تلقائية قبل ما نتخلى عن الصورة، وإذا فشلت نهائياً البطاقة تعرض اسمها بشكل مرتب بدل فراغ */
 (function(){
