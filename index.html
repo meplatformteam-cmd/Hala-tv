@@ -85,6 +85,8 @@ html.ph #rcv-art{display:none}html.ph .rcv-info{width:88vw;left:6vw;right:6vw}
 .rctile .rct::before{content:"\2726";display:block;font-size:.65em;opacity:.8;margin-bottom:.15em}
 @media(max-width:900px){#home .tile.rctile{height:300px}}
 .kidtile .rct::before{content:"\263A"}
+.sptile .rct::before{content:"\26BD"}
+.sptile .rcz img.lg{object-fit:contain;padding:14%;background:rgba(255,255,255,.07);filter:none}
 #rcv-art.lgo{object-fit:contain;padding:5%;box-sizing:border-box}
 .rcc.rcl img{object-fit:contain;padding:12% 10% 40%;box-sizing:border-box}.rcc.rcl .rcn{text-align:center}
 #home{overflow-y:auto;overflow-x:hidden;scrollbar-width:none}#home::-webkit-scrollbar{display:none}#home>*{flex-shrink:0}
@@ -1099,8 +1101,8 @@ function kidsSrc(){
  const vod=(a,kk)=>vis(a,kk).forEach(c=>{const g=c.group||'';let r=gc.get(g);if(r===undefined){r=KIDV.test(g)&&!KIDA.test(g);gc.set(g,r)}
   if((r||KIDT.test(c.name||''))&&!KIDA.test(c.name||'')){KDM.set(c,kk);out.push(c)}});
  vod(S.mv,'mv');vod(S.sr,'sr');return out}
-function src0(k){const lv=vis(S.live,'lv');return k=='__s'?[...lv,...vis(S.mv,'mv'),...vis(S.sr,'sr')]:k=='__kids'?kidsSrc():k=='__fav'?favs().filter(c=>!adBlk(c)):k=='__mv'?vis(S.mv,'mv'):k=='__sr'?vis(S.sr,'sr'):k=='__sp'?lv.filter(c=>SP.test(c.group+' '+c.name)):k=='__nw'?lv.filter(c=>NW.test(c.group+' '+c.name)):lv}
-const PM={__fav:'p_fav',__mv:'p_mv',__sr:'p_sr',__sp:'p_sp',__nw:'p_nw',__kids:'p_kids',__all:'p_ch',__s:'p_s'};
+function src0(k){const lv=vis(S.live,'lv');return k=='__s'?[...lv,...vis(S.mv,'mv'),...vis(S.sr,'sr')]:k=='__kids'?kidsSrc():k=='__sports'?sportsSrc():k=='__fav'?favs().filter(c=>!adBlk(c)):k=='__mv'?vis(S.mv,'mv'):k=='__sr'?vis(S.sr,'sr'):k=='__sp'?lv.filter(c=>SP.test(c.group+' '+c.name)):k=='__nw'?lv.filter(c=>NW.test(c.group+' '+c.name)):lv}
+const PM={__fav:'p_fav',__mv:'p_mv',__sr:'p_sr',__sp:'p_sp',__nw:'p_nw',__kids:'p_kids',__sports:'p_sp',__all:'p_ch',__s:'p_s'};
 const getProg=()=>S.demo?S.demoProg:(hget('prog')||{});
 
 /* ===== اللغة ===== */
@@ -1270,8 +1272,8 @@ function rcTile(){try{const r=document.createElement('div');r.className='tile rc
 /* ===== بطاقة الأطفال: بنفس شكل المقترحات، وتفتح شاشة المقترحات بوضع الأطفال ===== */
 Object.assign(T.ar,{kd_l:'قنوات الأطفال',kd_m:'أفلام الأطفال',kd_s:'مسلسلات الأطفال'});
 Object.assign(T.en,{kd_l:'Kids channels',kd_m:'Kids movies',kd_s:'Kids series'});
-function rkFk(it){return RV.kind=='kids'&&KDM.get(it)=='lv'?'lv':rcFk(it)}
-function kidPlayLive(c){const L=src('__kids').filter(x=>KDM.get(x)=='lv');S.view=L.includes(c)?L:S.live;S.cur=S.view.indexOf(c);direct(c,null)}
+function rkFk(it){const g=GRP[RV.kind];return g&&g.m.get(it)=='lv'?'lv':rcFk(it)}
+function kidPlayLive(c){const g=GRP[RV.kind]||GRP.kids,L=src(g.s).filter(x=>g.m.get(x)=='lv');S.view=L.includes(c)?L:S.live;S.cur=S.view.indexOf(c);direct(c,null)}
 function kidsTasks(){const a=src('__kids'),g={lv:[],mv:[],sr:[]};a.forEach(c=>{const k=KDM.get(c);if(g[k])g[k].push(c)});
  const pick=(l,n)=>l.filter(c=>c.logo).concat(l.filter(c=>!c.logo)).slice(0,n);
  return [['lv','kd_l',60],['mv','kd_m',40],['sr','kd_s',40]].map(([k,tk,n])=>()=>{const l=pick(g[k],n);return l.length?{id:'k'+k,title:t(tk),list:l}:null})}
@@ -1280,6 +1282,29 @@ function kidTile(){try{const r=document.createElement('div');r.className='tile r
   for(let n=0,g=0;n<60&&g<6&&a.length;n++){const c=a[Math.random()*a.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}
   pk.slice(0,12).forEach(u=>{const i=document.createElement('img');i.alt='';i.loading='lazy';i.decoding='async';i.src=thumb(u,'w185');i.onerror=()=>i.remove();z.append(i)});
   const tx=document.createElement('div');tx.className='rct';tx.textContent=t('p_kids');r.append(z,tx);r.onclick=()=>rcvOpen('kids');return r}catch(e){try{elog('kdt '+e)}catch(x){}return document.createDocumentFragment()}}
+/* ===== بطاقة الرياضة: بنفس شكل الأطفال، قنوات + أفلام + مسلسلات رياضية، وتفتح شاشة المقترحات بوضع الرياضة ===== */
+Object.assign(T.ar,{sp_l:'قنوات رياضية',sp_m:'أفلام رياضية',sp_s:'مسلسلات رياضية'});
+Object.assign(T.en,{sp_l:'Sports channels',sp_m:'Sports movies',sp_s:'Sports series'});
+var SDM=new Map(),
+ SPV=/sport|رياض|كرة|كورة|football|soccer|\bnba\b|\bnfl\b|\bufc\b|\bwwe\b|\bf1\b|formula ?1|boxing|ملاكم|مصارع|wrestling|olympic|أولمب|اولمب|بطولة|مونديال|world cup|كأس العالم|رالي|motogp|tennis|تنس/i,
+ SPT=/\brocky\b|\bcreed\b|ted lasso|drive to survive|the last dance|moneyball|ford v\.? ferrari|\bsenna\b|cool runnings|remember the titans|\brudy\b|friday night lights|ميسي|messi|ronaldo|رونالدو|ماراد[وو]نا|maradona|pele|بيليه|real madrid|برشلونة|barcelona fc/i;
+function sportsSrc(){
+ SDM.clear();const out=[],gc=new Map();
+ vis(S.live,'lv').forEach(c=>{const x=(c.group||'')+' '+(c.name||'');if(SP.test(x)&&!KIDA.test(x)){SDM.set(c,'lv');out.push(c)}});
+ const vod=(a,kk)=>vis(a,kk).forEach(c=>{const g=c.group||'';let r=gc.get(g);if(r===undefined){r=SPV.test(g)&&!KIDA.test(g);gc.set(g,r)}
+  if((r||SPT.test(c.name||''))&&!KIDA.test(c.name||'')){SDM.set(c,kk);out.push(c)}});
+ vod(S.mv,'mv');vod(S.sr,'sr');return out}
+function sportsTasks(){const a=src('__sports'),g={lv:[],mv:[],sr:[]};a.forEach(c=>{const k=SDM.get(c);if(g[k])g[k].push(c)});
+ const pick=(l,n)=>l.filter(c=>c.logo).concat(l.filter(c=>!c.logo)).slice(0,n);
+ return [['lv','sp_l',60],['mv','sp_m',40],['sr','sp_s',40]].map(([k,tk,n])=>()=>{const l=pick(g[k],n);return l.length?{id:'s'+k,title:t(tk),list:l}:null})}
+function spTile(){try{const r=document.createElement('div');r.className='tile rctile sptile';r.tabIndex=0;const z=document.createElement('div');z.className='rcz';
+  const pk=[],all=src('__sports'),a=all.filter(c=>c.logo&&SDM.get(c)!='lv');let lg=0;
+  for(let n=0,g=0;n<60&&g<6&&a.length;n++){const c=a[Math.random()*a.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}
+  if(pk.length<6){lg=1;const b=all.filter(c=>c.logo&&SDM.get(c)=='lv');for(let n=0,g=0;n<80&&g<6&&b.length;n++){const c=b[Math.random()*b.length|0];if(c&&c.logo&&pk.indexOf(c.logo)<0){pk.push(c.logo);g++}}}
+  pk.slice(0,12).forEach(u=>{const i=document.createElement('img');i.alt='';i.loading='lazy';i.decoding='async';i.src=thumb(u,'w185');if(lg)i.className='lg';i.onerror=()=>i.remove();z.append(i)});
+  const tx=document.createElement('div');tx.className='rct';tx.textContent=t('p_sp');r.append(z,tx);r.onclick=()=>rcvOpen('sports');return r}catch(e){try{elog('spt '+e)}catch(x){}return document.createDocumentFragment()}}
+/* مجموعات شاشة المقترحات: أطفال + رياضة */
+var GRP={kids:{m:KDM,s:'__kids',tl:'p_kids',ic:'\u263A'},sports:{m:SDM,s:'__sports',tl:'p_sp',ic:'\u26BD'}};
 /* ===== مواصلة المشاهدة: بطاقة + شاشة مربعين (أفلام / مسلسلات) ===== */
 var CW={on:0,st:0,kind:'mv',cur:null,ft:0,from:null};
 function cwItems(kind){try{return Object.values(getProg()).filter(p=>p&&p.kind==kind&&p.d>0&&p.url&&!adBlk(p)).sort((a,b)=>b.ts-a.ts).slice(0,30)}catch(e){return[]}}
@@ -1530,11 +1555,11 @@ function sgPick(){if(S._sgIt&&Date.now()-(S._sgT||0)<SG_MS)return{k:S._sgK,it:S.
  let k=store.get('sgk')=='mv'?'sr':'mv';if(!src(k=='mv'?'__mv':'__sr').length)k=k=='mv'?'sr':'mv';
  const it=rnd(src(k=='mv'?'__mv':'__sr'),1)[0];store.set('sgk',k);S._sgK=k;S._sgIt=it;S._sgT=Date.now();return{k,it}}
 function renderSug(){
- killPv();renderTiles();const sg=sgPick();
+ killPv();renderTiles();
  const SL=src('__all'),lc=SL._jo||(SL._jo=SL.filter(c=>JO.test(c.name))),box=$('#sug');box.innerHTML='';
  box.append(
   rcTile(),
-  hero(sg.it,sg.k,x=>showDet(x,sg.k)),
+  spTile(),
   cwTile(),
    kidTile());
  [...box.children].forEach(d=>{if(d._it&&d._fk!='lv')bgUrl(d._it).catch(()=>{})});/* تسخين: جيب رابط المعاينة مسبقاً */
@@ -1607,10 +1632,10 @@ const VM=()=>{if(!store.get('vm2')){store.set('vm2',1);store.set('vm','modern')}
 const _GS=new WeakMap(),_HV=new WeakMap(),_GI=new WeakMap(),_CRW=(vod,q,gs)=>vod&&VM()=='modern'&&!document.documentElement.classList.contains('mob')&&!q&&!S.let&&S.grp===''&&gs.length>=2;function _gsOf(a){let r=_GS.get(a);if(!r){r=[...new Set(a.map(c=>c.group).filter(Boolean))];_GS.set(a,r)}return r}
 function renderPage(){
  const k=S.page;if(!k)return;const vod=k=='__mv'||k=='__sr',fv=k=='__fav',q=$('#p-q').value.trim().toLowerCase(),all=src(k),KM=new Map();
- if(k=='__s'){S.mv.forEach(c=>KM.set(c,'mv'));S.sr.forEach(c=>KM.set(c,'sr'))}if(k=='__kids')KDM.forEach((v,c)=>KM.set(c,v));
+ if(k=='__s'){S.mv.forEach(c=>KM.set(c,'mv'));S.sr.forEach(c=>KM.set(c,'sr'))}if(k=='__kids')KDM.forEach((v,c)=>KM.set(c,v));if(k=='__sports')SDM.forEach((v,c)=>KM.set(c,v));
  $('#p-t').textContent=t(PM[k]);
  const gs=_gsOf(all),cl=vod&&!q?contList(k=='__mv'?'mv':'sr'):[],ng=fv||gs.length<2;
- if(S.grp==='__c'?!cl.length:(S.grp&&!gs.includes(S.grp)&&S.grp[0]!='@'&&S.grp!='__nw'&&S.grp!='__sp'&&S.grp!='__rc'&&S.grp!='__kl'&&S.grp!='__km'&&S.grp!='__ks'))S.grp='';
+ if(S.grp==='__c'?!cl.length:(S.grp&&!gs.includes(S.grp)&&S.grp[0]!='@'&&S.grp!='__nw'&&S.grp!='__sp'&&S.grp!='__rc'&&S.grp!='__kl'&&S.grp!='__km'&&S.grp!='__ks'&&S.grp!='__xl'&&S.grp!='__xm'&&S.grp!='__xs'))S.grp='';
  const qm=!q?null:(c=>{const l=_LC.get(c)||(_LC.set(c,String(c.name||'').toLowerCase()),_LC.get(c));return l.includes(q)||qtier(c.name,q)>0}),base=(!fv&&S.grp!=='__c'&&S.grp!=='__rc')?fastSorted(all,k):all;
  S.view=S.grp==='__c'?cl:S.grp==='__rc'?(vod?rcList(k=='__mv'?'mv':'sr',30).filter(c=>!qm||qm(c)):[]):base.filter(c=>gm(c)&&(!S.let||first(c.name)==S.let)&&(!qm||qm(c)));if(!fv&&S.grp!=='__c'){if(q&&qvoice(q)){const tm=new Map(S.view.map(c=>[c,qtier(c.name,q)]));S.view.sort((a,b)=>tm.get(a)-tm.get(b))}}
  $('#p-n').textContent=S.view.length;{const sb=$('#p-sort');sb.style.display=vod?'':'none';if(vod)sb.textContent='⇅ '+t('sort')+': '+t('so_'+sortMode(all))}$('#pg').classList.toggle('ng',ng);
@@ -1621,7 +1646,7 @@ function renderPage(){
   if(lt.length>1){const r=document.createElement('div');r.style.cssText='display:flex;flex-wrap:wrap;gap:2px;padding:4px';[['','•'],...lt.map(x=>[x,x])].forEach(([v,n])=>{const e=document.createElement('div');e.className='ai'+((S.gl||'')===v?' on':'');e.tabIndex=0;e.style.cssText='flex:none;min-width:1.6em;padding:2px 6px';e.textContent=n;e.onclick=()=>{S.gl=v;renderPage();focusEl($$('#p-g .ai').find(x=>x.textContent==n))};r.append(e)});G.append(r)}
   const lgs={};gsF.forEach(g=>{const l=langOf(g);(lgs[l]=lgs[l]||[]).push(g)});
   const lc2=Object.keys(lgs).filter(Boolean).sort((a,b)=>a=='AR'?-1:b=='AR'?1:a=='EN'?-1:b=='EN'?1:a.localeCompare(b)),ent=[],srt=a=>a.map(g=>[g,strip(g),'g']).sort((x,y)=>COL.compare(x[1],y[1]));
-  if(cl.length)ent.push(['__c',t('cont'),'c']);if(vod)ent.push(['__rc','✨ '+t('rc_t'),'c'],['__rcc','⚙ '+t('rc_cu'),'c']);if(k=='__all')ent.push(['__sp','⚽ '+t('p_sp'),'c'],['__nw','📰 '+t('p_nw'),'c']);if(k=='__kids')ent.push(['__kl','📺 '+t('p_ch'),'c'],['__km','🎬 '+t('p_mv'),'c'],['__ks','📼 '+t('p_sr'),'c']);ent.push(['',t('allg'),'c']);
+  if(cl.length)ent.push(['__c',t('cont'),'c']);if(vod)ent.push(['__rc','✨ '+t('rc_t'),'c'],['__rcc','⚙ '+t('rc_cu'),'c']);if(k=='__all')ent.push(['__sp','⚽ '+t('p_sp'),'c'],['__nw','📰 '+t('p_nw'),'c']);if(k=='__kids')ent.push(['__kl','📺 '+t('p_ch'),'c'],['__km','🎬 '+t('p_mv'),'c'],['__ks','📼 '+t('p_sr'),'c']);if(k=='__sports')ent.push(['__xl','📺 '+t('p_ch'),'c'],['__xm','🎬 '+t('p_mv'),'c'],['__xs','📼 '+t('p_sr'),'c']);ent.push(['',t('allg'),'c']);
   if(lc2.length>=2&&!vod){lc2.forEach(c=>{ent.push(['@'+c,LN[c]+' · '+lgs[c].length,'l']);if(S.lo[c]||langOf(S.grp)==c||S.grp=='@'+c)ent.push(...srt(lgs[c]))});ent.push(...srt(lgs['']||[]))}else ent.push(...srt(gsF));
   const _hk=hidK(),_ao=adOn(),isHid=(d,g)=>!!_hk[d+'|'+g]||(_ao&&adG(g));
   ent.forEach(([v,n,ty])=>{const e=document.createElement('div'),hd=ty=='g'&&isHid(kd,v);e.className='gi'+((S.grp||'')===v?' on':'')+(hd?' hid':'')+(v=='__sp'||v=='__nw'?' hot':'');e.tabIndex=0;e.dir='auto';const sp=document.createElement('span');sp.textContent=n;e.append(sp);
@@ -2659,7 +2684,7 @@ $('#b-th').onclick=()=>{toggleTheme();focusEl($('#b-th'))};$('#th-l').onclick=to
 {const b=$('#st-tha');if(b)b.onclick=()=>{store.set('thauto',thAuto()?0:1);if(thAuto())store.set('thlast','');applyTheme();thaTxt();osd(S.lang=='ar'?(thAuto()?'الوضع التلقائي شغّال':'الوضع التلقائي متوقف'):(thAuto()?'Auto theme on':'Auto theme off'))}}
 const LN={AR:'العربية',EN:'English',TR:'Türkçe',FR:'Français',DE:'Deutsch',ES:'Español',IT:'Italiano',RU:'Русский',FA:'فارسی',KU:'Kurdî',PT:'Português',NL:'Nederlands',UR:'اردو',HI:'हिन्दी',ZH:'中文'},LR=/^\s*[\[(]?\s*([A-Za-z]{2,3})\s*[\]):|\-–]+\s*/,LR2=/\s*[\[(|\-–]\s*([A-Za-z]{2,3})\s*[\])]?\s*$/;
 const _LO=new Map(),langOf=g=>{g=g||'';let r=_LO.get(g);if(r!==undefined)return r;const m=g.match(LR)||g.match(LR2),c=m&&m[1].toUpperCase();r=c&&LN[c]?c:'';_LO.set(g,r);return r},strip=g=>langOf(g)?((g.match(LR)?g.replace(LR,''):g.replace(LR2,''))||g):g;
-const gm=c=>!S.grp||(S.grp=='__nw'?NW.test(c.group+' '+c.name):S.grp=='__sp'?SP.test(c.group+' '+c.name):S.grp=='__kl'?KDM.get(c)=='lv':S.grp=='__km'?KDM.get(c)=='mv':S.grp=='__ks'?KDM.get(c)=='sr':S.grp[0]=='@'?langOf(c.group)==S.grp.slice(1):c.group==S.grp);
+const gm=c=>!S.grp||(S.grp=='__nw'?NW.test(c.group+' '+c.name):S.grp=='__sp'?SP.test(c.group+' '+c.name):S.grp=='__kl'?KDM.get(c)=='lv':S.grp=='__km'?KDM.get(c)=='mv':S.grp=='__ks'?KDM.get(c)=='sr':S.grp=='__xl'?SDM.get(c)=='lv':S.grp=='__xm'?SDM.get(c)=='mv':S.grp=='__xs'?SDM.get(c)=='sr':S.grp[0]=='@'?langOf(c.group)==S.grp.slice(1):c.group==S.grp);
 const EYE=['<svg viewBox="0 0 24 24"><path d="M3 12c3 4 6 5 9 5s6-1 9-5M5 15l-2 3M9 17l-1 3M15 17l1 3M19 15l2 3"/></svg>','<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'];
 const markSeen=x=>{if(!x||!x.sid||x.se==null||!histOn())return;const m=hget('seen')||{};m[x.sid+'_'+x.se+'_'+x.ep]=1;hset('seen',m)};
 const hsh=x=>{let h=5381;for(const c of x)h=(h*33^c.charCodeAt(0))>>>0;return String(h)};
@@ -3783,7 +3808,7 @@ function rcvTasks(kind){rcSync();const P=rcPrefs(),Pr=rcProfile(),ex=rcExclude()
  T.push(()=>add('top_r',t('rc_tr'),dd(rcTopBy(allp,K2,it=>(it.rt>=7||M[it.id])&&!ex[it.id]&&rcInfo(it).r>=7&&(!needF||rcPass(it,P)),(a,b)=>rcInfo(b).r-rcInfo(a).r||(b.ts||0)-(a.ts||0)))));
  return T}
 
-function rcvCard(it){const lv=RV.kind=='kids'&&KDM.get(it)=='lv';let d;
+function rcvCard(it){const G=GRP[RV.kind],lv=!!G&&G.m.get(it)=='lv';let d;
  if(lv){d=document.createElement('div');d.className='rcc rcl';d.tabIndex=0;d.dataset.id=it.id;d._it=it;d._fk='lv';
   if(it.logo){const i=document.createElement('img');i.loading='lazy';i.alt='';i.src=thumb(it.logo,'w185');i.onerror=()=>i.remove();d.append(i)}
   const c=document.createElement('div'),n=document.createElement('b');c.className='rcn';n.dir='auto';n.textContent=it.name||'';c.append(n);d.append(c);if(isFav(it.id))d.append(favBadge());
@@ -3791,24 +3816,24 @@ function rcvCard(it){const lv=RV.kind=='kids'&&KDM.get(it)=='lv';let d;
  else{d=rcCard(it);d.onclick=()=>{rcvClose(1);showDet(it,d._fk)};const r=rcInfo(it).r;
   if(rcIsNew(it)||r>0){const b=document.createElement('span');b.className='bd'+(rcIsNew(it)?' nw':'');b.textContent=rcIsNew(it)?t('rc_nb'):'★ '+r;d.append(b)}}
  d.onfocus=()=>{clearTimeout(RV.ft);RV.ft=setTimeout(()=>rcvHero(it),90);const row=d.parentNode,b=$('#rcv-b');if(row&&b){const y=row.parentNode.offsetTop-6;if(Math.abs(b.scrollTop-y)>4)b.scrollTop=y}};return d}
-function rcvHero(it){if(!RV.on||!it)return;RV.cur=it;const kd=RV.kind=='kids',lv=kd&&KDM.get(it)=='lv',fk=rkFk(it),d=lv?null:rcInfo(it),a=$('#rcv-art'),bg=$('#rcv-bg');
+function rcvHero(it){if(!RV.on||!it)return;RV.cur=it;const kd=GRP[RV.kind],lv=!!kd&&kd.m.get(it)=='lv',fk=rkFk(it),d=lv?null:rcInfo(it),a=$('#rcv-art'),bg=$('#rcv-bg');
  $('#rcv-in').style.display=lv?'none':'';a.classList.toggle('lgo',lv);
  if(it.logo){if(a.getAttribute('src')!==it.logo){a.classList.remove('fi');a.style.display='';a.onerror=()=>{a.style.display='none'};a.src=it.logo;void a.offsetWidth;a.classList.add('fi')}
   const lo=thumb(it.logo,'w154');if(bg.getAttribute('src')!==lo){bg.src=lo}bg.style.display=''}else{a.style.display='none';bg.style.display='none'}
- $('#rcv-tag').textContent=kd?'\u263A '+t('p_kids'):'✨ '+t('rc_tag');$('#rcv-ti').textContent=lv?(it.name||''):(cleanTitle(it.name)||it.name);
+ $('#rcv-tag').textContent=kd?kd.ic+' '+t(kd.tl):'✨ '+t('rc_tag');$('#rcv-ti').textContent=lv?(it.name||''):(cleanTitle(it.name)||it.name);
  let m;
  if(lv){m=[t('p_ch')];if(it.group)m.push(it.group)}
  else{m=[t(fk=='sr'?'rc_sr':'rc_mv')];if(d.y)m.push(d.y);d.g.slice(0,2).forEach(g=>m.push(RCN(RCG,g)));if(d.l)m.push(RCN(RCL,d.l));if(d.r>0)m.push('★ '+d.r);if(rcIsNew(it))m.push(t('rc_nb'))}
  $('#rcv-mt').textContent=m.join('  ·  ');$('#rcv-why').textContent=kd?'':rcReason(it);rcvFav()}
 function rcvFav(){const it=RV.cur;if(it)$('#rcv-fv').textContent=(isFav(it.id)?'♥ ':'♡ ')+t(isFav(it.id)?'pm_unfav':'pm_fav')}
 function rcvBuild(){if(!RV.on)return;const b=$('#rcv-b'),tok=RV.bt=(RV.bt|0)+1,t0=Date.now();RV.fd=0;b.innerHTML='';b.scrollTop=0;
- const kd=RV.kind=='kids';$('#rcv-hd').textContent=t(kd?'p_kids':'rc_t');$('#rcv-bk').textContent=(S.lang=='ar'?'› ':'‹ ')+t('back');$('#rcv-cu').textContent=kd?t('rc_all')+(S.lang=='ar'?' ‹':' ›'):'⚙ '+t('rc_cu');
+ const kd=!!GRP[RV.kind];$('#rcv-hd').textContent=t(kd?GRP[RV.kind].tl:'rc_t');$('#rcv-bk').textContent=(S.lang=='ar'?'› ':'‹ ')+t('back');$('#rcv-cu').textContent=kd?t('rc_all')+(S.lang=='ar'?' ‹':' ›'):'⚙ '+t('rc_cu');
  $('#rcv-pl').textContent='▶ '+t('play');$('#rcv-in').textContent='ⓘ '+t('rc_det');
  let first=null,i=0,T;const act=$('#rcv .rcv-act');
- try{T=RV.kind=='kids'?kidsTasks():rcvTasks(RV.kind)}catch(e){T=[];try{elog('rcv '+e)}catch(x){}}
- if(RV.kind!='kids'&&!rcHasSignal()){const n=document.createElement('div');n.className='rcv-nt';n.textContent=t('rc_none');b.append(n)}
+ try{T=RV.kind=='kids'?kidsTasks():RV.kind=='sports'?sportsTasks():rcvTasks(RV.kind)}catch(e){T=[];try{elog('rcv '+e)}catch(x){}}
+ if(!GRP[RV.kind]&&!rcHasSignal()){const n=document.createElement('div');n.className='rcv-nt';n.textContent=t('rc_none');b.append(n)}
  const fin=()=>{try{elog('perf rcv '+(Date.now()-t0)+'ms rows='+b.querySelectorAll('section').length)}catch(e){}
-  if(first)return;act.style.display='none';RV.cur=null;$('#rcv-tag').textContent='';$('#rcv-ti').textContent=t(RV.kind=='kids'?'p_kids':'rc_t');$('#rcv-mt').textContent='';$('#rcv-why').textContent=t(RV.kind=='kids'?'empty':'rc_none');$('#rcv-art').style.display='none';$('#rcv-bg').style.display='none';focusEl($(RV.kind=='kids'?'#rcv-bk':'#rcv-cu'))};
+  if(first)return;act.style.display='none';RV.cur=null;$('#rcv-tag').textContent='';$('#rcv-ti').textContent=t(GRP[RV.kind]?GRP[RV.kind].tl:'rc_t');$('#rcv-mt').textContent='';$('#rcv-why').textContent=t(GRP[RV.kind]?'empty':'rc_none');$('#rcv-art').style.display='none';$('#rcv-bg').style.display='none';focusEl($(GRP[RV.kind]?'#rcv-bk':'#rcv-cu'))};
  (function next(){if(!RV.on||RV.bt!==tok)return;if(i>=T.length){fin();return}
   let r=null;try{r=T[i++]()}catch(e){try{elog('rcv row '+e)}catch(x){}}
   if(r){const w=document.createElement('section'),h=document.createElement('h4'),rw=document.createElement('div'),fr=document.createDocumentFragment();h.className='rcv-rt';h.dir='auto';h.textContent=r.title;rw.className='rcv-rw';
@@ -3823,7 +3848,7 @@ function rcvKey(e){if(!RV.on)return false;const k=e.keyCode,a=document.activeEle
  if(BACK.includes(k)){e.preventDefault();if(!e.repeat)rcvClose();return true}
  if((k==405||k==70)&&a&&a._it){e.preventDefault();toggleFav(a._it,a._fk);const b=a.querySelector('.fvb');if(isFav(a._it.id)&&!b)a.append(favBadge());else if(!isFav(a._it.id)&&b)b.remove();rcvFav();osd(t(isFav(a._it.id)?'favadd':'favdel'));return true}
  if(k>=37&&k<=40){e.preventDefault();spatial(k,'#rcv .rcc,#rcv .rcb')}else if(k==13&&a&&a.click){e.preventDefault();a.click()}return true}
-$('#rcv-bk').onclick=()=>rcvClose();$('#rcv-cu').onclick=()=>{if(RV.kind=='kids'){rcvClose(1);showPage('__kids')}else rcMenu()};
+$('#rcv-bk').onclick=()=>rcvClose();$('#rcv-cu').onclick=()=>{const g=GRP[RV.kind];if(g){rcvClose(1);showPage(g.s)}else rcMenu()};
 $('#rcv-pl').onclick=()=>{const it=RV.cur;if(!it)return;const lv=rkFk(it)=='lv';rcvClose(1);if(lv)kidPlayLive(it);else openVod(it,rcFk(it))};
 $('#rcv-in').onclick=()=>{const it=RV.cur;if(!it)return;rcvClose(1);showDet(it,rcFk(it))};
 $('#rcv-fv').onclick=()=>{const it=RV.cur;if(!it)return;toggleFav(it,rkFk(it));rcvFav();osd(t(isFav(it.id)?'favadd':'favdel'))};
@@ -4053,8 +4078,8 @@ R('H','.sbx','البحث الشامل والصوت','البحث في كل الق
 R('H','.tw','الساعة والطقس والشبكة','الوقت والتاريخ والطقس واسم الشبكة وحالة الاشتراك.|معلومات للعرض فقط.|تتحدث تلقائياً.','Clock, weather, network','Time, date, weather, network and account info.|Display only.|Updates automatically.'),
 R('H','#wg','الويدجتس','بطاقات اختيارية: أوقات الصلاة، أسعار العملات، راديو، ملاحظة وويدجت خاص.|فعّلها من الإعدادات.|تظهر هنا مرتبة.','Widgets','Optional cards: prayer times, FX rates, radio, note, custom.|Enable them in Settings.|They appear here.'),
 R('H','#tiles','القنوات والأفلام والمسلسلات','ثلاث بلاطات للأقسام الرئيسية مع عدد العناصر.|اضغط البلاطة (OK على الريموت).|ينفتح القسم بقائمته.','Channels, Movies, Series','Three tiles for main sections with counts.|Press a tile (OK on remote).|The section opens.'),
-R('H','#sug .rctile:not(.kidtile)','مقترحات','بطاقة تعرض لك اقتراحات مرتبة حسب ذوقك وما شاهدته.|اضغط البطاقة لفتح شاشة المقترحات.|تقدر تخصص الأنواع واللغة والسنة، وتشغّل أي عمل منها.','Suggestions','A card with picks ranked by your taste and viewing.|Press it to open the Suggestions screen.|Customize genres, language and year, and play anything from it.'),
-R('H','#sug .hero','فيلم أو مسلسل لك','بطاقة بالنص تبدّل بين فيلم ومسلسل كل 10 دقايق، وتعرض معاينة عند التحديد.|اضغطها لفتح التفاصيل، أو زر الاقتراحات لتبديلها فوراً.|تظهر تفاصيل العمل وتقدر تشغّله.','A movie or series for you','The middle card alternates between a movie and a series every 10 minutes, with a preview on focus.|Press it for details, or use the refresh button to swap it now.|Details open and you can play it.'),
+R('H','#sug .rctile:not(.kidtile):not(.sptile)','مقترحات','بطاقة تعرض لك اقتراحات مرتبة حسب ذوقك وما شاهدته.|اضغط البطاقة لفتح شاشة المقترحات.|تقدر تخصص الأنواع واللغة والسنة، وتشغّل أي عمل منها.','Suggestions','A card with picks ranked by your taste and viewing.|Press it to open the Suggestions screen.|Customize genres, language and year, and play anything from it.'),
+R('H','#sug .sptile','قسم الرياضة','يجمع القنوات والأفلام والمسلسلات الرياضية بمكان واحد.|اضغط بطاقة الرياضة اللي بجنب المقترحات.|تنفتح شاشة بنفس شكل المقترحات بصفوف قنوات وأفلام ومسلسلات رياضية، و«عرض الكل» بيفتح الصفحة الكاملة.','Sports','Gathers sports channels, movies and series in one place.|Press the Sports card next to Suggestions.|A screen styled like Suggestions opens with rows of sports channels, movies and series; “See all” opens the full page.'),
 R('H','#sug .cwtile','مواصلة المشاهدة','تجمع كل ما بدأت مشاهدته مع حلقة التقدم، مقسّمة إلى أفلام ومسلسلات.|اضغط البطاقة ثم اختر مربع «أفلام» أو «مسلسلات».|تظهر أعمالك غير المكتملة، اختر واحداً ليكمل من آخر موضع، أو أزِله من القائمة.','Continue watching','Everything you started, with a progress ring, split into Movies and Series.|Press the card, then pick the Movies or Series square.|Your unfinished titles appear; choose one to resume, or remove it from the list.'),
 R('H','#b-fav','المفضلة','اختصار لقائمة ما أضفته بالقلب ♥.|اضغط الزر.|تنفتح صفحة المفضلة.','Favorites','Shortcut to items you hearted ♥.|Press it.|Favorites page opens.'),
 R('H','#sug .kidtile','قسم الأطفال','يجمع قنوات وأفلام ومسلسلات الأطفال بمكان واحد.|اضغط بطاقة الأطفال اللي بجنب المقترحات.|تنفتح شاشة بنفس شكل المقترحات بصفوف قنوات وأفلام ومسلسلات، و«عرض الكل» بيفتح الصفحة الكاملة.','Kids','Gathers kids channels, movies and series in one place.|Press the Kids card next to Suggestions.|A screen styled like Suggestions opens with rows of channels, movies and series; “See all” opens the full page.'),
