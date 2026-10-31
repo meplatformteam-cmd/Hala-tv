@@ -700,7 +700,7 @@ html.mob #p-l:not(.gv)>.li.lv{min-height:64px;gap:10px;padding:8px 12px}
 html.mob #p-l:not(.gv)>.li.lv img,html.mob #p-l:not(.gv)>.li.lv.nl::after{width:76px}
 html.mob #p-l:not(.gv)>.li.lv .cg{display:none}
 /* ===== HALA: طبقة الموبايل/التابلت (تعمل فقط لما html.mob، التلفزيون ما بتأثر) ===== */
-html.mob,html.mob body{font-size:16px;line-height:1.45;overscroll-behavior:none}
+html.mob,html.mob body{font-size:16px;line-height:1.45}
 html.mob #login{padding:max(env(safe-area-inset-top),14px) 14px max(env(safe-area-inset-bottom),14px)}
 html.mob .card0{width:100%;border-radius:24px;padding:20px 16px}
 html.mob .card0 .ruq{font-size:clamp(34px,10vw,56px)}
@@ -982,8 +982,10 @@ html.mob #st-di{font-size:13px;color:var(--mu);line-height:1.6;padding:2px 6px 8
 html.mob #osd{max-width:calc(100vw - 24px);width:max-content;font-size:15px;padding:10px 16px;border-radius:16px;top:calc(var(--sat) + 10px)}
 html.mob #osd b{font-size:16px}
 
-html.mob #ntoff{inset-inline:12px;width:auto;max-width:none;top:calc(var(--sat) + 10px);padding:10px 14px;border-radius:16px;font-size:14px}
+html.mob #ntoff{left:12px;right:12px;-webkit-transform:translateY(-150%);transform:translateY(-150%);width:auto;max-width:none;top:calc(var(--sat) + 10px);padding:10px 14px;border-radius:16px;font-size:14px}
+html.mob #ntoff.on{-webkit-transform:none;transform:none}
 html.mob #ntoff b{font-size:16px}
+#ntoff{pointer-events:auto;cursor:pointer}
 
 /* ===== جدول المباريات على الهاتف: بطاقة عمودية مرتبة ===== */
 html.mob #mtv{padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0}
@@ -1200,6 +1202,18 @@ html{--u:2}
 #tc .jp.on{display:block}
 html.tcon #fv,html.tcon #cc{display:none!important}
 html.tcon #osd{bottom:calc(var(--u)*135px)}
+html.mob *,html.mob *::before,html.mob *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.mob #fx,html.mob #scene,html.mob #hbg,html.mob #pbg{display:none!important}
+html.mob .tile,html.mob .cd,html.mob .li,html.mob .rcc{box-shadow:none!important}
+html.tch #pm .ri:focus{outline:none;box-shadow:none}
+#msg{z-index:40;cursor:pointer}
+#msg .mx{margin-top:6px;align-self:stretch;padding:14px 20px;border:0;border-radius:16px;background:#fff;color:#000;font:inherit;font-size:.72em;font-weight:900;cursor:pointer;touch-action:manipulation}
+#msg .mx:focus{outline:3px solid var(--gold,#fc0)}
+html.mob #msg .mbox{max-width:92vw;padding:20px 18px;border-radius:22px}
+html.mob #msg{font-size:18px;padding:12px}
+html.tch #pm{position:fixed;inset-inline-start:12px;inset-inline-end:12px;bottom:calc(var(--sab,0px) + 12px);top:auto;z-index:45;min-width:0;max-height:72vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px;border-radius:22px;background:rgba(24,24,30,.97);box-shadow:0 18px 60px rgba(0,0,0,.7)}
+html.tch #pm .ri{font-size:17px;padding:14px 16px;min-height:48px;display:flex;align-items:center;border-radius:14px;touch-action:manipulation}
+html.tch #pm .ri:active{background:#fff;color:#000}
 html.tcon #subov{bottom:calc(var(--u)*115px)}
 
 /* ===== تنظيف زوايا بوسترات الأفلام: بدون لمعة قطرية بالزاوية العلوية، حدود موحّدة، وشارة المفضلة دائرية أنيقة ===== */
@@ -1365,7 +1379,7 @@ async function lcLoad(){
  LC.gen=m.gen;return out}
 let _scT=0;function saveCache(){clearTimeout(_scT);_scT=setTimeout(()=>{const go=()=>{try{lcSave()}catch(e){}};/* الكتابة الكبيرة بوقت الفراغ عشان ما تجمّد الشاشة على الأجهزة الضعيفة */if(window.requestIdleCallback)requestIdleCallback(go,{timeout:15000});else go()},V()=='app'?20000:1500);window.prewarm&&prewarm()}
 const t=(k,...a)=>{const v=T[S.lang][k];return typeof v=='function'?v(...a):v};
-const V=()=>document.body.dataset.v, setView=v=>{document.body.dataset.v=v;window.kbShut&&kbShut();killPv();if(v!="app")window.exoStop&&exoStop()};
+const V=()=>document.body.dataset.v, setView=v=>{document.body.dataset.v=v;if(v=="app"){const n=document.getElementById("ntoff");if(n)n.className=""}window.kbShut&&kbShut();killPv();if(v!="app")window.exoStop&&exoStop()};
 const MV=/movie|film|vod|cinema|أفلام|فيلم|افلام|سينما/i,SR=/series|مسلسل|حلقات|season|show/i,JO=/رؤيا|roya|المملكة|mamlaka|الأردن|الاردن|jordan|jrtv|petra|بترا|عمان|amman/i,SP=/sport|رياض|كرة|كورة|football|soccer|bein|بي ?ان|espn|dazn|\bssc\b|eurosport|arryadia|\bnba\b|\bnfl\b|\bufc\b|\bwwe\b|\bf1\b|formula ?1|laliga|bundesliga|serie a|premier league|champions league|tennis|motogp|boxing|cricket|مباري|دوري/i,NW=/news|أخبار|اخبار|نشرة|cnn|bbc|jazeera|الجزيرة|العربية/i;
 /* قفل المحتوى للكبار تلقائياً */
 const ADG=/(^|[^a-z])(xxx|porn\w*|adults?(?!\s*swim)|18\s*\+|\+\s*18|erotic\w*|sexy?|hentai|nsfw|playboy|brazzers|hustler|penthouse|milf)([^a-z]|$)|للكبار|اباحي|إباحي|اباحية|إباحية|\+18|18\+|جنس|إغراء|اغراء|ممنوع على الأطفال/i,
@@ -1828,11 +1842,12 @@ $('#nt-bk').onclick=ntClose;$('#nt-done').onclick=ntClose;$('#nt-again').onclick
 /* ===== مراقب الاتصال: رسالة فورية لما ينقطع الإنترنت، ورسالة لما يرجع =====
    المصادر: إشارة أندرويد نفسها (__net) + أحداث المتصفح + فحص دوري خفيف + أخطاء الفيديو.
    أي إشارة بتشغّل فحص حقيقي لعدة مواقع، والرسالة ما بتظهر إلا إذا الفحص فشل (عشان ما تطلع رسالة غلط). */
-function ntBan(kind){let b=$('#ntoff');if(!b){b=document.createElement('div');b.id='ntoff';b.setAttribute('role','alert');b.innerHTML='<b></b><small></small>';document.body.appendChild(b)}
+function ntBan(kind){let b=$('#ntoff');if(!b){b=document.createElement('div');b.id='ntoff';b.setAttribute('role','alert');b.innerHTML='<b></b><small></small>';b.onclick=()=>{b.className=''};document.body.appendChild(b)}
+ if(V()=='app'&&store.get('ntw')!==1){b.className='';return}
  clearTimeout(b._t);b.className='on '+kind;
  b.querySelector('b').textContent=kind=='bad'?HX('⚠ انفصل الإنترنت','⚠ Internet disconnected'):HX('✓ رجع الإنترنت','✓ Internet is back');
  b.querySelector('small').textContent=kind=='bad'?HX('الاتصال انقطع فجأة. تأكد من الراوتر أو الكيبل.','The connection dropped suddenly. Check the router or cable.'):'';
- if(kind!='bad')b._t=setTimeout(()=>{b.className=''},3000)}
+ b._t=setTimeout(()=>{b.className=''},kind=='bad'?9000:3000)}
 var NM={up:true,fails:0,busy:0,q:0,at:0,timer:0};
 function nmPing(u,ms){return new Promise(res=>{let c=null,id;try{c=typeof AbortController!='undefined'?new AbortController():null}catch(e){}
  id=setTimeout(()=>{try{c&&c.abort()}catch(e){}res(false)},ms||4000);
@@ -2032,6 +2047,7 @@ function cinRows(all,k,gs){
  S.moreRows=()=>{if(S.rows&&S.rows.n<list.length)add()};add()}
 function lazyMore(){const Li=$('#p-l');if(!S.view||!S.mk||S.rows)return;const n=Li.children.length;if(n>=S.view.length||!Li.querySelector('.li'))return;S.view.slice(n,n+S.step).forEach(S.mk);S.gn=n+S.step}
 $('#p-l').addEventListener('focusin',e=>{const Li=$('#p-l'),r=e.target.closest('.li');if(S.rows){const w=e.target.closest('.cin-row');if(w&&!(w.nextElementSibling&&w.nextElementSibling.nextElementSibling))S.moreRows();return}if(r&&[].indexOf.call(Li.children,r)>=Li.children.length-(S.step==8?8:12))lazyMore()});
+{let _wsT=0;window.addEventListener('scroll',()=>{if(!window.__mob||V()!='page'||_wsT)return;_wsT=requestAnimationFrame(()=>{_wsT=0;const d=document.scrollingElement;if(d.scrollTop+innerHeight>=d.scrollHeight-innerHeight*.9){if(S.rows)S.moreRows&&S.moreRows();else lazyMore()}})},{passive:true})}
 $('#p-l').addEventListener('scroll',()=>{const Li=$('#p-l');if(Li.scrollTop+Li.clientHeight>=Li.scrollHeight-Li.clientHeight*.6)lazyMore()},{passive:true});
 $('#p-back').onclick=showHome;let qT;$('#p-q').oninput=()=>{clearTimeout(qT);qT=setTimeout(()=>{S.limit=72;renderPage()},250)};
 
@@ -2194,6 +2210,7 @@ function showErr(why,ttl){try{if(fovTry(why))return}catch(e){}const m=$('#msg'),
  const b=document.createElement('div');b.className='mbox';const h=document.createElement('div');h.className='m1';h.textContent=ttl||i.t;b.append(h);
  [[a?'السبب':'Cause',i.c],[a?'الحل':'What to do',i.f]].forEach(([k,v])=>{if(!v)return;const r=document.createElement('div'),n=document.createElement('b');r.className='m2';n.textContent=k;r.append(n,document.createTextNode(v));b.append(r)});
  if(i.code){const c=document.createElement('small');c.className='m3';c.textContent=i.code;b.append(c)}
+ {const x=document.createElement('button');x.type='button';x.className='mx';x.textContent=a?'✕  إغلاق':'✕  Close';x.onclick=e=>{e.stopPropagation();showMsg('');try{exitPlayer()}catch(_){}};b.append(x);m.onclick=()=>x.onclick({stopPropagation(){}});setTimeout(()=>{try{x.focus()}catch(_){}},50)}
  m.append(b);m.style.display='flex'}
 /* إشعار أنيق: زجاجي، أيقونة ملوّنة حسب النوع (معلومة / تم / خطأ)، سطر ثاني للتفاصيل. osd('عنوان\nتفاصيل','er') */
 const osdKind=x=>/^\s*[✓✔]|(^|\s)(تم|أضيف|اتضاف|انضاف|تفعّل|شغّال|اتحفظ|حُفظ)(\s|$)|\b(added|saved|enabled)\b/i.test(x)?'ok':/ما (اشتغل|لقينا|في|قدر|ردّ|سمعت)|فشل|خطأ|تعذّ|تعذر|انقطع|مش (مدعوم|موجود)|غير (متاح|مدعوم|موجود)|لازم|\b(fail|failed|error|unavailable|lost|denied|not supported|no supported)\b/i.test(x)?'er':'in';
@@ -4129,6 +4146,7 @@ function tcAct(a){
   case'pl':tcHide();engPick();return;
   case'as':fitNext();tcLabels();break;
   case'fs':tcFs();break;
+  case'mn':tcHide();pmShow();return;
   case'fv':favNow();break}
  tcArm();tcUpd()}
 (function(){try{
@@ -4145,10 +4163,11 @@ function tcAct(a){
   au:'<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg>',
   pl:'<svg viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>',
   as:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10l-2 2 2 2M16 10l2 2-2 2"/></svg>',
-  fs:'<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'};
+  fs:'<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+  mn:'<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>'};
  const bt=(a,id,lab,cls)=>'<button class="bt'+(cls?' '+cls:'')+'" data-a="'+a+'" id="'+id+'" type="button">'+ic[a]+(lab?'<span>'+lab+'</span>':'')+'</button>';
  const tc=document.createElement('div');tc.id='tc';tcEl=tc;
- tc.innerHTML='<div class="tb">'+bt('back','tc-b','')+'<div class="tt" id="tc-t"></div>'+bt('fv','tc-fv','')+'</div>'+
+ tc.innerHTML='<div class="tb">'+bt('back','tc-b','')+'<div class="tt" id="tc-t"></div>'+bt('fv','tc-fv','')+bt('mn','tc-mn','')+'</div>'+
   '<div class="cc">'+bt('pv','tc-pv','','s h')+bt('rw','tc-rw','','k10')+'<button class="bt" data-a="pp" id="tc-pp" type="button"></button>'+bt('ff','tc-ff','','k10')+bt('nx','tc-nx','','s h')+'</div>'+
   '<div class="jp"></div>'+
   '<div class="bb"><div class="sr"><span class="tm" id="tc-c">0:00</span><div class="sk" id="tc-s"><i></i><b></b></div><span class="tm d" id="tc-d">0:00</span></div><div class="br">'+
@@ -4167,7 +4186,8 @@ function tcAct(a){
  A.addEventListener('click',e=>{
   if(!(e.detail>0||e.pointerType))return;
   if(V()!='app'||!S.now)return;
-  const g=e.target;if(g&&g.closest&&g.closest('#tc,#sp,#pm,#dlg,#fv,#cc,#xb-c'))return;
+  const g=e.target;if(pmOpen()&&!(g&&g.closest&&g.closest('#pm'))){pmHide();return}
+  if(g&&g.closest&&g.closest('#tc,#sp,#pm,#dlg,#fv,#cc,#xb-c,#msg'))return;
   if(spOpen()||pmOpen()||$('#dlg').classList.contains('on'))return;
   tcOn()?tcHide():tcShow()});
  /* any remote/keyboard key hands control back to the TV bar */
@@ -5311,8 +5331,12 @@ function tbSet(c){const e=$('#tb');if(!e)return;const m=tbMode();clearTimeout(TB
 function tbFlash(){const e=$('#tb');if(!e||tbMode()!='h'||!e.lastChild.textContent)return;e.classList.add('on');clearTimeout(TB.t);TB.t=setTimeout(()=>e.classList.remove('on'),4500)}
 /* ===== أولوية المحتوى العربي (مفتاح بالإعدادات) ===== */
 /* ===== شو الجديد ===== */
-const WN_ID='2026.10.31-g',WNV={on:0,from:null};
+const WN_ID='2026.10.31-h',WNV={on:0,from:null};
 const WN=[
+ ["f","👆","اللمس على التليفون","السحب بالإصبع صار يشتغل من أي مكان بالشاشة: الرئيسية (حتى فوق الدوائر)، الإعدادات، والقوائم. والقوائم الطويلة بتكمّل تحميل لحالها وانت نازل.","Touch on phones","Swipe-scrolling now works from anywhere: Home (even over the circles), Settings and lists. Long lists keep loading as you scroll."],
+ ["f","☰","قائمة المشغّل على التليفون","صار في زر ☰ فوق على اليمين بالمشغّل بيفتح القائمة (ترجمة، مفضلة، حجم الصورة…) وبتسكّرها بلمسة برّا القائمة.","Player menu on phones","A ☰ button at the top of the player opens the menu; tap outside it to close."],
+ ["f","🚫","إشعارات ما بتسكّر","إشعار «انفصل الإنترنت» كان يظل فوق الفيلم ويغطي الأزرار. صار يختفي لحاله أول ما يبدأ التشغيل، وبيتسكّر بلمسة. وشاشة الخطأ إلها زر «إغلاق».","Stuck notifications","The “Internet disconnected” banner no longer covers the player, closes on tap, and the error screen has a Close button."],
+ ["i","⚡","أسرع على التليفون","شلت التمويه والخلفيات المتحركة الثقيلة عن التليفونات، فالتمرير والتنقل أخف.","Faster on phones","Heavy blur and animated backgrounds are off on phones for smoother scrolling."],
  ["f","↕️","أسهم تغيير القناة","القناة اللي بعدها صارت بنفس ترتيب القائمة اللي بتشوفها (حتى لو فتحت القناة من الرئيسية أو البحث): السهم اللي تحت = القناة اللي بعدها، واللي فوق = اللي قبلها. وإذا بدك العكس من الإعدادات «أسهم القنوات».","Channel arrows","Next/previous channel now follows the list order you see (even when opening from Home or search): Down = next, Up = previous. Reverse it in Settings → Channel arrows."],
  ["f","🎵","صوت الأغاني بلعبة الأغاني العربية","صار بيشغّل مقطع الأغنية الحقيقي (٣٠ ثانية) مع زر إعادة، وسطر بيقلك إذا الأغنية شغّالة أو ما لقينا مقطع لها. بدّه إنترنت.","Songs game now plays the song","Plays a real 30-second clip of the song with a replay button and a status line telling you if it is playing or not found. Needs internet."],
  ["f","🔔","تنبيه “افحص الإنترنت”","صار مطفي افتراضياً وما بيطلع بنص الفيلم. بتشغّله من الإعدادات إذا بدك.","Internet-check pop-up","Off by default so it never interrupts a film. Turn it on in Settings if you want it."],
