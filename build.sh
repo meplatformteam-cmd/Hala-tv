@@ -623,6 +623,225 @@ public final class ImgCache {
 }
 EOF
 
+cat > android/app/src/main/java/com/hala/tv/PhoneServer.java <<'EOF'
+package com.hala.tv;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Enumeration;
+
+/** Tiny LAN-only HTTP server: serves the phone page and receives remote/keyboard commands. Token protected. */
+public class PhoneServer {
+  public interface Cb { void onMsg(String json); byte[] page(); }
+
+  private ServerSocket ss;
+  private Thread th;
+  private volatile boolean run;
+  private String token = "";
+  private int port;
+  private Cb cb;
+  private volatile long lastSeen;
+
+  public synchronized String start(Cb c) {
+    stop();
+    cb = c;
+    String ip = System.getProperty("hala.ip");
+    if (ip == null) ip = localIp();
+    if (ip == null) return "";
+    byte[] r = new byte[9];
+    new SecureRandom().nextBytes(r);
+    StringBuilder sb = new StringBuilder();
+    for (byte b : r) sb.append(Character.forDigit((b >> 4) & 15, 16)).append(Character.forDigit(b & 15, 16));
+    token = sb.toString();
+    ss = null;
+    for (int p = 8765; p < 8785; p++) {
+      try { ss = new ServerSocket(p); port = p; break; } catch (Exception e) { ss = null; }
+    }
+    if (ss == null) return "";
+    run = true;
+    th = new Thread(new Runnable() { public void run() { loop(); } }, "hala-phone");
+    th.setDaemon(true);
+    th.start();
+    return "http://" + ip + ":" + port + "/?t=" + token;
+  }
+
+  public synchronized void stop() {
+    run = false;
+    try { if (ss != null) ss.close(); } catch (Exception e) {}
+    ss = null;
+  }
+
+  public boolean on() { return run; }
+  public long lastSeen() { return lastSeen; }
+  public int port() { return port; }
+  public String token() { return token; }
+
+  static String localIp() {
+    try {
+      String best = null;
+      Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+      while (en != null && en.hasMoreElements()) {
+        NetworkInterface ni = en.nextElement();
+        if (!ni.isUp() || ni.isLoopback()) continue;
+        String n = ni.getName() == null ? "" : ni.getName().toLowerCase();
+        Enumeration<InetAddress> ad = ni.getInetAddresses();
+        while (ad.hasMoreElements()) {
+          InetAddress a = ad.nextElement();
+          if (a instanceof Inet4Address && a.isSiteLocalAddress()) {
+            if (n.startsWith("wlan") || n.startsWith("eth")) return a.getHostAddress();
+            if (best == null) best = a.getHostAddress();
+          }
+        }
+      }
+      return best;
+    } catch (Exception e) { return null; }
+  }
+
+  private void loop() {
+    while (run && ss != null) {
+      try {
+        final Socket s = ss.accept();
+        Thread t = new Thread(new Runnable() { public void run() { serve(s); } }, "hala-phone-c");
+        t.setDaemon(true);
+        t.start();
+      } catch (Exception e) { if (!run) break; }
+    }
+  }
+
+  private static String readLine(InputStream in) throws Exception {
+    ByteArrayOutputStream b = new ByteArrayOutputStream();
+    int c;
+    while ((c = in.read()) != -1) {
+      if (c == '\n') break;
+      if (c != '\r') b.write(c);
+      if (b.size() > 4096) break;
+    }
+    return new String(b.toByteArray(), StandardCharsets.ISO_8859_1);
+  }
+
+  private void serve(Socket s) {
+    try {
+      s.setSoTimeout(6000);
+      InputStream in = s.getInputStream();
+      OutputStream out = s.getOutputStream();
+      String rl = readLine(in);
+      if (rl.length() == 0) { s.close(); return; }
+      String[] p = rl.split(" ");
+      String method = p.length > 0 ? p[0] : "", path = p.length > 1 ? p[1] : "/";
+      int len = 0;
+      String h;
+      while ((h = readLine(in)).length() > 0) {
+        String lh = h.toLowerCase();
+        if (lh.startsWith("content-length:")) { try { len = Integer.parseInt(lh.substring(15).trim()); } catch (Exception e) {} }
+      }
+      byte[] body = new byte[0];
+      if (len > 0 && len <= 8192) {
+        body = new byte[len];
+        int got = 0;
+        while (got < len) { int n = in.read(body, got, len - got); if (n < 0) break; got += n; }
+      }
+      String q = "";
+      int qi = path.indexOf('?');
+      String route = qi >= 0 ? path.substring(0, qi) : path;
+      if (qi >= 0) q = path.substring(qi + 1);
+      boolean ok = false;
+      for (String kv : q.split("&")) if (kv.equals("t=" + token)) ok = true;
+      if (!ok) { send(out, 403, "text/plain; charset=utf-8", "forbidden".getBytes(StandardCharsets.UTF_8)); s.close(); return; }
+      lastSeen = System.currentTimeMillis();
+      if (method.equals("POST") && route.equals("/m")) {
+        String j = new String(body, StandardCharsets.UTF_8);
+        try { cb.onMsg(j); } catch (Exception e) {}
+        send(out, 200, "text/plain; charset=utf-8", "ok".getBytes(StandardCharsets.UTF_8));
+      } else if (route.equals("/ping")) {
+        send(out, 200, "text/plain; charset=utf-8", "ok".getBytes(StandardCharsets.UTF_8));
+      } else if (route.equals("/")) {
+        byte[] pg = cb.page();
+        send(out, 200, "text/html; charset=utf-8", pg == null ? "page missing".getBytes(StandardCharsets.UTF_8) : pg);
+      } else {
+        send(out, 404, "text/plain; charset=utf-8", "not found".getBytes(StandardCharsets.UTF_8));
+      }
+      out.flush();
+      s.close();
+    } catch (Exception e) {
+      try { s.close(); } catch (Exception x) {}
+    }
+  }
+
+  private static void send(OutputStream out, int code, String type, byte[] b) throws Exception {
+    String st = code == 200 ? "OK" : code == 403 ? "Forbidden" : "Not Found";
+    String hd = "HTTP/1.1 " + code + " " + st + "\r\nContent-Type: " + type + "\r\nContent-Length: " + b.length + "\r\nCache-Control: no-store\r\nConnection: close\r\n\r\n";
+    out.write(hd.getBytes(StandardCharsets.ISO_8859_1));
+    out.write(b);
+  }
+}
+EOF
+
+cat > android/app/src/main/assets/phone.html <<'EOF'
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Hala TV · ريموت</title>
+<style>
+:root{--bg:#0f1115;--pn:#1a1d24;--ln:#2a2f3a;--tx:#f2f4f8;--mt:#8b93a3;--ac:#e50914;--ok:#2fbf71}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;touch-action:manipulation}
+body{padding:14px 14px 40px;max-width:520px;margin:0 auto}
+h1{font-size:18px;margin:4px 0 2px}
+#st{font-size:13px;color:var(--mt);margin-bottom:12px}#st.ok{color:var(--ok)}#st.no{color:#ff6b6b}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:18px;padding:12px;margin-bottom:14px}
+textarea{width:100%;min-height:92px;border-radius:12px;border:1px solid var(--ln);background:#0c0e12;color:var(--tx);padding:12px;font-size:20px;resize:vertical;font-family:inherit}
+textarea:focus{outline:2px solid var(--ac)}
+.row{display:flex;gap:8px;margin-top:8px}
+button{flex:1;min-height:52px;border-radius:14px;border:1px solid var(--ln);background:#242935;color:var(--tx);font-size:17px;font-family:inherit;font-weight:600}
+button:active{background:var(--ac);border-color:var(--ac)}
+button.pri{background:var(--ac);border-color:var(--ac)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad button{min-height:64px;font-size:26px}
+.pad .ok{background:var(--ac);border-color:var(--ac);font-size:20px}
+.sm{font-size:15px!important;min-height:50px!important}
+.lbl{font-size:13px;color:var(--mt);margin:2px 4px 8px}
+.tip{font-size:12.5px;color:var(--mt);line-height:1.7;margin-top:6px}
+</style></head><body>
+<h1>📺 Hala TV — ريموت التلفون</h1>
+<div id="st">عم نتصل…</div>
+<div class="card">
+<div class="lbl">⌨️ اكتب هون وبيطلع على التلفزيون بنفس الوقت (بتقدر تستخدم المايك تبع كيبورد التلفون للكتابة بالصوت)</div>
+<textarea id="tx" placeholder="اكتب أو احكي…" autocomplete="off" autocapitalize="off"></textarea>
+<div class="row"><button class="pri" id="bs">🔎 بحث</button><button id="be">↵ تأكيد</button><button id="bc">✕ مسح</button></div>
+</div>
+<div class="card">
+<div class="pad">
+<button data-k="home" class="sm">🏠</button><button data-k="38" class="rp">▲</button><button data-k="back" class="sm">↩ رجوع</button>
+<button data-k="37" class="rp">◀</button><button data-k="13" class="ok">OK</button><button data-k="39" class="rp">▶</button>
+<button data-a="seek-30" class="sm">⏪ 30</button><button data-k="40" class="rp">▼</button><button data-a="seek30" class="sm">30 ⏩</button>
+</div>
+<div class="row" style="margin-top:12px"><button data-a="pp" class="sm">⏯ تشغيل / إيقاف</button><button data-a="chn" class="sm">القناة ▲</button><button data-a="chp" class="sm">القناة ▼</button></div>
+<div class="row"><button data-a="next" class="sm">⏭ الحلقة الجاية</button><button data-a="menu" class="sm">☰ قائمة المشغّل</button></div>
+</div>
+<div class="tip">الأسهم والـOK بتشتغل مثل ريموت التلفزيون بالضبط. إذا كنت على شاشة تسجيل الدخول: اضغط OK على الحقل بالتلفزيون، وبعدها اكتب هون.</div>
+<script>
+var T=new URLSearchParams(location.search).get('t')||'',stEl=document.getElementById('st'),tx=document.getElementById('tx'),ok=false,tm=0;
+function send(o,cb){var x=new XMLHttpRequest();x.open('POST','/m?t='+encodeURIComponent(T));x.timeout=4000;x.onload=function(){setOk(x.status==200);cb&&cb()};x.onerror=x.ontimeout=function(){setOk(false)};x.send(JSON.stringify(o))}
+function setOk(v){ok=v;stEl.className=v?'ok':'no';stEl.textContent=v?'✓ متصل بالتلفزيون':'✗ انقطع الاتصال — تأكد انك على نفس الواي فاي'}
+function ping(){var x=new XMLHttpRequest();x.open('GET','/ping?t='+encodeURIComponent(T));x.timeout=3000;x.onload=function(){setOk(x.status==200)};x.onerror=x.ontimeout=function(){setOk(false)};x.send()}
+ping();setInterval(ping,5000);
+tx.addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(function(){send({t:'fill',v:tx.value})},120)});
+document.getElementById('bs').onclick=function(){send({t:'search',v:tx.value})};
+document.getElementById('be').onclick=function(){send({t:'fill',v:tx.value},function(){send({t:'key',k:'enter'})})};
+document.getElementById('bc').onclick=function(){tx.value='';send({t:'fill',v:''});tx.focus()};
+document.querySelectorAll('button[data-k]').forEach(function(b){var k=b.getAttribute('data-k'),iv=0,to=0;var fire=function(){if(navigator.vibrate)navigator.vibrate(8);send({t:'key',k:k})};
+ var st=function(e){e.preventDefault();fire();if(b.classList.contains('rp')){to=setTimeout(function(){iv=setInterval(fire,130)},420)}},en=function(){clearTimeout(to);clearInterval(iv)};
+ b.addEventListener('touchstart',st,{passive:false});b.addEventListener('touchend',en);b.addEventListener('touchcancel',en);b.addEventListener('mousedown',st);b.addEventListener('mouseup',en);b.addEventListener('mouseleave',en)});
+document.querySelectorAll('button[data-a]').forEach(function(b){b.onclick=function(){if(navigator.vibrate)navigator.vibrate(8);send({t:'act',a:b.getAttribute('data-a')})}});
+</script></body></html>
+EOF
+
 cat > android/app/src/main/java/com/hala/tv/MainActivity.java <<'EOF'
 package com.hala.tv;
 
@@ -826,7 +1045,40 @@ public class MainActivity extends Activity {
     }
   };
 
+  private PhoneServer phone;
+
   public class Bridge {
+    @JavascriptInterface
+    public String phoneStart() {
+      try {
+        if (phone == null) phone = new PhoneServer();
+        return phone.start(new PhoneServer.Cb() {
+          public void onMsg(final String j) {
+            runOnUiThread(new Runnable() { public void run() {
+              if (web != null) web.evaluateJavascript("window.__phone&&window.__phone(" + org.json.JSONObject.quote(j) + ")", null);
+            } });
+          }
+          public byte[] page() {
+            try {
+              java.io.InputStream in = getAssets().open("phone.html");
+              java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream();
+              byte[] buf = new byte[4096];
+              int n;
+              while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
+              in.close();
+              return bo.toByteArray();
+            } catch (Exception e) { return null; }
+          }
+        });
+      } catch (Throwable e) { return ""; }
+    }
+
+    @JavascriptInterface
+    public void phoneStop() { try { if (phone != null) phone.stop(); } catch (Throwable e) {} }
+
+    @JavascriptInterface
+    public long phoneSeen() { try { return phone == null ? 0 : phone.lastSeen(); } catch (Throwable e) { return 0; } }
+
     @JavascriptInterface
     public void setSttKey(String k) { sttKey = k == null ? "" : k.trim(); }
 
@@ -857,6 +1109,16 @@ public class MainActivity extends Activity {
 
     @JavascriptInterface
     public void exoStop() { runOnUiThread(new Runnable() { public void run() { exoHalt(); } }); }
+
+    @JavascriptInterface
+    public void exoInset(final int px) {
+      runOnUiThread(new Runnable() { public void run() {
+        try {
+          int p = px < 0 ? 0 : px;
+          if (exoRoot != null) { exoRoot.setPadding(p, p, p, p); exoRoot.requestLayout(); }
+        } catch (Throwable e) {}
+      } });
+    }
 
     @JavascriptInterface
     public void exoFit(final int m) {
@@ -2110,6 +2372,7 @@ public class MainActivity extends Activity {
   @Override
   protected void onDestroy() {
     if (nw != null) { nw.stop(); nw = null; }
+    try { if (phone != null) phone.stop(); } catch (Throwable e) {}
     voiceKill();
     exoRelease();
     vlcRelease();
