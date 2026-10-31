@@ -1111,16 +1111,6 @@ public class MainActivity extends Activity {
     public void exoStop() { runOnUiThread(new Runnable() { public void run() { exoHalt(); } }); }
 
     @JavascriptInterface
-    public void exoInset(final int px) {
-      runOnUiThread(new Runnable() { public void run() {
-        try {
-          int p = px < 0 ? 0 : px;
-          if (exoRoot != null) { exoRoot.setPadding(p, p, p, p); exoRoot.requestLayout(); }
-        } catch (Throwable e) {}
-      } });
-    }
-
-    @JavascriptInterface
     public void exoFit(final int m) {
       runOnUiThread(new Runnable() { public void run() {
         fitMode = (m < 0 || m > 5) ? 1 : m;
