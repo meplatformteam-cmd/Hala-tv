@@ -2710,6 +2710,7 @@ function spatial(k,sel){
   if(k==37||k==39){const d=((k==39)!==rtl)?1:-1,j=i+d;if(j>=kids.length-2&&one)lazyMore();kids=ls();if((one||Math.floor(j/4)==Math.floor(i/4))&&kids[j]){focusEl(kids[j]);return}
    /* طرف الصف: لو بهالاتجاه في شريط أحرف جانبي ننتقل إليه (الأقرب عمودياً)، غير هيك نبقى */
    const gs=$('#p-a')&&$('#p-a').getClientRects().length?$('#p-a'):$('#p-g .gl-strip');if(gs){const ar=a.getBoundingClientRect(),sr=gs.getBoundingClientRect(),toward=k==39?sr.left>=ar.right-5:sr.right<=ar.left+5;if(toward){const it=[...gs.querySelectorAll('.gi,.ai')].filter(x=>x.getClientRects().length);let bt=null,bd=1e9;it.forEach(x=>{const q=x.getBoundingClientRect(),dd=Math.abs(q.top+q.height/2-(ar.top+ar.height/2));if(dd<bd){bd=dd;bt=x}});if(bt)focusEl(bt)}}return}}}
+ if((k==38||k==40)&&a&&a.parentNode&&a.classList&&a.classList.contains('ai')&&a.parentNode.classList&&a.parentNode.classList.contains('gl-strip')){const n=k==40?a.nextElementSibling:a.previousElementSibling;if(n&&n.classList.contains('ai'))focusEl(n);return}
  if((k==38||k==40)&&a&&a.parentNode&&a.classList){const pid=a.parentNode.id,c=a.classList,cn=false,cl=pid=='p-l'&&!a.parentNode.classList.contains('gv')&&c.contains('li')?'li':pid=='p-g'&&c.contains('gi')&&!cn?'gi':pid=='p-a'&&c.contains('ai')&&!cn?'ai':'';
   if(cl){const n=k==40?a.nextElementSibling:a.previousElementSibling;if(n&&n.classList.contains(cl)){focusEl(n);return}if(cl=='ai'&&k==40)return}}
  const els=$$(sel).filter(e=>e.getClientRects().length);if(!els.includes(a)){let f=els[0];const lf=S.lfc;if(f&&lf&&Date.now()-lf[2]<15000){let bd=1e9;els.forEach(e=>{const q=e.getBoundingClientRect(),d=Math.hypot(q.left+q.width/2-lf[0],q.top+q.height/2-lf[1]);if(d<bd){bd=d;f=e}})}focusEl(f);return}   /* ضاع الفوكس (إعادة رسم): ارجع لأقرب عنصر لآخر مكان كنت فيه بدل ما تقفز لأول عنصر */
@@ -5235,7 +5236,7 @@ function tbSet(c){const e=$('#tb');if(!e)return;const m=tbMode();clearTimeout(TB
 function tbFlash(){const e=$('#tb');if(!e||tbMode()!='h'||!e.lastChild.textContent)return;e.classList.add('on');clearTimeout(TB.t);TB.t=setTimeout(()=>e.classList.remove('on'),4500)}
 /* ===== أولوية المحتوى العربي (مفتاح بالإعدادات) ===== */
 /* ===== شو الجديد ===== */
-const WN_ID='2026.10.31-e',WNV={on:0,from:null};
+const WN_ID='2026.10.31-f',WNV={on:0,from:null};
 const WN=[
  ["n","🎮","ألعاب العيلة بمحتوى جاهز","بدون سيرفر وبلهجتنا: أعلام الدول، عواصم، ماركات، سيارات، أغاني عربية، إيموجي أفلام، حزازير، أكمل المثل، أكلات شعبية، نكت، والقنبلة، ومزيج من الكل. من لاعب لـ4 بالريموت.","Family games, built-in content","No server needed, in our dialect: flags, capitals, brands, cars, Arabic songs, emoji movies, riddles, proverbs, dishes, jokes and the bomb."],
  ["n","💡","إطار إضاءة سينمائي 3D","الفيديو بيضل بحجمه الكامل، والإطار (≈٣ سم ضوء قوي + خط أسود نص سم) بيطلع فوق الحواف. ألوان: أحمر، أزرق، بنفسجي، أخضر، برتقالي، أصفر صحراوي، وغيرها. من الإعدادات أو قائمة المشغّل. واسم الفيلم واللوجو بينزاحوا لجوّا الإطار.","3D cinematic frame glow","The video keeps full size; a ≈3 cm strong glow plus a thin black line sits over its edges. Many colors incl. desert yellow. Title badge moves inside the frame."],
@@ -5245,6 +5246,7 @@ const WN=[
  ["n","⚽","مصدر احتياطي لجدول المباريات","إذا موقع المباريات انحجب من شبكتك، التطبيق بيجرّب مرآة ثانية، وبتقدر تحط مفتاح مجاني من football-data.org بالإعدادات.","Backup match source","If the match site is blocked the app tries a mirror; you can add a free football-data.org key in Settings."],
  ["f","⏪","زر الرجوع بالألعاب","كان ما بيطلّع من الألعاب بزر الرجوع الأصلي. صار بيرجع خطوة ببطء ويطلع.","Back button in games","Back now steps back and exits the games properly."],
  ["f","🎤","الصوت أثناء الفيلم","لما تفتح المايك وانت بتشاهد، الفيلم بيوقف مؤقتاً وبيكمّل لحاله بعد ما تخلص كلامك، مشان المايك ما يسمع صوت الفيلم.","Voice while watching","The film pauses while the mic listens and resumes afterwards, so the mic does not hear the movie."],
+ ["f","🔠","عمود الأحرف جنب المجموعات","كان بيوقف عند حرف S وما بينزل. صار بينزل لآخر حرف وبيرجع لفوق، والحرف اللي واقف عليه ظاهر دايماً، والفوكس ما بيتحرك يمين ولا شمال لحاله.","Letters beside groups","It used to stop at S. Now it scrolls to the last letter and back, the focused letter stays visible, and focus never jumps sideways by itself."],
  ["f","🔤","عمود الأحرف والأرقام","بيعرض كل الأحرف (عربي ثم لاتيني ثم #) وبتمشي عليهم واحد واحد وبيوقف عند آخر حرف.","Letters column","Shows every letter, steps one by one and stops at the end."],
  ["f","🎞️","النظام السينمائي افتراضي","كان بيختفي لما يشتغل وضع الأداء التلقائي. صار الشكل السينمائي هو الافتراضي دايماً.","Cinematic view is default again","It used to vanish when auto performance mode kicked in; it is the default again."],
  ["i","🚀","المكتبات الضخمة أسرع بكثير","فتح الأفلام والمسلسلات بمكتبات مئات الآلاف صار بثواني قليلة بعد ما التطبيق يجهّز نفسه بالخلفية.","Huge libraries open faster","Opening very large libraries takes about a second after background warm-up."]
@@ -5870,6 +5872,20 @@ function fovTry(why){
 #p-a .ai{flex:none}
 html.mob #p-a{display:none!important}
 </style>
+<style id="gls-css">
+/* شريط الأحرف داخل قائمة المجموعات: محدود بارتفاع اللوحة وقابل للتمرير (يوصل لآخر حرف ويرجع لفوق) */
+#p-g .gl-strip{overflow-y:auto;overflow-x:hidden;scrollbar-width:none;overscroll-behavior:contain;min-height:0;align-self:flex-start}
+#p-g .gl-strip::-webkit-scrollbar{display:none}
+#p-g .gl-strip .ai{flex:none}
+</style>
+<script id="gls-js">
+(function(){const G=document.getElementById('p-g');if(!G)return;
+ function fit(){try{const s=G.querySelector('.gl-strip');if(!s)return;const cs=getComputedStyle(G),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0),h=G.clientHeight-pad;if(h>40)s.style.maxHeight=h+'px'}catch(x){}}
+ function center(el){try{const s=el.closest('.gl-strip');if(!s)return;fit();const ch=s.clientHeight;if(s.scrollHeight>ch+2)s.scrollTop=Math.max(0,Math.min(s.scrollHeight-ch,el.offsetTop-(ch-el.offsetHeight)/2))}catch(x){}}
+ G.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('.gl-strip .ai');if(el)center(el)});
+ try{new MutationObserver(()=>{requestAnimationFrame(fit)}).observe(G,{childList:true})}catch(x){}
+ window.addEventListener('resize',()=>requestAnimationFrame(fit));setTimeout(fit,300)})();
+</script>
 <script id="turbo-js">
 /* ===== وضع الأداء (للأجهزة الضعيفة): بيشيل الحركات والظلال والمعاينات، وبيصغّر دفعات الرسم. تلقائي = بيقيس سرعة الجهاز ويفعّل لحاله ===== */
 const perfMode=()=>{const m=store.get('perf');return m==1?'turbo':m==2?'off':'auto'};
